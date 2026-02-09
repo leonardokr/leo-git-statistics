@@ -1,0 +1,89 @@
+<svg width="450" height="250" viewBox="0 0 450 250" xmlns="http://www.w3.org/2000/svg">
+<style>
+svg {
+  font-family: 'Segoe UI', Ubuntu, Sans-Serif;
+}
+
+#background {
+  fill: #FFFFFF;
+  stroke: #d0d7de;
+  stroke-width: 1px;
+  rx: 10px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  fill: #0969da;
+  color: #0969da;
+}
+
+.progress {
+  display: flex;
+  height: 10px;
+  overflow: hidden;
+  background-color: #d0d7de33;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.progress-item {
+  height: 100%;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: #24292f;
+}
+
+.lang-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.percent {
+  color: #57606a;
+  margin-left: 4px;
+  font-size: 11px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animated {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+</style>
+
+<rect x="0.5" y="0.5" width="449" height="249" id="background" />
+
+<foreignObject x="25" y="25" width="400" height="200">
+  <div xmlns="http://www.w3.org/1999/xhtml" class="animated">
+    <div class="title" style="margin-bottom: 20px;">Most Used Languages</div>
+    
+    <div class="progress">
+      
+    </div>
+    
+    <ul>
+      
+    </ul>
+  </div>
+</foreignObject>
+</svg>
