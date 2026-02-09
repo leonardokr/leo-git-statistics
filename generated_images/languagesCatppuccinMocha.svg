@@ -1,14 +1,14 @@
-<svg width="350" height="170" viewBox="0 0 350 170" xmlns="http://www.w3.org/2000/svg">
+<svg width="350" height="180" viewBox="0 0 350 180" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="lang-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
     <stop offset="0%" style="stop-color:#cba6f7;stop-opacity:1" />
     <stop offset="100%" style="stop-color:#f38ba8;stop-opacity:1" />
   </linearGradient>
   <clipPath id="lang-rounded">
-    <rect x="0" y="0" width="350" height="170" rx="6" ry="6"/>
+    <rect x="0" y="0" width="350" height="180" rx="6" ry="6"/>
   </clipPath>
   <clipPath id="progress-clip">
-    <rect x="0" y="0" width="300" height="8" rx="4" ry="4"/>
+    <rect x="0" y="0" width="310" height="8" rx="4" ry="4"/>
   </clipPath>
 </defs>
 
@@ -35,20 +35,24 @@
 
 <rect clip-path="url(#lang-rounded)" width="100%" height="100%" fill="#1e1e2e" stroke="#313244" stroke-width="1"/>
 
-<rect x="0" y="0" width="6" height="170" fill="url(#lang-gradient)" clip-path="url(#lang-rounded)"/>
+<rect x="0" y="0" width="6" height="180" fill="url(#lang-gradient)" clip-path="url(#lang-rounded)"/>
 
-<g transform="translate(25, 30)" class="animate-fade delay-1">
-  <text font-family="'Segoe UI', Ubuntu, 'Helvetica Neue', Sans-Serif" font-weight="600" font-size="16" fill="#cba6f7">Most Used Languages</text>
-</g>
-
-<g transform="translate(25, 50)" class="animate-fade delay-2">
-  <rect x="0" y="0" width="300" height="8" rx="4" ry="4" fill="#313244" opacity="0.3"/>
-  <g clip-path="url(#progress-clip)" class="progress-animate">
-    <rect x="0.00" y="0" width="155.68" height="8" fill="None"/><rect x="155.68" y="0" width="110.84" height="8" fill="#3572A5"/><rect x="266.53" y="0" width="24.54" height="8" fill="#EB8CEB"/><rect x="291.07" y="0" width="3.14" height="8" fill="#012456"/><rect x="294.21" y="0" width="2.05" height="8" fill="#f1e05a"/><rect x="296.25" y="0" width="1.51" height="8" fill="#A97BFF"/><rect x="297.77" y="0" width="0.86" height="8" fill="#3178c6"/><rect x="298.63" y="0" width="0.76" height="8" fill="#e34c26"/><rect x="299.38" y="0" width="0.26" height="8" fill="#f34b7d"/><rect x="299.64" y="0" width="0.15" height="8" fill="#ecdebe"/><rect x="299.79" y="0" width="0.08" height="8" fill="#3D6117"/><rect x="299.88" y="0" width="0.08" height="8" fill="#663399"/><rect x="299.95" y="0" width="0.03" height="8" fill="#89e051"/><rect x="299.98" y="0" width="0.02" height="8" fill="#C1F12E"/>
+<g transform="translate(25, 35)">
+  <g class="animate-fade delay-1">
+    <text font-family="'Segoe UI', Ubuntu, 'Helvetica Neue', Sans-Serif" font-weight="600" font-size="16" fill="#cba6f7">Most Used Languages</text>
   </g>
 </g>
 
-<foreignObject x="25" y="70" width="300" height="90" class="animate-slide delay-3">
+<g transform="translate(20, 55)">
+  <g class="animate-fade delay-2">
+    <rect x="0" y="0" width="310" height="8" rx="4" ry="4" fill="#313244" opacity="0.3"/>
+    <g clip-path="url(#progress-clip)" class="progress-animate">
+      <rect x="0.00" y="0" width="160.86" height="8" fill="None"/><rect x="160.86" y="0" width="114.56" height="8" fill="#3572A5"/><rect x="275.41" y="0" width="25.36" height="8" fill="#EB8CEB"/><rect x="300.77" y="0" width="3.24" height="8" fill="#012456"/><rect x="304.01" y="0" width="2.11" height="8" fill="#f1e05a"/><rect x="306.13" y="0" width="1.56" height="8" fill="#A97BFF"/><rect x="307.69" y="0" width="0.89" height="8" fill="#3178c6"/><rect x="308.58" y="0" width="0.78" height="8" fill="#e34c26"/><rect x="309.36" y="0" width="0.27" height="8" fill="#f34b7d"/><rect x="309.63" y="0" width="0.16" height="8" fill="#ecdebe"/><rect x="309.79" y="0" width="0.08" height="8" fill="#3D6117"/><rect x="309.87" y="0" width="0.08" height="8" fill="#663399"/><rect x="309.95" y="0" width="0.03" height="8" fill="#89e051"/><rect x="309.98" y="0" width="0.02" height="8" fill="#C1F12E"/>
+    </g>
+  </g>
+</g>
+
+<foreignObject x="20" y="75" width="310" height="95" class="animate-slide delay-3">
   <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: 'Segoe UI', Ubuntu, Sans-Serif; font-size: 12px;">
     <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px 16px;">
       <li style="display: flex; align-items: center;">
@@ -58,7 +62,7 @@
             </li><li style="display: flex; align-items: center;">
                 <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #3572A5; margin-right: 6px;"></span>
                 <span style="color: #cdd6f4;">Python</span>
-                <span style="color: #6c7086; margin-left: 4px; font-size: 11px;">36.9%</span>
+                <span style="color: #6c7086; margin-left: 4px; font-size: 11px;">37.0%</span>
             </li><li style="display: flex; align-items: center;">
                 <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #EB8CEB; margin-right: 6px;"></span>
                 <span style="color: #cdd6f4;">XSLT</span>
