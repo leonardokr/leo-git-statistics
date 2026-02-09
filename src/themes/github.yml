@@ -1,0 +1,51 @@
+default:
+  suffix: ""
+  colors:
+    bg_color: "#FFFFFF"
+    title_color: "#0969da"
+    text_color: "#24292f"
+    icon_color: "#57606a"
+    percent_color: "#57606a"
+    border_color: "#d0d7de"
+    accent_color: "#0969da"
+    gradient_start: "#0969da"
+    gradient_end: "#58a6ff"
+
+light:
+  suffix: "LightMode"
+  colors:
+    bg_color: "#FFFFFF"
+    title_color: "#0969da"
+    text_color: "#24292f"
+    icon_color: "#57606a"
+    percent_color: "#57606a"
+    border_color: "#d0d7de"
+    accent_color: "#0969da"
+    gradient_start: "#0969da"
+    gradient_end: "#58a6ff"
+
+dark:
+  suffix: "DarkMode"
+  colors:
+    bg_color: "#0d1117"
+    title_color: "#58a6ff"
+    text_color: "#c9d1d9"
+    icon_color: "#8b949e"
+    percent_color: "#8b949e"
+    border_color: "#30363d"
+    accent_color: "#58a6ff"
+    gradient_start: "#58a6ff"
+    gradient_end: "#a371f7"
+
+github_dimmed:
+  suffix: "GithubDimmed"
+  colors:
+    bg_color: "#22272e"
+    title_color: "#539bf5"
+    text_color: "#adbac7"
+    icon_color: "#768390"
+    percent_color: "#768390"
+    border_color: "#373e47"
+    accent_color: "#57ab5a"
+    gradient_start: "#539bf5"
+    gradient_end: "#986ee2"

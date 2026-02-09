@@ -1,0 +1,155 @@
+synthwave:
+  suffix: "Synthwave"
+  colors:
+    bg_color: "#262335"
+    title_color: "#ff7edb"
+    text_color: "#ffffff"
+    icon_color: "#36f9f6"
+    percent_color: "#848bbd"
+    border_color: "#34294f"
+    accent_color: "#fede5d"
+    gradient_start: "#ff7edb"
+    gradient_end: "#36f9f6"
+
+cyberpunk:
+  suffix: "Cyberpunk"
+  colors:
+    bg_color: "#0d0221"
+    title_color: "#f706cf"
+    text_color: "#fcee0a"
+    icon_color: "#00ff9f"
+    percent_color: "#6b5b95"
+    border_color: "#1a0533"
+    accent_color: "#00d4ff"
+    gradient_start: "#f706cf"
+    gradient_end: "#00ff9f"
+
+ocean:
+  suffix: "Ocean"
+  colors:
+    bg_color: "#0a192f"
+    title_color: "#64ffda"
+    text_color: "#8892b0"
+    icon_color: "#5ccfe6"
+    percent_color: "#495670"
+    border_color: "#172a45"
+    accent_color: "#f78c6c"
+    gradient_start: "#64ffda"
+    gradient_end: "#5ccfe6"
+
+forest:
+  suffix: "Forest"
+  colors:
+    bg_color: "#1b2820"
+    title_color: "#7ec883"
+    text_color: "#b8c4ba"
+    icon_color: "#5fb878"
+    percent_color: "#5d6b5f"
+    border_color: "#2d3d32"
+    accent_color: "#d4a656"
+    gradient_start: "#7ec883"
+    gradient_end: "#5fb878"
+
+sunset:
+  suffix: "Sunset"
+  colors:
+    bg_color: "#1f1520"
+    title_color: "#ff6b6b"
+    text_color: "#e8d5d5"
+    icon_color: "#ffa07a"
+    percent_color: "#8b7070"
+    border_color: "#3d2835"
+    accent_color: "#ffd93d"
+    gradient_start: "#ff6b6b"
+    gradient_end: "#ffa07a"
+
+midnight:
+  suffix: "Midnight"
+  colors:
+    bg_color: "#0f0a1a"
+    title_color: "#a78bfa"
+    text_color: "#d1d5db"
+    icon_color: "#818cf8"
+    percent_color: "#6b7280"
+    border_color: "#1e1433"
+    accent_color: "#f472b6"
+    gradient_start: "#a78bfa"
+    gradient_end: "#818cf8"
+
+aurora:
+  suffix: "Aurora"
+  colors:
+    bg_color: "#0c1929"
+    title_color: "#00d4aa"
+    text_color: "#e0f4f1"
+    icon_color: "#7b68ee"
+    percent_color: "#5a7d8a"
+    border_color: "#1a3a4a"
+    accent_color: "#ff6ec7"
+    gradient_start: "#00d4aa"
+    gradient_end: "#7b68ee"
+
+neon:
+  suffix: "Neon"
+  colors:
+    bg_color: "#0a0a0a"
+    title_color: "#00ff87"
+    text_color: "#ffffff"
+    icon_color: "#ff00ff"
+    percent_color: "#666666"
+    border_color: "#00ff8755"
+    accent_color: "#00ffff"
+    gradient_start: "#00ff87"
+    gradient_end: "#ff00ff"
+
+retro:
+  suffix: "Retro"
+  colors:
+    bg_color: "#f4e4ba"
+    title_color: "#8b4513"
+    text_color: "#5d4037"
+    icon_color: "#d2691e"
+    percent_color: "#a0522d"
+    border_color: "#deb887"
+    accent_color: "#228b22"
+    gradient_start: "#8b4513"
+    gradient_end: "#d2691e"
+
+lavender:
+  suffix: "Lavender"
+  colors:
+    bg_color: "#1a1625"
+    title_color: "#b4a7d6"
+    text_color: "#e0d8f0"
+    icon_color: "#9d8cd9"
+    percent_color: "#6b5b7a"
+    border_color: "#2d2640"
+    accent_color: "#e6b3cc"
+    gradient_start: "#b4a7d6"
+    gradient_end: "#9d8cd9"
+
+rose_pine:
+  suffix: "RosePine"
+  colors:
+    bg_color: "#191724"
+    title_color: "#ebbcba"
+    text_color: "#e0def4"
+    icon_color: "#c4a7e7"
+    percent_color: "#6e6a86"
+    border_color: "#26233a"
+    accent_color: "#9ccfd8"
+    gradient_start: "#ebbcba"
+    gradient_end: "#c4a7e7"
+
+rose_pine_dawn:
+  suffix: "RosePineDawn"
+  colors:
+    bg_color: "#faf4ed"
+    title_color: "#d7827e"
+    text_color: "#575279"
+    icon_color: "#907aa9"
+    percent_color: "#9893a5"
+    border_color: "#f2e9e1"
+    accent_color: "#56949f"
+    gradient_start: "#d7827e"
+    gradient_end: "#907aa9"

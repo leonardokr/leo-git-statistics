@@ -1,0 +1,77 @@
+palenight:
+  suffix: "Palenight"
+  colors:
+    bg_color: "#292d3e"
+    title_color: "#c792ea"
+    text_color: "#a6accd"
+    icon_color: "#89ddff"
+    percent_color: "#676e95"
+    border_color: "#3a3f58"
+    accent_color: "#c3e88d"
+    gradient_start: "#c792ea"
+    gradient_end: "#89ddff"
+
+material_darker:
+  suffix: "MaterialDarker"
+  colors:
+    bg_color: "#212121"
+    title_color: "#82aaff"
+    text_color: "#eeffff"
+    icon_color: "#c792ea"
+    percent_color: "#545454"
+    border_color: "#2b2b2b"
+    accent_color: "#c3e88d"
+    gradient_start: "#82aaff"
+    gradient_end: "#c792ea"
+
+material_ocean:
+  suffix: "MaterialOcean"
+  colors:
+    bg_color: "#0f111a"
+    title_color: "#82aaff"
+    text_color: "#8f93a2"
+    icon_color: "#c792ea"
+    percent_color: "#464b5d"
+    border_color: "#1a1c25"
+    accent_color: "#c3e88d"
+    gradient_start: "#82aaff"
+    gradient_end: "#c792ea"
+
+ayu:
+  suffix: "Ayu"
+  colors:
+    bg_color: "#0a0e14"
+    title_color: "#ffb454"
+    text_color: "#b3b1ad"
+    icon_color: "#39bae6"
+    percent_color: "#626a73"
+    border_color: "#1d252c"
+    accent_color: "#c2d94c"
+    gradient_start: "#ffb454"
+    gradient_end: "#ff8f40"
+
+ayu_light:
+  suffix: "AyuLight"
+  colors:
+    bg_color: "#fafafa"
+    title_color: "#ff9940"
+    text_color: "#5c6773"
+    icon_color: "#399ee6"
+    percent_color: "#abb0b6"
+    border_color: "#f0f0f0"
+    accent_color: "#86b300"
+    gradient_start: "#ff9940"
+    gradient_end: "#f07171"
+
+ayu_mirage:
+  suffix: "AyuMirage"
+  colors:
+    bg_color: "#1f2430"
+    title_color: "#ffcc66"
+    text_color: "#cbccc6"
+    icon_color: "#73d0ff"
+    percent_color: "#707a8c"
+    border_color: "#2a2f3e"
+    accent_color: "#bae67e"
+    gradient_start: "#ffcc66"
+    gradient_end: "#ffa759"

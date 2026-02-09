@@ -1,0 +1,116 @@
+dracula:
+  suffix: "Dracula"
+  colors:
+    bg_color: "#282a36"
+    title_color: "#ff79c6"
+    text_color: "#f8f8f2"
+    icon_color: "#bd93f9"
+    percent_color: "#6272a4"
+    border_color: "#44475a"
+    accent_color: "#50fa7b"
+    gradient_start: "#ff79c6"
+    gradient_end: "#bd93f9"
+
+nord:
+  suffix: "Nord"
+  colors:
+    bg_color: "#2e3440"
+    title_color: "#88c0d0"
+    text_color: "#eceff4"
+    icon_color: "#81a1c1"
+    percent_color: "#4c566a"
+    border_color: "#3b4252"
+    accent_color: "#a3be8c"
+    gradient_start: "#88c0d0"
+    gradient_end: "#5e81ac"
+
+gruvbox:
+  suffix: "Gruvbox"
+  colors:
+    bg_color: "#282828"
+    title_color: "#fabd2f"
+    text_color: "#ebdbb2"
+    icon_color: "#fe8019"
+    percent_color: "#928374"
+    border_color: "#3c3836"
+    accent_color: "#b8bb26"
+    gradient_start: "#fabd2f"
+    gradient_end: "#fe8019"
+
+gruvbox_light:
+  suffix: "GruvboxLight"
+  colors:
+    bg_color: "#fbf1c7"
+    title_color: "#b57614"
+    text_color: "#3c3836"
+    icon_color: "#af3a03"
+    percent_color: "#7c6f64"
+    border_color: "#d5c4a1"
+    accent_color: "#79740e"
+    gradient_start: "#b57614"
+    gradient_end: "#af3a03"
+
+one_dark:
+  suffix: "OneDark"
+  colors:
+    bg_color: "#282c34"
+    title_color: "#61afef"
+    text_color: "#abb2bf"
+    icon_color: "#c678dd"
+    percent_color: "#5c6370"
+    border_color: "#3e4451"
+    accent_color: "#98c379"
+    gradient_start: "#61afef"
+    gradient_end: "#c678dd"
+
+monokai:
+  suffix: "Monokai"
+  colors:
+    bg_color: "#2d2a2e"
+    title_color: "#ffd866"
+    text_color: "#fcfcfa"
+    icon_color: "#ff6188"
+    percent_color: "#939293"
+    border_color: "#403e41"
+    accent_color: "#a9dc76"
+    gradient_start: "#ffd866"
+    gradient_end: "#ff6188"
+
+tokyo_night:
+  suffix: "TokyoNight"
+  colors:
+    bg_color: "#1a1b26"
+    title_color: "#7aa2f7"
+    text_color: "#a9b1d6"
+    icon_color: "#bb9af7"
+    percent_color: "#565f89"
+    border_color: "#292e42"
+    accent_color: "#9ece6a"
+    gradient_start: "#7aa2f7"
+    gradient_end: "#bb9af7"
+
+solarized_dark:
+  suffix: "SolarizedDark"
+  colors:
+    bg_color: "#002b36"
+    title_color: "#268bd2"
+    text_color: "#839496"
+    icon_color: "#2aa198"
+    percent_color: "#586e75"
+    border_color: "#073642"
+    accent_color: "#859900"
+    gradient_start: "#268bd2"
+    gradient_end: "#2aa198"
+
+solarized_light:
+  suffix: "SolarizedLight"
+  colors:
+    bg_color: "#fdf6e3"
+    title_color: "#268bd2"
+    text_color: "#657b83"
+    icon_color: "#2aa198"
+    percent_color: "#93a1a1"
+    border_color: "#eee8d5"
+    accent_color: "#859900"
+    gradient_start: "#268bd2"
+    gradient_end: "#2aa198"

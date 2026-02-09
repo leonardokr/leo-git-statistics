@@ -1,0 +1,51 @@
+catppuccin_latte:
+  suffix: "CatppuccinLatte"
+  colors:
+    bg_color: "#eff1f5"
+    title_color: "#8839ef"
+    text_color: "#4c4f69"
+    icon_color: "#ea76cb"
+    percent_color: "#9ca0b0"
+    border_color: "#ccd0da"
+    accent_color: "#40a02b"
+    gradient_start: "#8839ef"
+    gradient_end: "#d20f39"
+
+catppuccin_frappe:
+  suffix: "CatppuccinFrappe"
+  colors:
+    bg_color: "#303446"
+    title_color: "#ca9ee6"
+    text_color: "#c6d0f5"
+    icon_color: "#f4b8e4"
+    percent_color: "#737994"
+    border_color: "#414559"
+    accent_color: "#a6d189"
+    gradient_start: "#ca9ee6"
+    gradient_end: "#e78284"
+
+catppuccin_macchiato:
+  suffix: "CatppuccinMacchiato"
+  colors:
+    bg_color: "#24273a"
+    title_color: "#c6a0f6"
+    text_color: "#cad3f5"
+    icon_color: "#f5bde6"
+    percent_color: "#6e738d"
+    border_color: "#363a4f"
+    accent_color: "#a6da95"
+    gradient_start: "#c6a0f6"
+    gradient_end: "#ed8796"
+
+catppuccin_mocha:
+  suffix: "CatppuccinMocha"
+  colors:
+    bg_color: "#1e1e2e"
+    title_color: "#cba6f7"
+    text_color: "#cdd6f4"
+    icon_color: "#f5c2e7"
+    percent_color: "#6c7086"
+    border_color: "#313244"
+    accent_color: "#a6e3a1"
+    gradient_start: "#cba6f7"
+    gradient_end: "#f38ba8"
