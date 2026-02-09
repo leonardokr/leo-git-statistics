@@ -33,18 +33,16 @@ jobs:
     - name: Read config
       id: config
       run: |
-        python3 -c "
+        python3 << 'EOF' >> $GITHUB_ENV
         import yaml
         with open('config.yml') as f:
             config = yaml.safe_load(f)
-        
-        # Root settings
-        print(f'GITHUB_ACTOR={config[\'github_user\']}')
-        
-        # Stats generation options
+
+        print(f"GITHUB_ACTOR={config['github_user']}")
+
         for key, value in config.get('stats_generation', {}).items():
-            print(f'{key.upper()}={value}')
-        " >> $GITHUB_ENV
+            print(f"{key.upper()}={value}")
+        EOF
 
     - name: Generate images
       run: |
@@ -78,10 +76,16 @@ jobs:
 
     - name: Commit and push
       run: |
-        python3 -c "import yaml; config = yaml.safe_load(open('config.yml')); print(f'NAME={config[\'commit_user_name\']}'); print(f'EMAIL={config[\'commit_user_email\']}')" > commit_info
+        python3 << 'EOF' > commit_info
+        import yaml
+        with open('config.yml') as f:
+            config = yaml.safe_load(f)
+        print(f"NAME={config['commit_user_name']}")
+        print(f"EMAIL={config['commit_user_email']}")
+        EOF
         NAME=$(grep NAME commit_info | cut -d= -f2)
         EMAIL=$(grep EMAIL commit_info | cut -d= -f2)
-        git config user.name \"$NAME\"
-        git config user.email \"$EMAIL\"
+        git config user.name "$NAME"
+        git config user.email "$EMAIL"
         git add .
         git diff --quiet && git diff --staged --quiet || (git commit -m 'Update GitHub stats images' && git push)
