@@ -80,7 +80,7 @@ metrics:
   # Number of events to load for recent analysis
   plugin_languages_recent_load: 1000
   # Sections to display (most-used, recently-used)
-  plugin_languages_sections: most-used, recently-used
+  plugin_languages_sections: most-used
   # Threshold for language display
   plugin_languages_threshold: 0%
   # Notable repositories plugin
