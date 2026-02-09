@@ -1,0 +1,23 @@
+from src.generators.base import BaseGenerator
+
+
+class StreakGenerator(BaseGenerator):
+    """
+    Generates the streak SVG template with contribution streak statistics.
+    """
+
+    async def generate(self) -> None:
+        base_replacements = {
+            "current_streak": str(await self.stats.current_streak),
+            "longest_streak": str(await self.stats.longest_streak),
+            "current_streak_range": await self.stats.current_streak_range,
+            "longest_streak_range": await self.stats.longest_streak_range,
+            "total_contributions": self.formatter.format_number(await self.stats.total_contributions),
+            "contribution_year": "All time"
+        }
+
+        self.render_for_all_themes(
+            self.config.STREAK_TEMPLATE,
+            "streak",
+            base_replacements
+        )
