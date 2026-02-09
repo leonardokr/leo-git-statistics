@@ -36,7 +36,11 @@ class ImageOrchestrator:
         """
         async with ClientSession() as session:
             self.__stats = StatsCollector(environment_vars=self.__environment, session=session)
-            await gather(self.generate_languages(), self.generate_overview())
+            await gather(
+                self.generate_languages(),
+                self.generate_overview(),
+                self.generate_streak()
+            )
 
     async def generate_overview(self) -> None:
         """
@@ -109,6 +113,33 @@ class ImageOrchestrator:
             self.template_engine.render_and_save(
                 self.config.LANGUAGES_TEMPLATE,
                 "languages",
+                replacements,
+                theme_config["suffix"]
+            )
+
+    async def generate_streak(self) -> None:
+        """
+        Fetches streak statistics and renders the streak SVG templates.
+        """
+        stats = self.__stats
+        current_year = str(__import__('datetime').date.today().year)
+
+        base_replacements = {
+            "current_streak": str(await stats.current_streak),
+            "longest_streak": str(await stats.longest_streak),
+            "current_streak_range": await stats.current_streak_range,
+            "longest_streak_range": await stats.longest_streak_range,
+            "total_contributions": self.formatter.format_number(await stats.total_contributions),
+            "contribution_year": f"All time"
+        }
+
+        for theme_name, theme_config in self.config.THEMES.items():
+            replacements = base_replacements.copy()
+            replacements.update(theme_config["colors"])
+
+            self.template_engine.render_and_save(
+                self.config.STREAK_TEMPLATE,
+                "streak",
                 replacements,
                 theme_config["suffix"]
             )
