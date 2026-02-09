@@ -869,3 +869,15 @@ class StatsCollector:
             return self._longest_streak_range
         await self._get_contribution_calendar()
         return self._longest_streak_range or "No streak"
+
+    @property
+    async def recent_contributions(self) -> list:
+        """
+        Retrieves the contribution counts for the last 10 days.
+
+        :return: List of contribution counts (most recent last).
+        """
+        await self._get_contribution_calendar()
+        days = self._contribution_calendar.get("days", [])
+        recent = days[-10:] if len(days) >= 10 else days
+        return [day.get("count", 0) for day in recent]
