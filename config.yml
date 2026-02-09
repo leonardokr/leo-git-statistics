@@ -17,10 +17,6 @@ themes:
     - default
     - light
     - dark
-    - dracula
-    - nord
-    - catppuccin_mocha
-    - tokyo_night
 
 # Timezone for workflows (e.g., America/Sao_Paulo, Asia/Dhaka)
 timezone: America/Sao_Paulo
