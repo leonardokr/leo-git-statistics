@@ -1,0 +1,91 @@
+# Visit https://github.com/lowlighter/metrics#-documentation for full reference
+name: Metrics
+on:
+  schedule: [{cron: "30 0/3 * * *"}]
+  workflow_dispatch:
+  # push: {branches: ["master", "main"]}
+jobs:
+  github-metrics:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Read config
+        id: config
+        run: |
+          python3 -c "
+          import yaml
+          with open('config.yml') as f:
+              config = yaml.safe_load(f)
+          
+          # Root settings
+          print(f'GITHUB_USER={config[\'github_user\']}')
+          print(f'TIMEZONE={config[\'timezone\']}')
+          
+          # Metrics options
+          for key, value in config.get('metrics', {}).items():
+              print(f'METRICS_{key.upper()}={value}')
+          " >> $GITHUB_ENV
+
+      - uses: lowlighter/metrics@latest
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          filename: generated_images/github-metrics.svg
+          output_action: commit
+          committer_branch: main
+          committer_message: "chore: update metrics"
+
+          # Options
+          user: ${{ env.GITHUB_USER }}
+          template: classic
+          base: ${{ env.METRICS_BASE }}
+          base_hireable: ${{ env.METRICS_BASE_HIREABLE }}
+          config_timezone: ${{ env.TIMEZONE }}
+          plugin_achievements: ${{ env.METRICS_PLUGIN_ACHIEVEMENTS }}
+          plugin_achievements_display: ${{ env.METRICS_PLUGIN_ACHIEVEMENTS_DISPLAY }}
+          plugin_achievements_limit: ${{ env.METRICS_PLUGIN_ACHIEVEMENTS_LIMIT }}
+          plugin_achievements_secrets: ${{ env.METRICS_PLUGIN_ACHIEVEMENTS_SECRETS }}
+          plugin_achievements_threshold: ${{ env.METRICS_PLUGIN_ACHIEVEMENTS_THRESHOLD }}
+          plugin_achievements_only: ${{ env.METRICS_PLUGIN_ACHIEVEMENTS_ONLY }}
+          plugin_habits: ${{ env.METRICS_PLUGIN_HABITS }}
+          plugin_habits_days: ${{ env.METRICS_PLUGIN_HABITS_DAYS }}
+          plugin_habits_facts: ${{ env.METRICS_PLUGIN_HABITS_FACTS }}
+          plugin_habits_from: ${{ env.METRICS_PLUGIN_HABITS_FROM }}
+          plugin_habits_languages_limit: ${{ env.METRICS_PLUGIN_HABITS_LANGUAGES_LIMIT }}
+          plugin_habits_languages_threshold: ${{ env.METRICS_PLUGIN_HABITS_LANGUAGES_THRESHOLD }}
+          plugin_languages: ${{ env.METRICS_PLUGIN_LANGUAGES }}
+          plugin_languages_analysis_timeout: ${{ env.METRICS_PLUGIN_LANGUAGES_ANALYSIS_TIMEOUT }}
+          plugin_languages_categories: ${{ env.METRICS_PLUGIN_LANGUAGES_CATEGORIES }}
+          plugin_languages_colors: ${{ env.METRICS_PLUGIN_LANGUAGES_COLORS }}
+          plugin_languages_details: ${{ env.METRICS_PLUGIN_LANGUAGES_DETAILS }}
+          plugin_languages_indepth: ${{ env.METRICS_PLUGIN_LANGUAGES_INDEPTH }}
+          plugin_languages_limit: ${{ env.METRICS_PLUGIN_LANGUAGES_LIMIT }}
+          plugin_languages_recent_categories: ${{ env.METRICS_PLUGIN_LANGUAGES_RECENT_CATEGORIES }}
+          plugin_languages_recent_days: ${{ env.METRICS_PLUGIN_LANGUAGES_RECENT_DAYS }}
+          plugin_languages_recent_load: ${{ env.METRICS_PLUGIN_LANGUAGES_RECENT_LOAD }}
+          plugin_languages_sections: ${{ env.METRICS_PLUGIN_LANGUAGES_SECTIONS }}
+          plugin_languages_threshold: ${{ env.METRICS_PLUGIN_LANGUAGES_THRESHOLD }}
+          plugin_notable: ${{ env.METRICS_PLUGIN_NOTABLE }}
+          plugin_notable_from: ${{ env.METRICS_PLUGIN_NOTABLE_FROM }}
+          plugin_notable_indepth: ${{ env.METRICS_PLUGIN_NOTABLE_INDEPTH }}
+          plugin_notable_repositories: ${{ env.METRICS_PLUGIN_NOTABLE_REPOSITORIES }}
+          plugin_traffic: ${{ env.METRICS_PLUGIN_TRAFFIC }}
+          plugin_wakatime: ${{ env.METRICS_PLUGIN_WAKATIME }}
+          plugin_wakatime_days: ${{ env.METRICS_PLUGIN_WAKATIME_DAYS }}
+          plugin_wakatime_limit: ${{ env.METRICS_PLUGIN_WAKATIME_LIMIT }}
+          plugin_wakatime_languages_other: ${{ env.METRICS_PLUGIN_WAKATIME_LANGUAGES_OTHER }}
+          plugin_wakatime_repositories_visibility: ${{ env.METRICS_PLUGIN_WAKATIME_REPOSITORIES_VISIBILITY }}
+          plugin_wakatime_sections: ${{ env.METRICS_PLUGIN_WAKATIME_SECTIONS }}
+          plugin_wakatime_token: ${{ secrets.WAKATIME_API_TOKEN }}
+          plugin_wakatime_url: https://wakatime.com
+          plugin_wakatime_user: ${{ env.METRICS_PLUGIN_WAKATIME_USER }}

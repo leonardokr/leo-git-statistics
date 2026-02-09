@@ -1,0 +1,87 @@
+# This is a scheduled workflow for daily automatic updates to the actions_branch branch
+
+name: Update Stats Images
+
+on:
+  schedule:
+    - cron: "0 0/12 * * *"
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: Install requirements
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyyaml
+
+    - name: Read config
+      id: config
+      run: |
+        python3 -c "
+        import yaml
+        with open('config.yml') as f:
+            config = yaml.safe_load(f)
+        
+        # Root settings
+        print(f'GITHUB_ACTOR={config[\'github_user\']}')
+        
+        # Stats generation options
+        for key, value in config.get('stats_generation', {}).items():
+            print(f'{key.upper()}={value}')
+        " >> $GITHUB_ENV
+
+    - name: Generate images
+      run: |
+        python3 generate.py
+      env:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        GITHUB_ACTOR: ${{ env.GITHUB_ACTOR }}
+        EXCLUDED: ${{ env.EXCLUDED_REPOS }}
+        EXCLUDED_LANGS: ${{ env.EXCLUDED_LANGS }}
+        INCLUDE_FORKED_REPOS: ${{ env.INCLUDE_FORKED_REPOS }}
+        EXCLUDE_CONTRIB_REPOS: ${{ env.EXCLUDE_CONTRIB_REPOS }}
+        EXCLUDE_ARCHIVE_REPOS: ${{ env.EXCLUDE_ARCHIVE_REPOS }}
+        EXCLUDE_PRIVATE_REPOS: ${{ env.EXCLUDE_PRIVATE_REPOS }}
+        EXCLUDE_PUBLIC_REPOS: ${{ env.EXCLUDE_PUBLIC_REPOS }}
+        STORE_REPO_VIEWS: ${{ env.STORE_REPO_VIEWS }}
+        STORE_REPO_CLONES: ${{ env.STORE_REPO_CLONES }}
+        MORE_COLLABS: ${{ env.MORE_COLLABS }}
+        MORE_REPOS: ${{ env.MANUALLY_ADDED_REPOS }}
+        SHOW_TOTAL_CONTRIBUTIONS: ${{ env.SHOW_TOTAL_CONTRIBUTIONS }}
+        SHOW_REPOSITORIES: ${{ env.SHOW_REPOSITORIES }}
+        SHOW_LINES_CHANGED: ${{ env.SHOW_LINES_CHANGED }}
+        SHOW_AVG_PERCENT: ${{ env.SHOW_AVG_PERCENT }}
+        SHOW_COLLABORATORS: ${{ env.SHOW_COLLABORATORS }}
+        SHOW_CONTRIBUTORS: ${{ env.SHOW_CONTRIBUTORS }}
+        SHOW_VIEWS: ${{ env.SHOW_VIEWS }}
+        SHOW_CLONES: ${{ env.SHOW_CLONES }}
+        SHOW_FORKS: ${{ env.SHOW_FORKS }}
+        SHOW_STARS: ${{ env.SHOW_STARS }}
+        SHOW_PULL_REQUESTS: ${{ env.SHOW_PULL_REQUESTS }}
+        SHOW_ISSUES: ${{ env.SHOW_ISSUES }}
+
+    - name: Commit and push
+      run: |
+        python3 -c "import yaml; config = yaml.safe_load(open('config.yml')); print(f'NAME={config[\'commit_user_name\']}'); print(f'EMAIL={config[\'commit_user_email\']}')" > commit_info
+        NAME=$(grep NAME commit_info | cut -d= -f2)
+        EMAIL=$(grep EMAIL commit_info | cut -d= -f2)
+        git config user.name \"$NAME\"
+        git config user.email \"$EMAIL\"
+        git add .
+        git diff --quiet && git diff --staged --quiet || (git commit -m 'Update GitHub stats images' && git push)
