@@ -91,7 +91,6 @@ jobs:
       with:
         token: ${{ secrets.ACCESS_TOKEN }}
         filename: generated_images/github-metrics.svg
-        output_action: none
         user: ${{ env.GITHUB_USER }}
         template: classic
         base: ${{ env.METRICS_BASE }}
