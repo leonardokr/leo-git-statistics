@@ -51,6 +51,11 @@ class StatsCollector:
         self._pull_requests: Optional[int] = None
         self._issues: Optional[int] = None
         self._empty_repos: Optional[Set[str]] = None
+        self._current_streak: Optional[int] = None
+        self._longest_streak: Optional[int] = None
+        self._current_streak_range: Optional[str] = None
+        self._longest_streak_range: Optional[str] = None
+        self._contribution_calendar: Optional[Dict[str, Any]] = None
 
     async def to_str(self) -> str:
         """
@@ -697,3 +702,170 @@ class StatsCollector:
                     except AttributeError:
                         continue
         return self._issues
+
+    async def _get_contribution_calendar(self) -> None:
+        """
+        Fetches the contribution calendar data and calculates streak information.
+
+        This method queries GitHub's GraphQL API to get contribution data
+        and calculates both current and longest contribution streaks.
+        """
+        if self._contribution_calendar is not None:
+            return
+
+        years = ((await self.queries.query(GitHubClient
+                                           .contributions_all_years()))
+                 .get("data", {})
+                 .get("viewer", {})
+                 .get("contributionsCollection", {})
+                 .get("contributionYears", []))
+
+        all_days = []
+        for year in years:
+            query = f"""
+            {{
+              viewer {{
+                contributionsCollection(from: "{year}-01-01T00:00:00Z", to: "{year}-12-31T23:59:59Z") {{
+                  contributionCalendar {{
+                    weeks {{
+                      contributionDays {{
+                        contributionCount
+                        date
+                      }}
+                    }}
+                  }}
+                }}
+              }}
+            }}
+            """
+            result = await self.queries.query(query)
+            weeks = (result
+                     .get("data", {})
+                     .get("viewer", {})
+                     .get("contributionsCollection", {})
+                     .get("contributionCalendar", {})
+                     .get("weeks", []))
+
+            for week in weeks:
+                for day in week.get("contributionDays", []):
+                    all_days.append({
+                        "date": day.get("date"),
+                        "count": day.get("contributionCount", 0)
+                    })
+
+        all_days.sort(key=lambda x: x["date"])
+
+        current_streak = 0
+        longest_streak = 0
+        current_streak_start = None
+        current_streak_end = None
+        longest_streak_start = None
+        longest_streak_end = None
+        temp_streak = 0
+        temp_streak_start = None
+
+        today = date.today().strftime(self.__DATE_FORMAT)
+
+        for i, day in enumerate(all_days):
+            if day["count"] > 0:
+                if temp_streak == 0:
+                    temp_streak_start = day["date"]
+                temp_streak += 1
+
+                if temp_streak > longest_streak:
+                    longest_streak = temp_streak
+                    longest_streak_start = temp_streak_start
+                    longest_streak_end = day["date"]
+
+                if day["date"] == today or (i == len(all_days) - 1):
+                    current_streak = temp_streak
+                    current_streak_start = temp_streak_start
+                    current_streak_end = day["date"]
+            else:
+                if i < len(all_days) - 1 or day["date"] == today:
+                    temp_streak = 0
+                    temp_streak_start = None
+
+        yesterday = (date.today() - timedelta(1)).strftime(self.__DATE_FORMAT)
+        if all_days and all_days[-1]["date"] < yesterday:
+            current_streak = 0
+            current_streak_start = None
+            current_streak_end = None
+
+        self._current_streak = current_streak
+        self._longest_streak = longest_streak
+        self._current_streak_range = self._format_date_range(current_streak_start, current_streak_end)
+        self._longest_streak_range = self._format_date_range(longest_streak_start, longest_streak_end)
+        self._contribution_calendar = {"days": all_days}
+
+    def _format_date_range(self, start: Optional[str], end: Optional[str]) -> str:
+        """
+        Formats a date range for display.
+
+        :param start: Start date string in YYYY-MM-DD format.
+        :param end: End date string in YYYY-MM-DD format.
+        :return: Formatted date range string.
+        """
+        if not start or not end:
+            return "No streak"
+
+        try:
+            start_date = date.fromisoformat(start)
+            end_date = date.fromisoformat(end)
+            start_fmt = start_date.strftime("%b %d")
+            end_fmt = end_date.strftime("%b %d, %Y")
+
+            if start_date.year != end_date.year:
+                start_fmt = start_date.strftime("%b %d, %Y")
+
+            return f"{start_fmt} - {end_fmt}"
+        except ValueError:
+            return "No streak"
+
+    @property
+    async def current_streak(self) -> int:
+        """
+        Retrieves the current contribution streak in days.
+
+        :return: Number of consecutive days with contributions.
+        """
+        if self._current_streak is not None:
+            return self._current_streak
+        await self._get_contribution_calendar()
+        return self._current_streak or 0
+
+    @property
+    async def longest_streak(self) -> int:
+        """
+        Retrieves the longest contribution streak in days.
+
+        :return: Maximum number of consecutive days with contributions.
+        """
+        if self._longest_streak is not None:
+            return self._longest_streak
+        await self._get_contribution_calendar()
+        return self._longest_streak or 0
+
+    @property
+    async def current_streak_range(self) -> str:
+        """
+        Retrieves the date range of the current streak.
+
+        :return: Formatted date range string.
+        """
+        if self._current_streak_range is not None:
+            return self._current_streak_range
+        await self._get_contribution_calendar()
+        return self._current_streak_range or "No streak"
+
+    @property
+    async def longest_streak_range(self) -> str:
+        """
+        Retrieves the date range of the longest streak.
+
+        :return: Formatted date range string.
+        """
+        if self._longest_streak_range is not None:
+            return self._longest_streak_range
+        await self._get_contribution_calendar()
+        return self._longest_streak_range or "No streak"
