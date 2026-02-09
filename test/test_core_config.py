@@ -2,6 +2,7 @@ import os
 import pytest
 from src.core.config import Config
 
+
 class TestConfig:
     """
     Tests for the Config class.
@@ -41,7 +42,30 @@ class TestConfig:
         """
         Tests that theme configurations are correctly defined.
         """
-        assert "light" in Config.THEMES
-        assert "dark" in Config.THEMES
-        assert Config.THEMES["light"]["suffix"] == "LightMode"
-        assert "bg_color" in Config.THEMES["light"]["colors"]
+        config = Config()
+        themes = config.THEMES
+        assert "light" in themes
+        assert "dark" in themes
+        assert themes["light"]["suffix"] == "LightMode"
+        assert "bg_color" in themes["light"]["colors"]
+
+    def test_list_available_themes(self):
+        """
+        Tests that available themes can be listed.
+        """
+        config = Config()
+        theme_list = config.list_available_themes()
+        assert isinstance(theme_list, list)
+        assert "light" in theme_list
+        assert "dark" in theme_list
+        assert "dracula" in theme_list
+
+    def test_get_theme(self):
+        """
+        Tests that individual themes can be retrieved.
+        """
+        config = Config()
+        dracula = config.get_theme("dracula")
+        assert dracula is not None
+        assert "colors" in dracula
+        assert dracula["suffix"] == "Dracula"
