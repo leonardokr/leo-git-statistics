@@ -57,12 +57,14 @@ class StatsFormatter:
         return progress_svg
 
     @staticmethod
-    def format_language_list(languages: Dict[str, Dict[str, Any]], max_items: int = 8) -> str:
+    def format_language_list(languages: Dict[str, Dict[str, Any]], max_items: int = 8, text_color: str = "#24292f", percent_color: str = "#57606a") -> str:
         """
         Generates HTML for a compact list of languages.
 
         :param languages: Dictionary containing language stats and percentages.
         :param max_items: Maximum number of languages to display.
+        :param text_color: Color for language names.
+        :param percent_color: Color for percentage values.
         :return: HTML string for the language list.
         """
         list_html = ""
@@ -73,8 +75,8 @@ class StatsFormatter:
             percent = data.get("prop", 0)
             list_html += f'''<li style="display: flex; align-items: center;">
                 <span style="width: 10px; height: 10px; border-radius: 50%; background-color: {color}; margin-right: 6px;"></span>
-                <span style="color: {{ text_color }};">{lang}</span>
-                <span style="color: {{ percent_color }}; margin-left: 4px; font-size: 11px;">{percent:.1f}%</span>
+                <span style="color: {text_color};">{lang}</span>
+                <span style="color: {percent_color}; margin-left: 4px; font-size: 11px;">{percent:.1f}%</span>
             </li>'''
 
         return list_html

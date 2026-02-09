@@ -100,16 +100,20 @@ class ImageOrchestrator:
         Fetches language statistics and renders the languages SVG templates.
         """
         languages = await self.__stats.languages
-        
-        base_replacements = {
-            "progress": self.formatter.format_language_progress(languages),
-            "lang_list": self.formatter.format_language_list(languages)
-        }
-        
+
         for theme_name, theme_config in self.config.THEMES.items():
-            replacements = base_replacements.copy()
-            replacements.update(theme_config["colors"])
-            
+            colors = theme_config["colors"]
+
+            replacements = {
+                "progress": self.formatter.format_language_progress(languages),
+                "lang_list": self.formatter.format_language_list(
+                    languages,
+                    text_color=colors.get("text_color", "#24292f"),
+                    percent_color=colors.get("percent_color", "#57606a")
+                )
+            }
+            replacements.update(colors)
+
             self.template_engine.render_and_save(
                 self.config.LANGUAGES_TEMPLATE,
                 "languages",
