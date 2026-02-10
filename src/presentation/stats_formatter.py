@@ -1,5 +1,6 @@
 from typing import Dict, Any, List, Tuple
 import colorsys
+import math
 
 
 class StatsFormatter:
@@ -228,9 +229,14 @@ class StatsFormatter:
         if not sorted_langs:
             return ""
 
-        values = [data.get("prop", 0) for _, data in sorted_langs]
+        raw_values = [data.get("prop", 0) for _, data in sorted_langs]
         names = [lang for lang, _ in sorted_langs]
-        percentages = values[:]
+        percentages = raw_values[:]
+
+        scaled_values = [math.sqrt(v) for v in raw_values]
+        scale_total = sum(scaled_values)
+        if scale_total > 0:
+            scaled_values = [v / scale_total * 100 for v in scaled_values]
 
         colors = StatsFormatter._generate_palette_colors(
             len(sorted_langs),
@@ -240,7 +246,7 @@ class StatsFormatter:
             hue_spread
         )
 
-        rects = StatsFormatter._treemap_slice_dice(values, 0, 0, width, height)
+        rects = StatsFormatter._treemap_slice_dice(scaled_values, 0, 0, width, height)
 
         svg_blocks = ""
         half_gap = gap / 2
