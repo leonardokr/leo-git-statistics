@@ -1,5 +1,5 @@
 synthwave:
-  suffix: "Synthwave"
+  suffix: "synthwave"
   colors:
     bg_color: "#262335"
     title_color: "#ff7edb"
@@ -16,7 +16,7 @@ synthwave:
     puzzle_hue_spread: 100
 
 cyberpunk:
-  suffix: "Cyberpunk"
+  suffix: "cyberpunk"
   colors:
     bg_color: "#0d0221"
     title_color: "#f706cf"
@@ -33,7 +33,7 @@ cyberpunk:
     puzzle_hue_spread: 120
 
 ocean:
-  suffix: "Ocean"
+  suffix: "ocean"
   colors:
     bg_color: "#0a192f"
     title_color: "#64ffda"
@@ -50,7 +50,7 @@ ocean:
     puzzle_hue_spread: 80
 
 forest:
-  suffix: "Forest"
+  suffix: "forest"
   colors:
     bg_color: "#1b2820"
     title_color: "#7ec883"
@@ -67,7 +67,7 @@ forest:
     puzzle_hue_spread: 80
 
 sunset:
-  suffix: "Sunset"
+  suffix: "sunset"
   colors:
     bg_color: "#1f1520"
     title_color: "#ff6b6b"
@@ -84,7 +84,7 @@ sunset:
     puzzle_hue_spread: 100
 
 midnight:
-  suffix: "Midnight"
+  suffix: "midnight"
   colors:
     bg_color: "#0f0a1a"
     title_color: "#a78bfa"
@@ -101,7 +101,7 @@ midnight:
     puzzle_hue_spread: 90
 
 aurora:
-  suffix: "Aurora"
+  suffix: "aurora"
   colors:
     bg_color: "#0c1929"
     title_color: "#00d4aa"
@@ -118,7 +118,7 @@ aurora:
     puzzle_hue_spread: 100
 
 neon:
-  suffix: "Neon"
+  suffix: "neon"
   colors:
     bg_color: "#0a0a0a"
     title_color: "#00ff87"
@@ -135,7 +135,7 @@ neon:
     puzzle_hue_spread: 120
 
 retro:
-  suffix: "Retro"
+  suffix: "retro"
   colors:
     bg_color: "#f4e4ba"
     title_color: "#8b4513"
@@ -152,7 +152,7 @@ retro:
     puzzle_hue_spread: 90
 
 lavender:
-  suffix: "Lavender"
+  suffix: "lavender"
   colors:
     bg_color: "#1a1625"
     title_color: "#b4a7d6"
@@ -169,7 +169,7 @@ lavender:
     puzzle_hue_spread: 80
 
 rose_pine:
-  suffix: "RosePine"
+  suffix: "rose_pine"
   colors:
     bg_color: "#191724"
     title_color: "#ebbcba"
@@ -186,7 +186,7 @@ rose_pine:
     puzzle_hue_spread: 90
 
 rose_pine_dawn:
-  suffix: "RosePineDawn"
+  suffix: "rose_pine_dawn"
   colors:
     bg_color: "#faf4ed"
     title_color: "#d7827e"

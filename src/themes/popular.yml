@@ -1,5 +1,5 @@
 dracula:
-  suffix: "Dracula"
+  suffix: "dracula"
   colors:
     bg_color: "#282a36"
     title_color: "#ff79c6"
@@ -16,7 +16,7 @@ dracula:
     puzzle_hue_spread: 90
 
 nord:
-  suffix: "Nord"
+  suffix: "nord"
   colors:
     bg_color: "#2e3440"
     title_color: "#88c0d0"
@@ -33,7 +33,7 @@ nord:
     puzzle_hue_spread: 80
 
 gruvbox:
-  suffix: "Gruvbox"
+  suffix: "gruvbox"
   colors:
     bg_color: "#282828"
     title_color: "#fabd2f"
@@ -50,7 +50,7 @@ gruvbox:
     puzzle_hue_spread: 100
 
 gruvbox_light:
-  suffix: "GruvboxLight"
+  suffix: "gruvbox_light"
   colors:
     bg_color: "#fbf1c7"
     title_color: "#b57614"
@@ -67,7 +67,7 @@ gruvbox_light:
     puzzle_hue_spread: 100
 
 one_dark:
-  suffix: "OneDark"
+  suffix: "one_dark"
   colors:
     bg_color: "#282c34"
     title_color: "#61afef"
@@ -84,7 +84,7 @@ one_dark:
     puzzle_hue_spread: 90
 
 monokai:
-  suffix: "Monokai"
+  suffix: "monokai"
   colors:
     bg_color: "#2d2a2e"
     title_color: "#ffd866"
@@ -101,7 +101,7 @@ monokai:
     puzzle_hue_spread: 100
 
 tokyo_night:
-  suffix: "TokyoNight"
+  suffix: "tokyo_night"
   colors:
     bg_color: "#1a1b26"
     title_color: "#7aa2f7"
@@ -118,7 +118,7 @@ tokyo_night:
     puzzle_hue_spread: 90
 
 solarized_dark:
-  suffix: "SolarizedDark"
+  suffix: "solarized_dark"
   colors:
     bg_color: "#002b36"
     title_color: "#268bd2"
@@ -135,7 +135,7 @@ solarized_dark:
     puzzle_hue_spread: 80
 
 solarized_light:
-  suffix: "SolarizedLight"
+  suffix: "solarized_light"
   colors:
     bg_color: "#fdf6e3"
     title_color: "#268bd2"

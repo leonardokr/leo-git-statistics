@@ -1,5 +1,5 @@
 palenight:
-  suffix: "Palenight"
+  suffix: "palenight"
   colors:
     bg_color: "#292d3e"
     title_color: "#c792ea"
@@ -16,7 +16,7 @@ palenight:
     puzzle_hue_spread: 90
 
 material_darker:
-  suffix: "MaterialDarker"
+  suffix: "material_darker"
   colors:
     bg_color: "#212121"
     title_color: "#82aaff"
@@ -33,7 +33,7 @@ material_darker:
     puzzle_hue_spread: 90
 
 material_ocean:
-  suffix: "MaterialOcean"
+  suffix: "material_ocean"
   colors:
     bg_color: "#0f111a"
     title_color: "#82aaff"
@@ -50,7 +50,7 @@ material_ocean:
     puzzle_hue_spread: 90
 
 ayu:
-  suffix: "Ayu"
+  suffix: "ayu"
   colors:
     bg_color: "#0a0e14"
     title_color: "#ffb454"
@@ -67,7 +67,7 @@ ayu:
     puzzle_hue_spread: 100
 
 ayu_light:
-  suffix: "AyuLight"
+  suffix: "ayu_light"
   colors:
     bg_color: "#fafafa"
     title_color: "#ff9940"
@@ -84,7 +84,7 @@ ayu_light:
     puzzle_hue_spread: 100
 
 ayu_mirage:
-  suffix: "AyuMirage"
+  suffix: "ayu_mirage"
   colors:
     bg_color: "#1f2430"
     title_color: "#ffcc66"

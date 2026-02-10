@@ -1,5 +1,5 @@
 catppuccin_latte:
-  suffix: "CatppuccinLatte"
+  suffix: "catppuccin_latte"
   colors:
     bg_color: "#eff1f5"
     title_color: "#8839ef"
@@ -16,7 +16,7 @@ catppuccin_latte:
     puzzle_hue_spread: 90
 
 catppuccin_frappe:
-  suffix: "CatppuccinFrappe"
+  suffix: "catppuccin_grappe"
   colors:
     bg_color: "#303446"
     title_color: "#ca9ee6"
@@ -33,7 +33,7 @@ catppuccin_frappe:
     puzzle_hue_spread: 90
 
 catppuccin_macchiato:
-  suffix: "CatppuccinMacchiato"
+  suffix: "catppuccin_macchiato"
   colors:
     bg_color: "#24273a"
     title_color: "#c6a0f6"
@@ -50,7 +50,7 @@ catppuccin_macchiato:
     puzzle_hue_spread: 90
 
 catppuccin_mocha:
-  suffix: "CatppuccinMocha"
+  suffix: "catppuccin_mocha"
   colors:
     bg_color: "#1e1e2e"
     title_color: "#cba6f7"

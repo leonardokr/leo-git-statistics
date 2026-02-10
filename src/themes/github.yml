@@ -16,7 +16,7 @@ default:
     puzzle_hue_spread: 100
 
 light:
-  suffix: "LightMode"
+  suffix: "light"
   colors:
     bg_color: "#FFFFFF"
     title_color: "#0969da"
@@ -33,7 +33,7 @@ light:
     puzzle_hue_spread: 100
 
 dark:
-  suffix: "DarkMode"
+  suffix: "dark"
   colors:
     bg_color: "#0d1117"
     title_color: "#58a6ff"
@@ -50,7 +50,7 @@ dark:
     puzzle_hue_spread: 100
 
 github_dimmed:
-  suffix: "GithubDimmed"
+  suffix: "github_dimmed"
   colors:
     bg_color: "#22272e"
     title_color: "#539bf5"
