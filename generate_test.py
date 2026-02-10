@@ -11,6 +11,7 @@ from src.core.mock_stats import MockStatsCollector, MockEnvironment
 from src.presentation.stats_formatter import StatsFormatter
 from src.presentation.svg_template import SVGTemplate
 from src.generators.languages import LanguagesGenerator
+from src.generators.languages_puzzle import LanguagesPuzzleGenerator
 from src.generators.overview import OverviewGenerator
 from src.generators.streak import StreakGenerator
 from src.generators.streak_battery import StreakBatteryGenerator
@@ -26,6 +27,10 @@ async def main():
     languages_gen = LanguagesGenerator(config, mock_stats, formatter, template_engine)
     await languages_gen.generate()
     print("Generated languages SVGs")
+
+    languages_puzzle_gen = LanguagesPuzzleGenerator(config, mock_stats, formatter, template_engine)
+    await languages_puzzle_gen.generate()
+    print("Generated languages_puzzle SVGs")
 
     overview_gen = OverviewGenerator(config, mock_stats, formatter, template_engine, environment)
     await overview_gen.generate()
