@@ -87,21 +87,23 @@ class StatsFormatter:
         count: int,
         hue: int = 210,
         saturation_range: List[int] = None,
-        lightness_range: List[int] = None
+        lightness_range: List[int] = None,
+        hue_spread: int = 60
     ) -> List[str]:
         """
-        Generates a list of colors within a specified HSL range.
+        Generates a list of visually distinct colors within a harmonious palette.
 
         :param count: Number of colors to generate.
         :param hue: Base hue value (0-360).
         :param saturation_range: [min, max] saturation percentage (0-100).
         :param lightness_range: [min, max] lightness percentage (0-100).
+        :param hue_spread: Total spread of hues around the base (0-180).
         :return: List of hex color strings.
         """
         if saturation_range is None:
-            saturation_range = [60, 85]
+            saturation_range = [65, 85]
         if lightness_range is None:
-            lightness_range = [35, 65]
+            lightness_range = [40, 60]
 
         colors = []
         sat_min, sat_max = saturation_range[0] / 100, saturation_range[1] / 100
@@ -109,10 +111,18 @@ class StatsFormatter:
 
         for i in range(count):
             t = i / max(count - 1, 1)
-            saturation = sat_min + (sat_max - sat_min) * (1 - t)
-            lightness = light_min + (light_max - light_min) * t
 
-            r, g, b = colorsys.hls_to_rgb(hue / 360, lightness, saturation)
+            hue_offset = (i * 137.508) % 360
+            current_hue = (hue + (hue_offset / 360) * hue_spread - hue_spread / 2) % 360
+
+            if i % 2 == 0:
+                saturation = sat_max - (sat_max - sat_min) * (t * 0.5)
+                lightness = light_min + (light_max - light_min) * (t * 0.7)
+            else:
+                saturation = sat_min + (sat_max - sat_min) * (1 - t * 0.5)
+                lightness = light_max - (light_max - light_min) * (t * 0.5)
+
+            r, g, b = colorsys.hls_to_rgb(current_hue / 360, lightness, saturation)
             hex_color = f"#{int(r * 255):02x}{int(g * 255):02x}{int(b * 255):02x}"
             colors.append(hex_color)
 
@@ -196,7 +206,9 @@ class StatsFormatter:
         height: int = 200,
         hue: int = 210,
         saturation_range: List[int] = None,
-        lightness_range: List[int] = None
+        lightness_range: List[int] = None,
+        hue_spread: int = 60,
+        gap: int = 2
     ) -> str:
         """
         Generates SVG rect elements for a treemap-style puzzle of languages.
@@ -207,6 +219,8 @@ class StatsFormatter:
         :param hue: Base hue for the color palette.
         :param saturation_range: [min, max] saturation.
         :param lightness_range: [min, max] lightness.
+        :param hue_spread: Total spread of hues around the base (0-180).
+        :param gap: Gap between blocks in pixels.
         :return: SVG string with puzzle blocks.
         """
         sorted_langs = sorted(languages.items(), key=lambda x: x[1].get("size", 0), reverse=True)
@@ -222,24 +236,33 @@ class StatsFormatter:
             len(sorted_langs),
             hue,
             saturation_range,
-            lightness_range
+            lightness_range,
+            hue_spread
         )
 
         rects = StatsFormatter._treemap_slice_dice(values, 0, 0, width, height)
 
         svg_blocks = ""
+        half_gap = gap / 2
         for i, ((x, y, w, h), name, pct) in enumerate(zip(rects, names, percentages)):
-            if w > 0 and h > 0:
+            if w > gap and h > gap:
                 delay_class = f"delay-{min(i + 1, 8)}"
-                svg_blocks += f'<rect class="puzzle-rect {delay_class}" x="{x:.2f}" y="{y:.2f}" width="{w:.2f}" height="{h:.2f}" fill="{colors[i]}"/>\n'
+                rx = min(4, w / 4, h / 4)
+
+                adj_x = x + half_gap
+                adj_y = y + half_gap
+                adj_w = w - gap
+                adj_h = h - gap
+
+                svg_blocks += f'<rect class="puzzle-rect {delay_class}" x="{adj_x:.2f}" y="{adj_y:.2f}" width="{adj_w:.2f}" height="{adj_h:.2f}" rx="{rx:.1f}" fill="{colors[i]}"/>\n'
 
                 center_x = x + w / 2
                 center_y = y + h / 2
 
-                if w > 40 and h > 25:
+                if adj_w > 40 and adj_h > 25:
                     svg_blocks += f'<text class="puzzle-text" x="{center_x:.2f}" y="{center_y - 2:.2f}" text-anchor="middle" dominant-baseline="middle">{name}</text>\n'
                     svg_blocks += f'<text class="puzzle-percent" x="{center_x:.2f}" y="{center_y + 10:.2f}" text-anchor="middle" dominant-baseline="middle">{pct:.1f}%</text>\n'
-                elif w > 30 and h > 18:
+                elif adj_w > 30 and adj_h > 18:
                     svg_blocks += f'<text class="puzzle-percent" x="{center_x:.2f}" y="{center_y:.2f}" text-anchor="middle" dominant-baseline="middle">{pct:.1f}%</text>\n'
 
         return svg_blocks
