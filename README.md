@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="generated_images/overview.svg" alt="GitHub Stats Overview" />
+  <img src="generated_images/samples/overview_sample_light.svg" alt="GitHub Stats Overview" />
 </p>
 
 <h1 align="center">Git Statistics</h1>
@@ -34,40 +34,40 @@
 Displays comprehensive GitHub statistics including contributions, repositories, stars, forks, and more.
 
 <p align="center">
-  <img src="generated_images/overviewDarkMode.svg" alt="Overview Dark Mode" width="49%" />
-  <img src="generated_images/overviewLightMode.svg" alt="Overview Light Mode" width="49%" />
+  <img src="generated_images/samples/overview_sample_dark.svg" alt="Overview Dark Mode" width="49%" />
+  <img src="generated_images/samples/overview_sample_light.svg" alt="Overview Light Mode" width="49%" />
 </p>
 
 ### Language Distribution
 Shows your most used programming languages with an animated progress bar.
 
 <p align="center">
-  <img src="generated_images/languagesDarkMode.svg" alt="Languages Dark Mode" width="49%" />
-  <img src="generated_images/languagesLightMode.svg" alt="Languages Light Mode" width="49%" />
+  <img src="generated_images/samples/languages_sample_dark.svg" alt="Languages Dark Mode" width="49%" />
+  <img src="generated_images/samples/languages_sample_light.svg" alt="Languages Light Mode" width="49%" />
 </p>
 
 ### Contribution Streak
 Tracks your current and longest contribution streaks.
 
 <p align="center">
-  <img src="generated_images/streakDarkMode.svg" alt="Streak Dark Mode" width="49%" />
-  <img src="generated_images/streakLightMode.svg" alt="Streak Light Mode" width="49%" />
+  <img src="generated_images/samples/streak_sample_dark.svg" alt="Streak Dark Mode" width="49%" />
+  <img src="generated_images/samples/streak_sample_light.svg" alt="Streak Light Mode" width="49%" />
 </p>
 
 ### Streak Battery
 Visual battery indicator showing your streak progress with recent contribution history.
 
 <p align="center">
-  <img src="generated_images/streak_batteryDarkMode.svg" alt="Streak Battery Dark Mode" width="49%" />
-  <img src="generated_images/streak_batteryLightMode.svg" alt="Streak Battery Light Mode" width="49%" />
+  <img src="generated_images/samples/streak_battery_sample_dark.svg" alt="Streak Battery Dark Mode" width="49%" />
+  <img src="generated_images/samples/streak_battery_sample_light.svg" alt="Streak Battery Light Mode" width="49%" />
 </p>
 
 ### Language Puzzle
 Treemap visualization of your programming languages - area proportional to usage percentage.
 
 <p align="center">
-  <img src="generated_images/languages_puzzleDarkMode.svg" alt="Language Puzzle Dark Mode" width="49%" />
-  <img src="generated_images/languages_puzzleLightMode.svg" alt="Language Puzzle Light Mode" width="49%" />
+  <img src="generated_images/samples/languages_puzzle_sample_dark.svg" alt="Language Puzzle Dark Mode" width="49%" />
+  <img src="generated_images/samples/languages_puzzle_sample_light.svg" alt="Language Puzzle Light Mode" width="49%" />
 </p>
 
 ## Themes
@@ -86,22 +86,54 @@ Choose from **25+ built-in themes** or create your own:
 
 <details>
 <summary><b>Dracula</b></summary>
-<img src="generated_images/overviewDracula.svg" alt="Dracula Theme" />
+<div align="center">
+<img src="generated_images/samples/overview_sample_dracula.svg" alt="Dracula Theme" width="49%" />
+</div>
+<div align="center">
+<img src="generated_images/samples/streak_sample_dracula.svg" alt="Dracula Theme" width="49%" />
+<img src="generated_images/samples/streak_battery_sample_dracula.svg" alt="Dracula Theme" width="49%" />
+<img src="generated_images/samples/languages_sample_dracula.svg" alt="Dracula Theme" width="49%" />
+<img src="generated_images/samples/languages_puzzle_sample_dracula.svg" alt="Dracula Theme" width="49%" />
+</div>
 </details>
 
 <details>
 <summary><b>Nord</b></summary>
-<img src="generated_images/overviewNord.svg" alt="Nord Theme" />
+<div align="center">
+<img src="generated_images/samples/overview_sample_nord.svg" alt="Nord Theme" width="49%" />
+</div>
+<div align="center">
+<img src="generated_images/samples/streak_sample_nord.svg" alt="Nord Theme" width="49%" />
+<img src="generated_images/samples/streak_battery_sample_nord.svg" alt="Nord Theme" width="49%" />
+<img src="generated_images/samples/languages_sample_nord.svg" alt="Nord Theme" width="49%" />
+<img src="generated_images/samples/languages_puzzle_sample_nord.svg" alt="Nord Theme" width="49%" />
+</div>
 </details>
 
 <details>
 <summary><b>Tokyo Night</b></summary>
-<img src="generated_images/overviewTokyoNight.svg" alt="Tokyo Night Theme" />
+<div align="center">
+<img src="generated_images/samples/overview_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
+</div>
+<div align="center">
+<img src="generated_images/samples/streak_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
+<img src="generated_images/samples/streak_battery_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
+<img src="generated_images/samples/languages_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
+<img src="generated_images/samples/languages_puzzle_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
+</div>
 </details>
 
 <details>
 <summary><b>Catppuccin Mocha</b></summary>
-<img src="generated_images/overviewCatppuccinMocha.svg" alt="Catppuccin Mocha Theme" />
+<div align="center">
+<img src="generated_images/samples/overview_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
+</div>
+<div align="center">
+<img src="generated_images/samples/streak_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
+<img src="generated_images/samples/streak_battery_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
+<img src="generated_images/samples/languages_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
+<img src="generated_images/samples/languages_puzzle_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
+</div>
 </details>
 
 ## Quick Start
