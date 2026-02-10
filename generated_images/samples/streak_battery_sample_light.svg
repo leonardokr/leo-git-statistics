@@ -86,10 +86,7 @@
     <rect x="4" y="4" width="42" height="87" rx="3" ry="3" fill="#FFFFFF" opacity="0.5"/>
 
     <g opacity="0.15" fill="#24292f">
-      <rect x="7" y="8" width="36" height="17" rx="2"/>
-      <rect x="7" y="29" width="36" height="17" rx="2"/>
-      <rect x="7" y="50" width="36" height="17" rx="2"/>
-      <rect x="7" y="71" width="36" height="17" rx="2"/>
+      <rect x="7" y="8" width="36" height="88" rx="2"/>
     </g>
 
     <g class="">
