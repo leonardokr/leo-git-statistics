@@ -11,6 +11,9 @@ synthwave:
     gradient_start: "#ff7edb"
     gradient_end: "#36f9f6"
     puzzle_hue: 310
+    puzzle_saturation_range: [70, 95]
+    puzzle_lightness_range: [50, 70]
+    puzzle_hue_spread: 100
 
 cyberpunk:
   suffix: "Cyberpunk"
@@ -25,6 +28,9 @@ cyberpunk:
     gradient_start: "#f706cf"
     gradient_end: "#00ff9f"
     puzzle_hue: 300
+    puzzle_saturation_range: [80, 100]
+    puzzle_lightness_range: [45, 65]
+    puzzle_hue_spread: 120
 
 ocean:
   suffix: "Ocean"
@@ -39,6 +45,9 @@ ocean:
     gradient_start: "#64ffda"
     gradient_end: "#5ccfe6"
     puzzle_hue: 170
+    puzzle_saturation_range: [55, 80]
+    puzzle_lightness_range: [45, 65]
+    puzzle_hue_spread: 80
 
 forest:
   suffix: "Forest"
@@ -53,6 +62,9 @@ forest:
     gradient_start: "#7ec883"
     gradient_end: "#5fb878"
     puzzle_hue: 130
+    puzzle_saturation_range: [45, 70]
+    puzzle_lightness_range: [40, 60]
+    puzzle_hue_spread: 80
 
 sunset:
   suffix: "Sunset"
@@ -67,6 +79,9 @@ sunset:
     gradient_start: "#ff6b6b"
     gradient_end: "#ffa07a"
     puzzle_hue: 15
+    puzzle_saturation_range: [70, 95]
+    puzzle_lightness_range: [45, 65]
+    puzzle_hue_spread: 100
 
 midnight:
   suffix: "Midnight"
@@ -81,6 +96,9 @@ midnight:
     gradient_start: "#a78bfa"
     gradient_end: "#818cf8"
     puzzle_hue: 255
+    puzzle_saturation_range: [55, 80]
+    puzzle_lightness_range: [50, 70]
+    puzzle_hue_spread: 90
 
 aurora:
   suffix: "Aurora"
@@ -95,6 +113,9 @@ aurora:
     gradient_start: "#00d4aa"
     gradient_end: "#7b68ee"
     puzzle_hue: 160
+    puzzle_saturation_range: [60, 85]
+    puzzle_lightness_range: [45, 65]
+    puzzle_hue_spread: 100
 
 neon:
   suffix: "Neon"
@@ -110,7 +131,8 @@ neon:
     gradient_end: "#ff00ff"
     puzzle_hue: 150
     puzzle_saturation_range: [80, 100]
-    puzzle_lightness_range: [40, 60]
+    puzzle_lightness_range: [45, 65]
+    puzzle_hue_spread: 120
 
 retro:
   suffix: "Retro"
@@ -126,7 +148,8 @@ retro:
     gradient_end: "#d2691e"
     puzzle_hue: 25
     puzzle_saturation_range: [60, 85]
-    puzzle_lightness_range: [25, 50]
+    puzzle_lightness_range: [30, 55]
+    puzzle_hue_spread: 90
 
 lavender:
   suffix: "Lavender"
@@ -141,6 +164,9 @@ lavender:
     gradient_start: "#b4a7d6"
     gradient_end: "#9d8cd9"
     puzzle_hue: 260
+    puzzle_saturation_range: [45, 70]
+    puzzle_lightness_range: [50, 70]
+    puzzle_hue_spread: 80
 
 rose_pine:
   suffix: "RosePine"
@@ -155,6 +181,9 @@ rose_pine:
     gradient_start: "#ebbcba"
     gradient_end: "#c4a7e7"
     puzzle_hue: 280
+    puzzle_saturation_range: [50, 75]
+    puzzle_lightness_range: [50, 70]
+    puzzle_hue_spread: 90
 
 rose_pine_dawn:
   suffix: "RosePineDawn"
@@ -171,3 +200,4 @@ rose_pine_dawn:
     puzzle_hue: 5
     puzzle_saturation_range: [45, 70]
     puzzle_lightness_range: [45, 65]
+    puzzle_hue_spread: 90

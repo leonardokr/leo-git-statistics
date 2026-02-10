@@ -11,6 +11,9 @@ palenight:
     gradient_start: "#c792ea"
     gradient_end: "#89ddff"
     puzzle_hue: 280
+    puzzle_saturation_range: [55, 80]
+    puzzle_lightness_range: [50, 70]
+    puzzle_hue_spread: 90
 
 material_darker:
   suffix: "MaterialDarker"
@@ -25,6 +28,9 @@ material_darker:
     gradient_start: "#82aaff"
     gradient_end: "#c792ea"
     puzzle_hue: 220
+    puzzle_saturation_range: [55, 80]
+    puzzle_lightness_range: [50, 70]
+    puzzle_hue_spread: 90
 
 material_ocean:
   suffix: "MaterialOcean"
@@ -39,6 +45,9 @@ material_ocean:
     gradient_start: "#82aaff"
     gradient_end: "#c792ea"
     puzzle_hue: 220
+    puzzle_saturation_range: [55, 80]
+    puzzle_lightness_range: [50, 70]
+    puzzle_hue_spread: 90
 
 ayu:
   suffix: "Ayu"
@@ -53,6 +62,9 @@ ayu:
     gradient_start: "#ffb454"
     gradient_end: "#ff8f40"
     puzzle_hue: 35
+    puzzle_saturation_range: [65, 90]
+    puzzle_lightness_range: [45, 65]
+    puzzle_hue_spread: 100
 
 ayu_light:
   suffix: "AyuLight"
@@ -69,6 +81,7 @@ ayu_light:
     puzzle_hue: 30
     puzzle_saturation_range: [70, 90]
     puzzle_lightness_range: [40, 60]
+    puzzle_hue_spread: 100
 
 ayu_mirage:
   suffix: "AyuMirage"
@@ -83,3 +96,6 @@ ayu_mirage:
     gradient_start: "#ffcc66"
     gradient_end: "#ffa759"
     puzzle_hue: 45
+    puzzle_saturation_range: [65, 90]
+    puzzle_lightness_range: [45, 65]
+    puzzle_hue_spread: 100

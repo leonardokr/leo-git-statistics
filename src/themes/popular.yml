@@ -11,6 +11,9 @@ dracula:
     gradient_start: "#ff79c6"
     gradient_end: "#bd93f9"
     puzzle_hue: 270
+    puzzle_saturation_range: [60, 85]
+    puzzle_lightness_range: [45, 65]
+    puzzle_hue_spread: 90
 
 nord:
   suffix: "Nord"
@@ -25,6 +28,9 @@ nord:
     gradient_start: "#88c0d0"
     gradient_end: "#5e81ac"
     puzzle_hue: 193
+    puzzle_saturation_range: [45, 70]
+    puzzle_lightness_range: [45, 65]
+    puzzle_hue_spread: 80
 
 gruvbox:
   suffix: "Gruvbox"
@@ -39,6 +45,9 @@ gruvbox:
     gradient_start: "#fabd2f"
     gradient_end: "#fe8019"
     puzzle_hue: 40
+    puzzle_saturation_range: [65, 90]
+    puzzle_lightness_range: [40, 60]
+    puzzle_hue_spread: 100
 
 gruvbox_light:
   suffix: "GruvboxLight"
@@ -55,6 +64,7 @@ gruvbox_light:
     puzzle_hue: 35
     puzzle_saturation_range: [65, 90]
     puzzle_lightness_range: [30, 55]
+    puzzle_hue_spread: 100
 
 one_dark:
   suffix: "OneDark"
@@ -69,6 +79,9 @@ one_dark:
     gradient_start: "#61afef"
     gradient_end: "#c678dd"
     puzzle_hue: 207
+    puzzle_saturation_range: [55, 80]
+    puzzle_lightness_range: [45, 65]
+    puzzle_hue_spread: 90
 
 monokai:
   suffix: "Monokai"
@@ -83,6 +96,9 @@ monokai:
     gradient_start: "#ffd866"
     gradient_end: "#ff6188"
     puzzle_hue: 50
+    puzzle_saturation_range: [70, 95]
+    puzzle_lightness_range: [45, 65]
+    puzzle_hue_spread: 100
 
 tokyo_night:
   suffix: "TokyoNight"
@@ -97,6 +113,9 @@ tokyo_night:
     gradient_start: "#7aa2f7"
     gradient_end: "#bb9af7"
     puzzle_hue: 225
+    puzzle_saturation_range: [55, 80]
+    puzzle_lightness_range: [50, 70]
+    puzzle_hue_spread: 90
 
 solarized_dark:
   suffix: "SolarizedDark"
@@ -111,6 +130,9 @@ solarized_dark:
     gradient_start: "#268bd2"
     gradient_end: "#2aa198"
     puzzle_hue: 175
+    puzzle_saturation_range: [50, 75]
+    puzzle_lightness_range: [40, 60]
+    puzzle_hue_spread: 80
 
 solarized_light:
   suffix: "SolarizedLight"
@@ -127,3 +149,4 @@ solarized_light:
     puzzle_hue: 175
     puzzle_saturation_range: [50, 75]
     puzzle_lightness_range: [35, 55]
+    puzzle_hue_spread: 80
