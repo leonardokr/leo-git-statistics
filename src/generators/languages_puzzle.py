@@ -21,8 +21,8 @@ class LanguagesPuzzleGenerator(BaseGenerator):
 
             puzzle_blocks = self.formatter.format_puzzle_blocks(
                 languages,
-                width=400,
-                height=200,
+                width=455,
+                height=135,
                 hue=hue,
                 saturation_range=saturation_range,
                 lightness_range=lightness_range,
