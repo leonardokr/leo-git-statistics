@@ -35,7 +35,7 @@ class StatsFormatter:
             return str(number)
 
     @staticmethod
-    def format_language_progress(languages: Dict[str, Dict[str, Any]], total_width: int = 310) -> str:
+    def format_language_progress(languages: Dict[str, Dict[str, Any]], total_width: int = 455) -> str:
         """
         Generates SVG rect elements for a progress bar representing language distribution.
 

@@ -1,14 +1,14 @@
-<svg width="350" height="180" viewBox="0 0 350 180" xmlns="http://www.w3.org/2000/svg">
+<svg width="495" height="195" viewBox="0 0 495 195" xmlns="http://www.w3.org/2000/svg">
 <defs>
   <linearGradient id="lang-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
     <stop offset="0%" style="stop-color:{{ gradient_start }};stop-opacity:1" />
     <stop offset="100%" style="stop-color:{{ gradient_end }};stop-opacity:1" />
   </linearGradient>
   <clipPath id="lang-rounded">
-    <rect x="0" y="0" width="350" height="180" rx="6" ry="6"/>
+    <rect x="0" y="0" width="495" height="195" rx="6" ry="6"/>
   </clipPath>
   <clipPath id="progress-clip">
-    <rect x="0" y="0" width="310" height="8" rx="4" ry="4"/>
+    <rect x="0" y="0" width="455" height="8" rx="4" ry="4"/>
   </clipPath>
 </defs>
 
@@ -35,24 +35,24 @@
 
 <rect clip-path="url(#lang-rounded)" width="100%" height="100%" fill="{{ bg_color }}" stroke="{{ border_color }}" stroke-width="1"/>
 
-<rect x="0" y="0" width="6" height="180" fill="url(#lang-gradient)" clip-path="url(#lang-rounded)"/>
+<rect x="0" y="0" width="6" height="195" fill="url(#lang-gradient)" clip-path="url(#lang-rounded)"/>
 
-<g transform="translate(25, 35)">
+<g transform="translate(25, 28)">
   <g class="animate-fade delay-1">
-    <text font-family="'Segoe UI', Ubuntu, 'Helvetica Neue', Sans-Serif" font-weight="600" font-size="16" fill="{{ title_color }}">Most Used Languages</text>
+    <text font-family="'Segoe UI', Ubuntu, 'Helvetica Neue', Sans-Serif" font-weight="600" font-size="18" fill="{{ title_color }}">Most Used Languages</text>
   </g>
 </g>
 
-<g transform="translate(20, 55)">
+<g transform="translate(20, 50)">
   <g class="animate-fade delay-2">
-    <rect x="0" y="0" width="310" height="8" rx="4" ry="4" fill="{{ border_color }}" opacity="0.3"/>
+    <rect x="0" y="0" width="455" height="8" rx="4" ry="4" fill="{{ border_color }}" opacity="0.3"/>
     <g clip-path="url(#progress-clip)" class="progress-animate">
       {{ progress }}
     </g>
   </g>
 </g>
 
-<foreignObject x="20" y="75" width="310" height="95" class="animate-slide delay-3">
+<foreignObject x="20" y="75" width="455" height="105" class="animate-slide delay-3">
   <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: 'Segoe UI', Ubuntu, Sans-Serif; font-size: 12px;">
     <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px 16px;">
       {{ lang_list }}
