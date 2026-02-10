@@ -1,138 +1,39 @@
 # git-statistics Project Settings
 
-# GitHub username
 github_user: leonardokr
 
-# Theme Configuration
-# Available built-in themes:
+# Available themes:
 #   GitHub: default, light, dark, github_dimmed
 #   Popular: dracula, nord, gruvbox, gruvbox_light, one_dark, monokai, tokyo_night, solarized_dark, solarized_light
 #   Catppuccin: catppuccin_latte, catppuccin_frappe, catppuccin_macchiato, catppuccin_mocha
 #   Material: palenight, material_darker, material_ocean, ayu, ayu_light, ayu_mirage
 #   Creative: synthwave, cyberpunk, ocean, forest, sunset, midnight, aurora, neon, retro, lavender, rose_pine, rose_pine_dawn
-#
-# Use 'all' to generate images for all available themes
+#   Use 'all' to generate images for all available themes
 themes:
   enabled:
-    - default
     - light
     - dark
 
-# Timezone for workflows (e.g., America/Sao_Paulo, Asia/Dhaka)
 timezone: America/Sao_Paulo
 
-# Commit configuration for the workflow
 commit_user_name: GitHub Action
 commit_user_email: action@github.com
 
-# Metrics options (for metrics.yml)
-metrics:
-  # Base content: header, activity, community, repositories, metadata
-  base: metadata
-  # Hireable status
-  base_hireable: "yes"
-  # Achievements plugin
-  plugin_achievements: "yes"
-  # Achievements display mode (compact, detailed)
-  plugin_achievements_display: compact
-  # Achievements limit
-  plugin_achievements_limit: 999
-  # Include secret achievements
-  plugin_achievements_secrets: "yes"
-  # Achievements threshold
-  plugin_achievements_threshold: X
-  # Filter specific achievements
-  plugin_achievements_only: polyglot, developer, influencer, automator, worker, contributor, maintainer
-  # Habits plugin
-  plugin_habits: "yes"
-  # Number of days for habits analysis
-  plugin_habits_days: 30
-  # Include facts about habits
-  plugin_habits_facts: "yes"
-  # Minimum number of events for habits analysis
-  plugin_habits_from: 1000
-  # Languages limit for habits plugin
-  plugin_habits_languages_limit: 8
-  # Threshold for languages in habits plugin
-  plugin_habits_languages_threshold: 0%
-  # Languages plugin
-  plugin_languages: "yes"
-  # Analysis timeout for languages plugin
-  plugin_languages_analysis_timeout: 60
-  # Categories to include (markup, programming, data, prose)
-  plugin_languages_categories: markup, programming
-  # Color scheme for languages
-  plugin_languages_colors: github
-  # Detailed metrics for languages (lines, bytes-size, percentage)
-  plugin_languages_details: lines, bytes-size, percentage
-  # In-depth analysis for languages
-  plugin_languages_indepth: "yes"
-  # Limit of languages displayed
-  plugin_languages_limit: 8
-  # Categories for recent language analysis
-  plugin_languages_recent_categories: markup, programming
-  # Number of days for recent language analysis
-  plugin_languages_recent_days: 365
-  # Number of events to load for recent analysis
-  plugin_languages_recent_load: 1000
-  # Sections to display (most-used, recently-used)
-  plugin_languages_sections: most-used
-  # Threshold for language display
-  plugin_languages_threshold: 0%
-  # Notable repositories plugin
-  plugin_notable: "yes"
-  # Source of notable repositories (all, organization)
-  plugin_notable_from: all
-  # In-depth analysis for notable repositories
-  plugin_notable_indepth: "yes"
-  # Include notable repositories
-  plugin_notable_repositories: "yes"
-  # Traffic plugin
-  plugin_traffic: "yes"
-  # Wakatime plugin
-  plugin_wakatime: "no"
-  # Wakatime range (days)
-  plugin_wakatime_days: 30
-  # Wakatime limit of languages/editors
-  plugin_wakatime_limit: 7
-  # Include 'Other' languages in Wakatime
-  plugin_wakatime_languages_other: "yes"
-  # Visibility of repositories in Wakatime
-  plugin_wakatime_repositories_visibility: all
-  # Sections to display in Wakatime
-  plugin_wakatime_sections: time, projects, projects-graphs, languages, languages-graphs, editors, os
-  # Wakatime username
-  plugin_wakatime_user: leonardokr
-
-# Custom Stats Generation Settings (for generate.py)
 stats_generation:
-  # Repositories to exclude (comma-separated)
   excluded_repos: ""
-  # Languages to exclude (comma-separated)
   excluded_langs: ""
-  # Include forked repositories
   include_forked_repos: "false"
-  # Exclude repositories where you are only a contributor
-  exclude_contrib_repos: "false"
-  # Exclude archived repositories
+  exclude_contrib_repos: "false"  # Exclude repos where you are only a contributor
   exclude_archive_repos: "true"
-  # Exclude private repositories
   exclude_private_repos: "false"
-  # Exclude public repositories
   exclude_public_repos: "false"
-  # Store and accumulate repository views count
-  store_repo_views: "true"
-  # Store and accumulate repository clones count
-  store_repo_clones: "true"
-  # Manually add extra collaborators count
-  more_collabs: 0
-  # Manually added repositories (comma-separated, e.g., owner/repo)
-  manually_added_repos: ""
-  # Only include these repositories (comma-separated, leaves others out)
-  only_included_repos: ""
+  store_repo_views: "true"   # Accumulate views count over time
+  store_repo_clones: "true"  # Accumulate clones count over time
+  more_collabs: 0            # Manually add extra collaborators count
+  manually_added_repos: ""   # Format: owner/repo,owner/repo
+  only_included_repos: ""    # If set, only these repos are included
 
-  # Visual Customization
-  # Set to "false" to hide specific statistics in the generated images
+  # Set to "false" to hide specific stats
   show_total_contributions: "true"
   show_repositories: "true"
   show_lines_changed: "true"
