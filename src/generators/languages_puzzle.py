@@ -13,8 +13,10 @@ class LanguagesPuzzleGenerator(BaseGenerator):
             colors = theme_config["colors"]
 
             hue = colors.get("puzzle_hue", 210)
-            saturation_range = colors.get("puzzle_saturation_range", [60, 85])
-            lightness_range = colors.get("puzzle_lightness_range", [35, 65])
+            saturation_range = colors.get("puzzle_saturation_range", [65, 85])
+            lightness_range = colors.get("puzzle_lightness_range", [40, 60])
+            hue_spread = colors.get("puzzle_hue_spread", 80)
+            puzzle_gap = colors.get("puzzle_gap", 2)
             puzzle_text_color = colors.get("puzzle_text_color", "#FFFFFF")
 
             puzzle_blocks = self.formatter.format_puzzle_blocks(
@@ -23,7 +25,9 @@ class LanguagesPuzzleGenerator(BaseGenerator):
                 height=200,
                 hue=hue,
                 saturation_range=saturation_range,
-                lightness_range=lightness_range
+                lightness_range=lightness_range,
+                hue_spread=hue_spread,
+                gap=puzzle_gap
             )
 
             replacements = {
