@@ -1,19 +1,27 @@
-<svg width="100%" height="100%" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+<svg width="495" height="195" viewBox="0 0 495 195" xmlns="http://www.w3.org/2000/svg">
 <defs>
-  <clipPath id="puzzle-rounded">
-    <rect x="0" y="0" width="400" height="200" rx="6" ry="6"/>
+  <linearGradient id="puzzle-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" style="stop-color:{{ gradient_start }};stop-opacity:1" />
+    <stop offset="100%" style="stop-color:{{ gradient_end }};stop-opacity:1" />
+  </linearGradient>
+  <clipPath id="card-rounded">
+    <rect x="0" y="0" width="495" height="195" rx="6" ry="6"/>
+  </clipPath>
+  <clipPath id="treemap-clip">
+    <rect x="0" y="0" width="455" height="135" rx="4" ry="4"/>
   </clipPath>
 </defs>
 
 <style>
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.9); }
+    from { opacity: 0; transform: scale(0.95); }
     to { opacity: 1; transform: scale(1); }
   }
+  .animate-fade { animation: fadeInUp 0.6s ease forwards; opacity: 0; }
   .puzzle-rect { animation: scaleIn 0.5s ease forwards; opacity: 0; }
   .delay-1 { animation-delay: 0.1s; }
   .delay-2 { animation-delay: 0.2s; }
@@ -26,24 +34,39 @@
   .puzzle-text {
     font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', Sans-Serif;
     font-weight: 600;
-    font-size: 11px;
+    font-size: 12px;
     fill: {{ puzzle_text_color }};
     pointer-events: none;
   }
   .puzzle-percent {
     font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', Sans-Serif;
     font-weight: 400;
-    font-size: 9px;
+    font-size: 10px;
     fill: {{ puzzle_text_color }};
-    opacity: 0.8;
+    opacity: 0.85;
     pointer-events: none;
   }
 </style>
 
-<rect clip-path="url(#puzzle-rounded)" width="100%" height="100%" fill="{{ bg_color }}" stroke="{{ border_color }}" stroke-width="2"/>
+<rect clip-path="url(#card-rounded)" width="100%" height="100%" fill="{{ bg_color }}" stroke="{{ border_color }}" stroke-width="1"/>
 
-<g clip-path="url(#puzzle-rounded)">
-  {{ puzzle_blocks }}
+<rect x="0" y="0" width="6" height="195" fill="url(#puzzle-gradient)" clip-path="url(#card-rounded)"/>
+
+<g transform="translate(25, 32)">
+  <g class="animate-fade delay-1">
+    <svg x="0" y="-14" width="16" height="16" viewBox="0 0 16 16" fill="{{ icon_color }}">
+      <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/>
+    </svg>
+    <text x="22" font-family="'Segoe UI', Ubuntu, 'Helvetica Neue', Sans-Serif" font-weight="600" font-size="16" fill="{{ title_color }}">Top Languages</text>
+  </g>
+</g>
+
+<g transform="translate(20, 50)">
+    <g class="animate-fade delay-2">
+    <g clip-path="url(#treemap-clip)">
+      {{ puzzle_blocks }}
+    </g>
+  </g>
 </g>
 
 </svg>
