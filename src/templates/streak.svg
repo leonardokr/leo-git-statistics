@@ -41,7 +41,7 @@
   </g>
 </g>
 
-<g transform="translate(85, 95)">
+<g transform="translate(85, 105)">
   <g class="animate-count delay-2">
     <text font-family="'Segoe UI', Ubuntu, Sans-Serif" font-weight="700" font-size="42" fill="{{ title_color }}" text-anchor="middle">{{ current_streak }}</text>
     <text y="25" font-family="'Segoe UI', Ubuntu, Sans-Serif" font-size="12" fill="{{ text_color }}" text-anchor="middle">Current Streak</text>
@@ -51,9 +51,9 @@
 
 <line x1="165" y1="60" x2="165" y2="160" stroke="{{ border_color }}" stroke-width="1" stroke-dasharray="4,4"/>
 
-<g transform="translate(247, 95)">
+<g transform="translate(247, 105)">
   <g class="animate-count delay-3">
-    <svg class="animate-pulse" x="-12" y="-65" width="24" height="24" viewBox="0 0 16 16" fill="{{ accent_color }}">
+    <svg class="animate-pulse" x="-12" y="-70" width="24" height="24" viewBox="0 0 16 16" fill="{{ accent_color }}">
       <path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/>
     </svg>
     <text font-family="'Segoe UI', Ubuntu, Sans-Serif" font-weight="700" font-size="42" fill="{{ title_color }}" text-anchor="middle">{{ longest_streak }}</text>
@@ -64,7 +64,7 @@
 
 <line x1="330" y1="60" x2="330" y2="160" stroke="{{ border_color }}" stroke-width="1" stroke-dasharray="4,4"/>
 
-<g transform="translate(412, 95)">
+<g transform="translate(412, 105)">
   <g class="animate-count delay-4">
     <text font-family="'Segoe UI', Ubuntu, Sans-Serif" font-weight="700" font-size="42" fill="{{ title_color }}" text-anchor="middle">{{ total_contributions }}</text>
     <text y="25" font-family="'Segoe UI', Ubuntu, Sans-Serif" font-size="12" fill="{{ text_color }}" text-anchor="middle">Total Contributions</text>
