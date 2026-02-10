@@ -1,11 +1,35 @@
 #!/usr/bin/python3
+"""
+GitHub API Client Module.
 
+This module provides an async-first client for interacting with GitHub's
+GraphQL (v4) and REST (v3) APIs with proper error handling and rate limiting.
+"""
+
+import logging
 from asyncio import Semaphore, sleep
-from requests import post, get
-from aiohttp import ClientSession
 from typing import Dict, Optional, List
-from requests import get
-from json import loads
+
+import aiohttp
+from requests import post, get
+from json import loads, JSONDecodeError
+
+logger = logging.getLogger(__name__)
+
+
+class GitHubAPIError(Exception):
+    """
+    Custom exception for GitHub API errors.
+
+    :param message: Error description.
+    :param status_code: HTTP status code if available.
+    """
+
+    def __init__(self, message: str, status_code: Optional[int] = None):
+        self.message = message
+        self.status_code = status_code
+        super().__init__(self.message)
+
 
 class GitHubClient:
     """
@@ -21,11 +45,13 @@ class GitHubClient:
     __ASYNCIO_SLEEP_TIME = 2
     __DEFAULT_MAX_CONNECTIONS = 10
 
-    def __init__(self,
-                 username: str,
-                 access_token: str,
-                 session: ClientSession,
-                 max_connections: int = __DEFAULT_MAX_CONNECTIONS):
+    def __init__(
+        self,
+        username: str,
+        access_token: str,
+        session: aiohttp.ClientSession,
+        max_connections: int = __DEFAULT_MAX_CONNECTIONS,
+    ):
         """
         Initializes the GitHubClient.
 
@@ -60,20 +86,23 @@ class GitHubClient:
 
             if result is not None:
                 return result
-        except:
-            print("aiohttp failed for GraphQL query")
+        except (aiohttp.ClientError, aiohttp.ServerTimeoutError, JSONDecodeError) as e:
+            logger.warning("aiohttp failed for GraphQL query: %s. Falling back to sync.", e)
 
-            # Fall back on non-async requests
-            async with self.semaphore:
-                r_requests = post(
-                    self.__GITHUB_API_URL + self.__GRAPHQL_PATH,
-                    headers=self.headers,
-                    json={"query": generated_query},
-                )
-                result = r_requests.json()
+            try:
+                async with self.semaphore:
+                    r_requests = post(
+                        self.__GITHUB_API_URL + self.__GRAPHQL_PATH,
+                        headers=self.headers,
+                        json={"query": generated_query},
+                    )
+                    result = r_requests.json()
 
-                if result is not None:
-                    return result
+                    if result is not None:
+                        return result
+            except Exception as fallback_error:
+                logger.error("Sync fallback also failed: %s", fallback_error)
+
         return dict()
 
     async def query_rest(self,
@@ -101,7 +130,7 @@ class GitHubClient:
                     )
 
                 if r_async.status == 202:
-                    print(f"A path returned 202. Retrying...")
+                    logger.debug("Path %s returned 202. Retrying attempt %d...", path, i + 1)
                     await sleep(self.__ASYNCIO_SLEEP_TIME)
                     continue
 
@@ -109,39 +138,40 @@ class GitHubClient:
 
                 if result is not None:
                     return result
-            except:
-                print("aiohttp failed for REST query attempt #" + str(i + 1))
+            except (aiohttp.ClientError, aiohttp.ServerTimeoutError, JSONDecodeError) as e:
+                logger.warning("aiohttp failed for REST query attempt #%d: %s", i + 1, e)
 
-                # Fall back on non-async requests
-                async with self.semaphore:
-                    r_requests = get(
-                        self.__GITHUB_API_URL + path,
-                        headers=self.headers,
-                        params=tuple(params.items()),
-                    )
+                try:
+                    async with self.semaphore:
+                        r_requests = get(
+                            self.__GITHUB_API_URL + path,
+                            headers=self.headers,
+                            params=tuple(params.items()),
+                        )
 
-                    if r_requests.status_code == 202:
-                        print(f"A path returned 202. Retrying...")
-                        await sleep(self.__ASYNCIO_SLEEP_TIME)
-                        continue
-                    elif r_requests.status_code == 200:
-                        return r_requests.json()
+                        if r_requests.status_code == 202:
+                            logger.debug("Sync fallback returned 202. Retrying...")
+                            await sleep(self.__ASYNCIO_SLEEP_TIME)
+                            continue
+                        elif r_requests.status_code == 200:
+                            return r_requests.json()
+                except Exception as fallback_error:
+                    logger.error("Sync fallback failed: %s", fallback_error)
 
-        print("Too many 202s. Data for this repository will be incomplete.")
+        logger.warning("Too many 202s for path %s. Data will be incomplete.", path)
         return dict()
 
     @staticmethod
-    def repos_overview(contrib_cursor: Optional[str] = None,
-                       owned_cursor: Optional[str] = None) -> str:
+    def repos_overview(
+        contrib_cursor: Optional[str] = None,
+        owned_cursor: Optional[str] = None,
+    ) -> str:
         """
-        Generates a GraphQL query for an overview of repositories.
+        Generate a GraphQL query for an overview of repositories.
 
         :param contrib_cursor: Cursor for paginating contributed repositories.
         :param owned_cursor: Cursor for paginating owned repositories.
         :return: GraphQL query string.
-        """
-        """
-        :return: GraphQL queries with overview of user repositories
         """
         return f"""
             {{
@@ -154,10 +184,7 @@ class GitHubClient:
                         field: UPDATED_AT,
                         direction: DESC
                     }},
-                    after: {
-                        "null" if owned_cursor is None 
-                        else '"' + owned_cursor + '"'
-                    }) {{
+                    after: {"null" if owned_cursor is None else '"' + owned_cursor + '"'}) {{
                         pageInfo {{
                             hasNextPage
                             endCursor
@@ -199,9 +226,7 @@ class GitHubClient:
                         REPOSITORY,
                         PULL_REQUEST_REVIEW
                     ]
-                    after: {
-                    "null" if contrib_cursor is None 
-                    else '"' + contrib_cursor + '"'}) {{
+                    after: {"null" if contrib_cursor is None else '"' + contrib_cursor + '"'}) {{
                         pageInfo {{
                             hasNextPage
                             endCursor
@@ -236,12 +261,9 @@ class GitHubClient:
     @staticmethod
     def contributions_all_years() -> str:
         """
-        Generates a GraphQL query to retrieve all years the user has contributions.
+        Generate a GraphQL query to retrieve all years the user has contributions.
 
         :return: GraphQL query string.
-        """
-        """
-        :return: GraphQL query to get all years the user has been a contributor
         """
         return """
             query {
@@ -255,14 +277,10 @@ class GitHubClient:
     @staticmethod
     def contributions_by_year(year: str) -> str:
         """
-        Generates a GraphQL query for contributions in a specific year.
+        Generate a GraphQL query for contributions in a specific year.
 
         :param year: The year to query.
         :return: GraphQL query string.
-        """
-        """
-        :param year: year to query for
-        :return: portion of a GraphQL query with desired info for a given year
         """
         return f"""
             year{year}: contributionsCollection(
@@ -277,14 +295,10 @@ class GitHubClient:
     @classmethod
     def all_contributions(cls, years: List[str]) -> str:
         """
-        Generates a GraphQL query for contributions across multiple years.
+        Generate a GraphQL query for contributions across multiple years.
 
         :param years: List of years to include in the query.
         :return: GraphQL query string.
-        """
-        """
-        :param years: list of years to get contributions for
-        :return: query to retrieve contribution information for all user years
         """
         by_years = "\n".join(map(cls.contributions_by_year, years))
         return f"""
@@ -297,9 +311,16 @@ class GitHubClient:
     @staticmethod
     def get_language_colors() -> Dict:
         """
-        Retrieves a mapping of programming languages to their respective colors.
+        Retrieve a mapping of programming languages to their respective colors.
 
         :return: Dictionary mapping language names to hex color codes.
         """
-        url = get("https://raw.githubusercontent.com/ozh/github-colors/master/colors.json")
-        return loads(url.text)
+        try:
+            response = get(
+                "https://raw.githubusercontent.com/ozh/github-colors/master/colors.json"
+            )
+            response.raise_for_status()
+            return loads(response.text)
+        except Exception as e:
+            logger.error("Failed to fetch language colors: %s", e)
+            return dict()
