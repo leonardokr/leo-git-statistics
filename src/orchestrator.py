@@ -9,6 +9,7 @@ from src.presentation.svg_template import SVGTemplate
 from src.generators import (
     OverviewGenerator,
     LanguagesGenerator,
+    LanguagesPuzzleGenerator,
     StreakGenerator,
     StreakBatteryGenerator,
 )
@@ -51,6 +52,12 @@ class ImageOrchestrator:
                     self.__environment
                 ),
                 LanguagesGenerator(
+                    self.config,
+                    self.__stats,
+                    self.formatter,
+                    self.template_engine
+                ),
+                LanguagesPuzzleGenerator(
                     self.config,
                     self.__stats,
                     self.formatter,
