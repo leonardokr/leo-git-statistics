@@ -884,5 +884,7 @@ class StatsCollector:
         """
         await self._get_contribution_calendar()
         days = self._contribution_calendar.get("days", [])
-        recent = days[-10:] if len(days) >= 10 else days
+        today = date.today().strftime(self.__DATE_FORMAT)
+        past_days = [d for d in days if d["date"] <= today]
+        recent = past_days[-10:] if len(past_days) >= 10 else past_days
         return [day.get("count", 0) for day in recent]
