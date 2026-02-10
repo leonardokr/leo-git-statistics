@@ -10,6 +10,8 @@ default:
     accent_color: "#0969da"
     gradient_start: "#0969da"
     gradient_end: "#58a6ff"
+    puzzle_saturation_range: [70, 90]
+    puzzle_lightness_range: [30, 50]
 
 light:
   suffix: "LightMode"
@@ -23,6 +25,8 @@ light:
     accent_color: "#0969da"
     gradient_start: "#0969da"
     gradient_end: "#58a6ff"
+    puzzle_saturation_range: [70, 90]
+    puzzle_lightness_range: [30, 50]
 
 dark:
   suffix: "DarkMode"
@@ -36,6 +40,8 @@ dark:
     accent_color: "#58a6ff"
     gradient_start: "#58a6ff"
     gradient_end: "#a371f7"
+    puzzle_saturation_range: [50, 75]
+    puzzle_lightness_range: [45, 70]
 
 github_dimmed:
   suffix: "GithubDimmed"
@@ -49,3 +55,5 @@ github_dimmed:
     accent_color: "#57ab5a"
     gradient_start: "#539bf5"
     gradient_end: "#986ee2"
+    puzzle_saturation_range: [50, 75]
+    puzzle_lightness_range: [45, 65]

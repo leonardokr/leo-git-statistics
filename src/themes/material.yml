@@ -10,6 +10,7 @@ palenight:
     accent_color: "#c3e88d"
     gradient_start: "#c792ea"
     gradient_end: "#89ddff"
+    puzzle_hue: 280
 
 material_darker:
   suffix: "MaterialDarker"
@@ -23,6 +24,7 @@ material_darker:
     accent_color: "#c3e88d"
     gradient_start: "#82aaff"
     gradient_end: "#c792ea"
+    puzzle_hue: 220
 
 material_ocean:
   suffix: "MaterialOcean"
@@ -36,6 +38,7 @@ material_ocean:
     accent_color: "#c3e88d"
     gradient_start: "#82aaff"
     gradient_end: "#c792ea"
+    puzzle_hue: 220
 
 ayu:
   suffix: "Ayu"
@@ -49,6 +52,7 @@ ayu:
     accent_color: "#c2d94c"
     gradient_start: "#ffb454"
     gradient_end: "#ff8f40"
+    puzzle_hue: 35
 
 ayu_light:
   suffix: "AyuLight"
@@ -62,6 +66,9 @@ ayu_light:
     accent_color: "#86b300"
     gradient_start: "#ff9940"
     gradient_end: "#f07171"
+    puzzle_hue: 30
+    puzzle_saturation_range: [70, 90]
+    puzzle_lightness_range: [40, 60]
 
 ayu_mirage:
   suffix: "AyuMirage"
@@ -75,3 +82,4 @@ ayu_mirage:
     accent_color: "#bae67e"
     gradient_start: "#ffcc66"
     gradient_end: "#ffa759"
+    puzzle_hue: 45

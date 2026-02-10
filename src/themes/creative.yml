@@ -10,6 +10,7 @@ synthwave:
     accent_color: "#fede5d"
     gradient_start: "#ff7edb"
     gradient_end: "#36f9f6"
+    puzzle_hue: 310
 
 cyberpunk:
   suffix: "Cyberpunk"
@@ -23,6 +24,7 @@ cyberpunk:
     accent_color: "#00d4ff"
     gradient_start: "#f706cf"
     gradient_end: "#00ff9f"
+    puzzle_hue: 300
 
 ocean:
   suffix: "Ocean"
@@ -36,6 +38,7 @@ ocean:
     accent_color: "#f78c6c"
     gradient_start: "#64ffda"
     gradient_end: "#5ccfe6"
+    puzzle_hue: 170
 
 forest:
   suffix: "Forest"
@@ -49,6 +52,7 @@ forest:
     accent_color: "#d4a656"
     gradient_start: "#7ec883"
     gradient_end: "#5fb878"
+    puzzle_hue: 130
 
 sunset:
   suffix: "Sunset"
@@ -62,6 +66,7 @@ sunset:
     accent_color: "#ffd93d"
     gradient_start: "#ff6b6b"
     gradient_end: "#ffa07a"
+    puzzle_hue: 15
 
 midnight:
   suffix: "Midnight"
@@ -75,6 +80,7 @@ midnight:
     accent_color: "#f472b6"
     gradient_start: "#a78bfa"
     gradient_end: "#818cf8"
+    puzzle_hue: 255
 
 aurora:
   suffix: "Aurora"
@@ -88,6 +94,7 @@ aurora:
     accent_color: "#ff6ec7"
     gradient_start: "#00d4aa"
     gradient_end: "#7b68ee"
+    puzzle_hue: 160
 
 neon:
   suffix: "Neon"
@@ -101,6 +108,9 @@ neon:
     accent_color: "#00ffff"
     gradient_start: "#00ff87"
     gradient_end: "#ff00ff"
+    puzzle_hue: 150
+    puzzle_saturation_range: [80, 100]
+    puzzle_lightness_range: [40, 60]
 
 retro:
   suffix: "Retro"
@@ -114,6 +124,9 @@ retro:
     accent_color: "#228b22"
     gradient_start: "#8b4513"
     gradient_end: "#d2691e"
+    puzzle_hue: 25
+    puzzle_saturation_range: [60, 85]
+    puzzle_lightness_range: [25, 50]
 
 lavender:
   suffix: "Lavender"
@@ -127,6 +140,7 @@ lavender:
     accent_color: "#e6b3cc"
     gradient_start: "#b4a7d6"
     gradient_end: "#9d8cd9"
+    puzzle_hue: 260
 
 rose_pine:
   suffix: "RosePine"
@@ -140,6 +154,7 @@ rose_pine:
     accent_color: "#9ccfd8"
     gradient_start: "#ebbcba"
     gradient_end: "#c4a7e7"
+    puzzle_hue: 280
 
 rose_pine_dawn:
   suffix: "RosePineDawn"
@@ -153,3 +168,6 @@ rose_pine_dawn:
     accent_color: "#56949f"
     gradient_start: "#d7827e"
     gradient_end: "#907aa9"
+    puzzle_hue: 5
+    puzzle_saturation_range: [45, 70]
+    puzzle_lightness_range: [45, 65]

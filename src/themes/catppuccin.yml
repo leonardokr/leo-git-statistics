@@ -10,6 +10,9 @@ catppuccin_latte:
     accent_color: "#40a02b"
     gradient_start: "#8839ef"
     gradient_end: "#d20f39"
+    puzzle_hue: 267
+    puzzle_saturation_range: [55, 80]
+    puzzle_lightness_range: [40, 60]
 
 catppuccin_frappe:
   suffix: "CatppuccinFrappe"
@@ -23,6 +26,7 @@ catppuccin_frappe:
     accent_color: "#a6d189"
     gradient_start: "#ca9ee6"
     gradient_end: "#e78284"
+    puzzle_hue: 277
 
 catppuccin_macchiato:
   suffix: "CatppuccinMacchiato"
@@ -36,6 +40,7 @@ catppuccin_macchiato:
     accent_color: "#a6da95"
     gradient_start: "#c6a0f6"
     gradient_end: "#ed8796"
+    puzzle_hue: 267
 
 catppuccin_mocha:
   suffix: "CatppuccinMocha"
@@ -49,3 +54,4 @@ catppuccin_mocha:
     accent_color: "#a6e3a1"
     gradient_start: "#cba6f7"
     gradient_end: "#f38ba8"
+    puzzle_hue: 267
