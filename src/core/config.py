@@ -15,6 +15,7 @@ class Config:
 
     OVERVIEW_TEMPLATE = "overview.svg"
     LANGUAGES_TEMPLATE = "languages.svg"
+    LANGUAGES_PUZZLE_TEMPLATE = "languages_puzzle.svg"
     STREAK_TEMPLATE = "streak.svg"
     STREAK_BATTERY_TEMPLATE = "streak_battery.svg"
 
