@@ -43,6 +43,11 @@ class ImageOrchestrator:
                 session=session
             )
 
+            await self.__stats.get_stats()
+            await self.__stats._get_contribution_calendar()
+
+            print(f"Stats collected: {len(await self.__stats.repos)} repos, {len(await self.__stats.languages)} languages")
+
             generators = [
                 OverviewGenerator(
                     self.config,
