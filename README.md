@@ -20,7 +20,7 @@
 
 ## Features
 
-- **Multiple Statistics Cards** - Overview stats, language distribution, and contribution streaks
+- **Multiple Statistics Cards** - Overview stats, language distribution, contribution streaks, streak battery, and language puzzle
 - **25+ Built-in Themes** - From Dracula to Nord, Catppuccin to Tokyo Night
 - **Extensible Theme System** - Add your own themes via YAML files
 - **Animated SVGs** - Smooth fade-in and slide animations
@@ -52,6 +52,22 @@ Tracks your current and longest contribution streaks.
 <p align="center">
   <img src="generated_images/streakDarkMode.svg" alt="Streak Dark Mode" width="49%" />
   <img src="generated_images/streakLightMode.svg" alt="Streak Light Mode" width="49%" />
+</p>
+
+### Streak Battery
+Visual battery indicator showing your streak progress with recent contribution history.
+
+<p align="center">
+  <img src="generated_images/streak_batteryDarkMode.svg" alt="Streak Battery Dark Mode" width="49%" />
+  <img src="generated_images/streak_batteryLightMode.svg" alt="Streak Battery Light Mode" width="49%" />
+</p>
+
+### Language Puzzle
+Treemap visualization of your programming languages - area proportional to usage percentage.
+
+<p align="center">
+  <img src="generated_images/languages_puzzleDarkMode.svg" alt="Language Puzzle Dark Mode" width="49%" />
+  <img src="generated_images/languages_puzzleLightMode.svg" alt="Language Puzzle Light Mode" width="49%" />
 </p>
 
 ## Themes
@@ -190,7 +206,9 @@ src/
 ├── templates/              # SVG templates
 │   ├── overview.svg
 │   ├── languages.svg
-│   └── streak.svg
+│   ├── languages_puzzle.svg
+│   ├── streak.svg
+│   └── streak_battery.svg
 ├── themes/                 # Theme definitions
 │   ├── github.yml
 │   ├── popular.yml
