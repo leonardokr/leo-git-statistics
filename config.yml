@@ -20,7 +20,7 @@ commit_user_name: GitHub Action
 commit_user_email: action@github.com
 
 stats_generation:
-  excluded_repos: ""
+  excluded_repos: "tiga-alves/IAP086---AI-Applied-to-Map-Development-Process"
   excluded_langs: ""
   include_forked_repos: "false"
   exclude_contrib_repos: "false"  # Exclude repos where you are only a contributor
