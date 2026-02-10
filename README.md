@@ -199,9 +199,19 @@ src/
 │   ├── config.py           # Configuration management
 │   ├── environment.py      # Environment variables
 │   ├── github_client.py    # GitHub API client (GraphQL + REST)
+│   ├── mock_stats.py       # Mock data for testing
 │   └── stats_collector.py  # Statistics aggregation
+├── db/                     # Data persistence
+│   └── db.py               # JSON database for accumulated metrics
+├── generators/             # SVG generators
+│   ├── base.py             # Base generator class
+│   ├── languages.py        # Language distribution card
+│   ├── languages_puzzle.py # Language treemap card
+│   ├── overview.py         # Overview statistics card
+│   ├── streak.py           # Contribution streak card
+│   └── streak_battery.py   # Streak battery card
 ├── presentation/           # Rendering layer
-│   ├── stats_formatter.py  # Data formatting
+│   ├── stats_formatter.py  # Data formatting utilities
 │   └── svg_template.py     # SVG template engine
 ├── templates/              # SVG templates
 │   ├── overview.svg
@@ -210,11 +220,14 @@ src/
 │   ├── streak.svg
 │   └── streak_battery.svg
 ├── themes/                 # Theme definitions
+│   ├── loader.py           # Theme loading utilities
 │   ├── github.yml
 │   ├── popular.yml
 │   ├── catppuccin.yml
 │   ├── material.yml
 │   └── creative.yml
+├── utils/                  # Utility functions
+│   └── file_system.py      # File system helpers
 └── orchestrator.py         # Main coordinator
 ```
 
@@ -240,11 +253,27 @@ pip install -r requirements.txt
 
 ### Running Locally
 
+#### With GitHub API (real data)
+
 ```bash
 export ACCESS_TOKEN="your_github_token"
 export GITHUB_ACTOR="your_username"
 python generate.py
 ```
+
+#### With Mock Data (no API required)
+
+For testing templates, themes, and visual changes without needing a GitHub token:
+
+```bash
+python generate_test.py
+```
+
+This generates all SVG cards using mock data in the `generated_images/` folder. Useful for:
+- Testing theme modifications
+- Developing new SVG templates
+- Previewing visual changes locally
+- CI/CD pipelines without API access
 
 ### Running Tests
 
