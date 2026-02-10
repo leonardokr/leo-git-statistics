@@ -6,7 +6,7 @@ class StreakGenerator(BaseGenerator):
     Generates the streak SVG template with contribution streak statistics.
     """
 
-    async def generate(self) -> None:
+    async def generate(self, output_name: str = "streak") -> None:
         base_replacements = {
             "current_streak": str(await self.stats.current_streak),
             "longest_streak": str(await self.stats.longest_streak),
@@ -18,6 +18,6 @@ class StreakGenerator(BaseGenerator):
 
         self.render_for_all_themes(
             self.config.STREAK_TEMPLATE,
-            "streak",
+            output_name,
             base_replacements
         )

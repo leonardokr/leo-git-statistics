@@ -6,7 +6,7 @@ class LanguagesGenerator(BaseGenerator):
     Generates the languages SVG template with programming language statistics.
     """
 
-    async def generate(self) -> None:
+    async def generate(self, output_name: str = "languages") -> None:
         languages = await self.stats.languages
 
         for theme_name, theme_config in self.config.THEMES.items():
@@ -24,7 +24,7 @@ class LanguagesGenerator(BaseGenerator):
 
             self.template_engine.render_and_save(
                 self.config.LANGUAGES_TEMPLATE,
-                "languages",
+                output_name,
                 replacements,
                 theme_config["suffix"]
             )

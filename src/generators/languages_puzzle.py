@@ -6,7 +6,7 @@ class LanguagesPuzzleGenerator(BaseGenerator):
     Generates the languages puzzle SVG template with a treemap visualization.
     """
 
-    async def generate(self) -> None:
+    async def generate(self, output_name: str = "languages_puzzle") -> None:
         languages = await self.stats.languages
 
         for theme_name, theme_config in self.config.THEMES.items():
@@ -38,7 +38,7 @@ class LanguagesPuzzleGenerator(BaseGenerator):
 
             self.template_engine.render_and_save(
                 self.config.LANGUAGES_PUZZLE_TEMPLATE,
-                "languages_puzzle",
+                output_name,
                 replacements,
                 theme_config["suffix"]
             )
