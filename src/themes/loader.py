@@ -15,7 +15,11 @@ DEFAULT_COLORS = {
     "border_color": "#d0d7de",
     "accent_color": "#0969da",
     "gradient_start": "#0969da",
-    "gradient_end": "#58a6ff"
+    "gradient_end": "#58a6ff",
+    "puzzle_hue": 210,
+    "puzzle_saturation_range": [60, 85],
+    "puzzle_lightness_range": [35, 65],
+    "puzzle_text_color": "#FFFFFF"
 }
 
 
@@ -36,7 +40,13 @@ def _load_theme_file(filepath: str) -> Dict[str, Dict[str, Any]]:
 def _normalize_theme(name: str, theme_data: Dict[str, Any]) -> Dict[str, Any]:
     """Ensure a theme has all required color properties with defaults."""
     colors = theme_data.get("colors", {})
-    normalized_colors = {key: colors.get(key, default) for key, default in DEFAULT_COLORS.items()}
+    normalized_colors = {}
+
+    for key, default in DEFAULT_COLORS.items():
+        if key in colors:
+            normalized_colors[key] = colors[key]
+        else:
+            normalized_colors[key] = default
 
     suffix = theme_data.get("suffix")
     if suffix is None:
