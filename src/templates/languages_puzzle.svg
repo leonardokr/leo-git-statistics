@@ -1,0 +1,49 @@
+<svg width="100%" height="100%" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <clipPath id="puzzle-rounded">
+    <rect x="0" y="0" width="400" height="200" rx="6" ry="6"/>
+  </clipPath>
+</defs>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .puzzle-rect { animation: scaleIn 0.5s ease forwards; opacity: 0; }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+  .delay-5 { animation-delay: 0.5s; }
+  .delay-6 { animation-delay: 0.6s; }
+  .delay-7 { animation-delay: 0.7s; }
+  .delay-8 { animation-delay: 0.8s; }
+  .puzzle-text {
+    font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', Sans-Serif;
+    font-weight: 600;
+    font-size: 11px;
+    fill: {{ puzzle_text_color }};
+    pointer-events: none;
+  }
+  .puzzle-percent {
+    font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', Sans-Serif;
+    font-weight: 400;
+    font-size: 9px;
+    fill: {{ puzzle_text_color }};
+    opacity: 0.8;
+    pointer-events: none;
+  }
+</style>
+
+<rect clip-path="url(#puzzle-rounded)" width="100%" height="100%" fill="{{ bg_color }}" stroke="{{ border_color }}" stroke-width="2"/>
+
+<g clip-path="url(#puzzle-rounded)">
+  {{ puzzle_blocks }}
+</g>
+
+</svg>
