@@ -47,7 +47,7 @@
   <g class="animate-fade delay-2">
     <rect x="0" y="0" width="310" height="8" rx="4" ry="4" fill="#d0d7de" opacity="0.3"/>
     <g clip-path="url(#progress-clip)" class="progress-animate">
-      <rect x="0.00" y="0" width="139.50" height="8" fill="#3572A5"/><rect x="139.50" y="0" width="77.50" height="8" fill="#3178c6"/><rect x="217.00" y="0" width="46.50" height="8" fill="#f1e05a"/><rect x="263.50" y="0" width="24.80" height="8" fill="#dea584"/><rect x="288.30" y="0" width="12.40" height="8" fill="#00ADD8"/><rect x="300.70" y="0" width="9.30" height="8" fill="#89e051"/>
+      
     </g>
   </g>
 </g>
@@ -55,31 +55,7 @@
 <foreignObject x="20" y="75" width="310" height="95" class="animate-slide delay-3">
   <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: 'Segoe UI', Ubuntu, Sans-Serif; font-size: 12px;">
     <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px 16px;">
-      <li style="display: flex; align-items: center;">
-                <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #3572A5; margin-right: 6px;"></span>
-                <span style="color: #24292f;">Python</span>
-                <span style="color: #57606a; margin-left: 4px; font-size: 11px;">45.0%</span>
-            </li><li style="display: flex; align-items: center;">
-                <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #3178c6; margin-right: 6px;"></span>
-                <span style="color: #24292f;">TypeScript</span>
-                <span style="color: #57606a; margin-left: 4px; font-size: 11px;">25.0%</span>
-            </li><li style="display: flex; align-items: center;">
-                <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #f1e05a; margin-right: 6px;"></span>
-                <span style="color: #24292f;">JavaScript</span>
-                <span style="color: #57606a; margin-left: 4px; font-size: 11px;">15.0%</span>
-            </li><li style="display: flex; align-items: center;">
-                <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #dea584; margin-right: 6px;"></span>
-                <span style="color: #24292f;">Rust</span>
-                <span style="color: #57606a; margin-left: 4px; font-size: 11px;">8.0%</span>
-            </li><li style="display: flex; align-items: center;">
-                <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #00ADD8; margin-right: 6px;"></span>
-                <span style="color: #24292f;">Go</span>
-                <span style="color: #57606a; margin-left: 4px; font-size: 11px;">4.0%</span>
-            </li><li style="display: flex; align-items: center;">
-                <span style="width: 10px; height: 10px; border-radius: 50%; background-color: #89e051; margin-right: 6px;"></span>
-                <span style="color: #24292f;">Shell</span>
-                <span style="color: #57606a; margin-left: 4px; font-size: 11px;">3.0%</span>
-            </li>
+      
     </ul>
   </div>
 </foreignObject>
