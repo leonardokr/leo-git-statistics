@@ -1,0 +1,69 @@
+<svg width="100%" height="100%" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <clipPath id="puzzle-rounded">
+    <rect x="0" y="0" width="400" height="200" rx="6" ry="6"/>
+  </clipPath>
+</defs>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .puzzle-rect { animation: scaleIn 0.5s ease forwards; opacity: 0; }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.2s; }
+  .delay-3 { animation-delay: 0.3s; }
+  .delay-4 { animation-delay: 0.4s; }
+  .delay-5 { animation-delay: 0.5s; }
+  .delay-6 { animation-delay: 0.6s; }
+  .delay-7 { animation-delay: 0.7s; }
+  .delay-8 { animation-delay: 0.8s; }
+  .puzzle-text {
+    font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', Sans-Serif;
+    font-weight: 600;
+    font-size: 11px;
+    fill: #FFFFFF;
+    pointer-events: none;
+  }
+  .puzzle-percent {
+    font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', Sans-Serif;
+    font-weight: 400;
+    font-size: 9px;
+    fill: #FFFFFF;
+    opacity: 0.8;
+    pointer-events: none;
+  }
+</style>
+
+<rect clip-path="url(#puzzle-rounded)" width="100%" height="100%" fill="#0d1117" stroke="#30363d" stroke-width="2"/>
+
+<g clip-path="url(#puzzle-rounded)">
+  <rect class="puzzle-rect delay-1" x="0.00" y="0.00" width="212.85" height="194.94" fill="#1c72c8"/>
+<text class="puzzle-text" x="106.42" y="95.47" text-anchor="middle" dominant-baseline="middle">Rich Text Format</text>
+<text class="puzzle-percent" x="106.42" y="107.47" text-anchor="middle" dominant-baseline="middle">51.9%</text>
+<rect class="puzzle-rect delay-2" x="212.85" y="0.00" width="185.32" height="159.65" fill="#2077cf"/>
+<text class="puzzle-text" x="305.51" y="77.82" text-anchor="middle" dominant-baseline="middle">Python</text>
+<text class="puzzle-percent" x="305.51" y="89.82" text-anchor="middle" dominant-baseline="middle">37.0%</text>
+<rect class="puzzle-rect delay-3" x="212.85" y="159.65" width="185.32" height="35.30" fill="#237cd5"/>
+<text class="puzzle-text" x="305.51" y="175.29" text-anchor="middle" dominant-baseline="middle">XSLT</text>
+<text class="puzzle-percent" x="305.51" y="187.29" text-anchor="middle" dominant-baseline="middle">8.2%</text>
+<rect class="puzzle-rect delay-4" x="0.00" y="194.94" width="273.10" height="3.06" fill="#2a81d8"/>
+<rect class="puzzle-rect delay-5" x="0.00" y="198.00" width="273.10" height="2.00" fill="#3586d7"/>
+<rect class="puzzle-rect delay-6" x="273.10" y="194.94" width="125.07" height="3.23" fill="#3f8bd6"/>
+<rect class="puzzle-rect delay-7" x="273.10" y="198.17" width="125.07" height="1.83" fill="#4990d6"/>
+<rect class="puzzle-rect delay-8" x="398.17" y="0.00" width="1.18" height="170.13" fill="#5395d6"/>
+<rect class="puzzle-rect delay-8" x="399.35" y="0.00" width="0.65" height="107.16" fill="#5d99d6"/>
+<rect class="puzzle-rect delay-8" x="399.35" y="107.16" width="0.65" height="62.97" fill="#679ed6"/>
+<rect class="puzzle-rect delay-8" x="398.17" y="170.13" width="1.40" height="15.33" fill="#70a3d6"/>
+<rect class="puzzle-rect delay-8" x="398.17" y="185.46" width="1.40" height="14.54" fill="#7aa8d7"/>
+<rect class="puzzle-rect delay-8" x="399.56" y="170.13" width="0.44" height="15.67" fill="#83add7"/>
+<rect class="puzzle-rect delay-8" x="399.56" y="185.80" width="0.44" height="14.20" fill="#8cb2d8"/>
+
+</g>
+
+</svg>
