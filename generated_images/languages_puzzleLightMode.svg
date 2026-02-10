@@ -43,21 +43,13 @@
 <rect clip-path="url(#puzzle-rounded)" width="100%" height="100%" fill="#FFFFFF" stroke="#d0d7de" stroke-width="2"/>
 
 <g clip-path="url(#puzzle-rounded)">
-  <rect class="puzzle-rect delay-1" x="1.00" y="1.00" width="338.00" height="103.88" rx="4.0" fill="#0da58b"/>
-<text class="puzzle-text" x="170.00" y="50.94" text-anchor="middle" dominant-baseline="middle">Python</text>
-<text class="puzzle-percent" x="170.00" y="62.94" text-anchor="middle" dominant-baseline="middle">45.0%</text>
-<rect class="puzzle-rect delay-2" x="1.00" y="106.88" width="210.50" height="92.12" rx="4.0" fill="#23a6ea"/>
-<text class="puzzle-text" x="106.25" y="150.94" text-anchor="middle" dominant-baseline="middle">TypeScript</text>
-<text class="puzzle-percent" x="106.25" y="162.94" text-anchor="middle" dominant-baseline="middle">25.0%</text>
-<rect class="puzzle-rect delay-3" x="213.50" y="106.88" width="125.50" height="92.12" rx="4.0" fill="#132cbb"/>
-<text class="puzzle-text" x="276.25" y="150.94" text-anchor="middle" dominant-baseline="middle">JavaScript</text>
-<text class="puzzle-percent" x="276.25" y="162.94" text-anchor="middle" dominant-baseline="middle">15.0%</text>
-<rect class="puzzle-rect delay-4" x="341.00" y="1.00" width="58.00" height="104.67" rx="4.0" fill="#1adadf"/>
-<text class="puzzle-text" x="370.00" y="51.33" text-anchor="middle" dominant-baseline="middle">Rust</text>
-<text class="puzzle-percent" x="370.00" y="63.33" text-anchor="middle" dominant-baseline="middle">8.0%</text>
-<rect class="puzzle-rect delay-5" x="341.00" y="107.67" width="32.29" height="91.33" rx="4.0" fill="#1b6fd0"/>
-<text class="puzzle-percent" x="357.14" y="153.33" text-anchor="middle" dominant-baseline="middle">4.0%</text>
-<rect class="puzzle-rect delay-6" x="375.29" y="107.67" width="23.71" height="91.33" rx="4.0" fill="#241cc8"/>
+  <rect class="puzzle-rect delay-1" x="1.00" y="1.00" width="384.69" height="190.42" rx="4.0" fill="#0da58b"/>
+<text class="puzzle-text" x="193.35" y="94.21" text-anchor="middle" dominant-baseline="middle">Python</text>
+<text class="puzzle-percent" x="193.35" y="106.21" text-anchor="middle" dominant-baseline="middle">93.0%</text>
+<rect class="puzzle-rect delay-2" x="387.69" y="1.00" width="9.12" height="190.42" rx="2.8" fill="#26a8ec"/>
+<rect class="puzzle-rect delay-3" x="1.00" y="193.42" width="182.18" height="5.58" rx="1.9" fill="#1028b1"/>
+<rect class="puzzle-rect delay-4" x="185.18" y="193.42" width="211.63" height="2.84" rx="1.2" fill="#1fe2e8"/>
+<rect class="puzzle-rect delay-5" x="185.18" y="198.26" width="211.63" height="0.74" rx="0.7" fill="#1462bd"/>
 
 </g>
 
