@@ -47,6 +47,7 @@ class ImageOrchestrator:
             await self.__stats._get_contribution_calendar()
 
             print(f"Stats collected: {len(await self.__stats.repos)} repos, {len(await self.__stats.languages)} languages")
+            print(f"Recent contributions: {await self.__stats.recent_contributions}")
 
             generators = [
                 OverviewGenerator(

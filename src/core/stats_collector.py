@@ -156,6 +156,7 @@ class StatsCollector:
 
         :param repo_data: Dictionary containing repository metadata.
         """
+        repo_name = repo_data.get("nameWithOwner", "unknown")
         for edge in repo_data.get("languages", {}).get("edges", []):
             lang_name = edge.get("node", {}).get("name", "Other")
             if lang_name in self.environment_vars.exclude_langs:
@@ -163,6 +164,7 @@ class StatsCollector:
 
             size = edge.get("size", 0)
             color = edge.get("node", {}).get("color")
+            print(f"  {repo_name}: {lang_name} ({size} bytes)")
             
             if lang_name in self._languages:
                 self._languages[lang_name]["size"] += size
