@@ -24,6 +24,3 @@ Thumbs.db
 
 # Env
 .env
-
-# Project
-generated_images/*
