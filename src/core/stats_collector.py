@@ -757,6 +757,9 @@ class StatsCollector:
 
         all_days.sort(key=lambda x: x["date"])
 
+        if all_days:
+            print(f"Contribution calendar: {len(all_days)} days, last 10: {all_days[-10:]}")
+
         current_streak = 0
         longest_streak = 0
         current_streak_start = None
