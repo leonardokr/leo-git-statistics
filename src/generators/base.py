@@ -12,6 +12,8 @@ class BaseGenerator(ABC):
     Abstract base class for all SVG template generators.
     """
 
+    OUTPUT_NAME: str = ""
+
     def __init__(
         self,
         config: Config,

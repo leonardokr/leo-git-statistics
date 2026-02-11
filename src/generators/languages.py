@@ -4,7 +4,9 @@ from src.generators.base import BaseGenerator
 class LanguagesGenerator(BaseGenerator):
     """Generates the languages SVG template with programming language statistics."""
 
-    async def generate(self, output_name: str = "languages") -> None:
+    OUTPUT_NAME = "languages"
+
+    async def generate(self) -> None:
         languages = await self.stats.get_languages()
 
         base_replacements = {
@@ -22,7 +24,7 @@ class LanguagesGenerator(BaseGenerator):
 
         self.render_for_all_themes(
             self.config.LANGUAGES_TEMPLATE,
-            output_name,
+            self.OUTPUT_NAME,
             base_replacements,
             theme_callback
         )

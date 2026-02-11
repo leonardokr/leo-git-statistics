@@ -11,7 +11,9 @@ class OverviewGenerator(BaseGenerator):
         super().__init__(config, stats, formatter, template_engine)
         self.environment = environment
 
-    async def generate(self, output_name: str = "overview") -> None:
+    OUTPUT_NAME = "overview"
+
+    async def generate(self) -> None:
         lines_added, lines_removed = await self.stats.get_lines_changed()
         total_lines_changed = lines_added + lines_removed
 
@@ -47,6 +49,6 @@ class OverviewGenerator(BaseGenerator):
 
         self.render_for_all_themes(
             self.config.OVERVIEW_TEMPLATE,
-            output_name,
+            self.OUTPUT_NAME,
             base_replacements
         )

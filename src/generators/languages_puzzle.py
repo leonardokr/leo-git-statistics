@@ -7,7 +7,9 @@ class LanguagesPuzzleGenerator(BaseGenerator):
     PUZZLE_WIDTH = 455
     PUZZLE_HEIGHT = 135
 
-    async def generate(self, output_name: str = "languages_puzzle") -> None:
+    OUTPUT_NAME = "languages_puzzle"
+
+    async def generate(self) -> None:
         languages = await self.stats.get_languages()
 
         def theme_callback(colors):
@@ -28,7 +30,7 @@ class LanguagesPuzzleGenerator(BaseGenerator):
 
         self.render_for_all_themes(
             self.config.LANGUAGES_PUZZLE_TEMPLATE,
-            output_name,
+            self.OUTPUT_NAME,
             {},
             theme_callback
         )

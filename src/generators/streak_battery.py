@@ -15,7 +15,9 @@ class StreakBatteryGenerator(BaseGenerator):
     BAR_MAX_HEIGHT = 100
     BAR_MIN_HEIGHT = 4
 
-    async def generate(self, output_name: str = "streak_battery") -> None:
+    OUTPUT_NAME = "streak_battery"
+
+    async def generate(self) -> None:
         current_streak = await self.stats.get_current_streak()
         longest_streak = await self.stats.get_longest_streak()
         recent_contributions = await self.stats.get_recent_contributions()
@@ -55,7 +57,7 @@ class StreakBatteryGenerator(BaseGenerator):
 
         self.render_for_all_themes(
             self.config.STREAK_BATTERY_TEMPLATE,
-            output_name,
+            self.OUTPUT_NAME,
             base_replacements,
             theme_callback,
         )
