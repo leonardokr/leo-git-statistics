@@ -5,7 +5,7 @@ Defines narrow interfaces so each generator depends only on the
 subset of statistics it actually uses.
 """
 
-from typing import Dict, Any, Set, Tuple, Protocol, runtime_checkable
+from typing import Dict, Any, List, Set, Tuple, Protocol, runtime_checkable
 
 
 @runtime_checkable
@@ -72,3 +72,70 @@ class OverviewProvider(Protocol):
     async def get_issues(self) -> int: ...
     async def get_views_from_date(self) -> str: ...
     async def get_clones_from_date(self) -> str: ...
+
+
+@runtime_checkable
+class TemplateRenderer(Protocol):
+    """
+    Renders templates with variable replacements and saves to disk.
+    """
+
+    def render_and_save(
+        self,
+        template_file: str,
+        output_filename_base: str,
+        replacements: Dict[str, str],
+        theme_suffix: str = "",
+    ) -> None: ...
+
+
+@runtime_checkable
+class Formatter(Protocol):
+    """
+    Formats statistics values into display-ready strings and SVG fragments.
+    """
+
+    @staticmethod
+    def format_name(name: str) -> str: ...
+
+    @staticmethod
+    def format_number(number: Any) -> str: ...
+
+    @staticmethod
+    def format_language_progress(
+        languages: Dict[str, Dict[str, Any]], total_width: int = 455
+    ) -> str: ...
+
+    @staticmethod
+    def format_language_list(
+        languages: Dict[str, Dict[str, Any]],
+        max_items: int = 8,
+        text_color: str = "#24292f",
+        percent_color: str = "#57606a",
+    ) -> str: ...
+
+    @staticmethod
+    def format_puzzle_blocks(
+        languages: Dict[str, Dict[str, Any]],
+        width: int = 400,
+        height: int = 200,
+        hue: int = 210,
+        saturation_range: List[int] = None,
+        lightness_range: List[int] = None,
+        hue_spread: int = 60,
+        gap: int = 2,
+    ) -> str: ...
+
+
+@runtime_checkable
+class Database(Protocol):
+    """
+    Persistence interface for repository traffic statistics.
+    """
+
+    def set_views_count(self, count: Any) -> None: ...
+    def set_views_from_date(self, date: str) -> None: ...
+    def set_views_to_date(self, date: str) -> None: ...
+    def set_clones_count(self, count: Any) -> None: ...
+    def set_clones_from_date(self, date: str) -> None: ...
+    def set_clones_to_date(self, date: str) -> None: ...
