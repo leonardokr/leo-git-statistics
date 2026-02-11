@@ -8,6 +8,13 @@ class StreakBatteryGenerator(BaseGenerator):
     with a glow effect when hitting a new record.
     """
 
+    BATTERY_MAX_HEIGHT = 87
+    BATTERY_Y_OFFSET = 4
+    BAR_WIDTH = 14
+    BAR_GAP = 4
+    BAR_MAX_HEIGHT = 100
+    BAR_MIN_HEIGHT = 4
+
     async def generate(self, output_name: str = "streak_battery") -> None:
         current_streak = await self.stats.get_current_streak()
         longest_streak = await self.stats.get_longest_streak()
@@ -18,9 +25,8 @@ class StreakBatteryGenerator(BaseGenerator):
         else:
             streak_percentage = 0 if current_streak == 0 else 100
 
-        battery_max_height = 87
-        battery_fill_height = int((streak_percentage / 100) * battery_max_height)
-        battery_fill_y = 4 + (battery_max_height - battery_fill_height)
+        battery_fill_height = int((streak_percentage / 100) * self.BATTERY_MAX_HEIGHT)
+        battery_fill_y = self.BATTERY_Y_OFFSET + (self.BATTERY_MAX_HEIGHT - battery_fill_height)
 
         is_record = current_streak > 0 and current_streak >= longest_streak
 
@@ -60,27 +66,24 @@ class StreakBatteryGenerator(BaseGenerator):
             return ""
 
         max_contrib = max(contributions) if max(contributions) > 0 else 1
-        bar_width = 14
-        bar_gap = 4
-        max_bar_height = 100
         bars = []
 
         for i, count in enumerate(contributions):
-            bar_height = max(4, int((count / max_contrib) * max_bar_height)) if count > 0 else 4
-            x = i * (bar_width + bar_gap)
-            y = max_bar_height - bar_height
+            bar_height = max(self.BAR_MIN_HEIGHT, int((count / max_contrib) * self.BAR_MAX_HEIGHT)) if count > 0 else self.BAR_MIN_HEIGHT
+            x = i * (self.BAR_WIDTH + self.BAR_GAP)
+            y = self.BAR_MAX_HEIGHT - bar_height
             delay_class = f"delay-{i + 1}"
 
             bars.append(
-                f'<g class="animate-fill {delay_class}" style="transform-origin: {x + bar_width // 2}px bottom;">'
-                f'<rect x="{x}" y="{y}" width="{bar_width}" height="{bar_height}" rx="2" fill="{bar_color}"/>'
+                f'<g class="animate-fill {delay_class}" style="transform-origin: {x + self.BAR_WIDTH // 2}px bottom;">'
+                f'<rect x="{x}" y="{y}" width="{self.BAR_WIDTH}" height="{bar_height}" rx="2" fill="{bar_color}"/>'
                 f'</g>'
             )
 
             if count > 0:
                 text_y = y - 5
                 bars.append(
-                    f'<text x="{x + bar_width // 2}" y="{text_y}" font-family="\'Segoe UI\', Ubuntu, Sans-Serif" '
+                    f'<text x="{x + self.BAR_WIDTH // 2}" y="{text_y}" font-family="\'Segoe UI\', Ubuntu, Sans-Serif" '
                     f'font-size="9" fill="{text_color}" text-anchor="middle" class="animate-fade {delay_class}">{count}</text>'
                 )
 
