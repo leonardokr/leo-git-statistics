@@ -131,9 +131,9 @@ class StatsCollector:
             return True
         return (
             repo_name in self._repos
-            or len(self.environment_vars.only_included_repos) > 0
-            and repo_name not in self.environment_vars.only_included_repos
-            or repo_name in self.environment_vars.exclude_repos
+            or len(self.environment_vars.filter.only_included_repos) > 0
+            and repo_name not in self.environment_vars.filter.only_included_repos
+            or repo_name in self.environment_vars.filter.exclude_repos
         )
 
     async def is_repo_type_excluded(self, repo_data: Dict[str, Any]) -> bool:
@@ -150,13 +150,13 @@ class StatsCollector:
         :return: True if the repository type should be excluded, False otherwise.
         """
         return (
-            not self.environment_vars.include_forked_repos
+            not self.environment_vars.filter.include_forked_repos
             and (repo_data.get("isFork") or repo_data.get("fork"))
-            or self.environment_vars.exclude_archive_repos
+            or self.environment_vars.filter.exclude_archive_repos
             and (repo_data.get("isArchived") or repo_data.get("archived"))
-            or self.environment_vars.exclude_private_repos
+            or self.environment_vars.filter.exclude_private_repos
             and (repo_data.get("isPrivate") or repo_data.get("private"))
-            or self.environment_vars.exclude_public_repos
+            or self.environment_vars.filter.exclude_public_repos
             and (not repo_data.get("isPrivate") or not repo_data.get("private"))
         )
 
@@ -169,7 +169,7 @@ class StatsCollector:
         repo_name = repo_data.get("nameWithOwner", "unknown")
         for edge in repo_data.get("languages", {}).get("edges", []):
             lang_name = edge.get("node", {}).get("name", "Other")
-            if lang_name in self.environment_vars.exclude_langs:
+            if lang_name in self.environment_vars.filter.exclude_langs:
                 continue
 
             size = edge.get("size", 0)
@@ -217,7 +217,7 @@ class StatsCollector:
             owned_repos = viewer_data.get("repositories", {})
 
             repos = owned_repos.get("nodes", [])
-            if not self.environment_vars.exclude_contrib_repos:
+            if not self.environment_vars.filter.exclude_contrib_repos:
                 repos += contrib_repos.get("nodes", [])
 
             for repo in repos:
@@ -249,14 +249,14 @@ class StatsCollector:
             else:
                 break
 
-        if not self.environment_vars.exclude_contrib_repos:
+        if not self.environment_vars.filter.exclude_contrib_repos:
             await self._process_manually_added_repos()
 
         self._calculate_language_proportions()
 
     async def _process_manually_added_repos(self) -> None:
         """Fetch and aggregate statistics for manually specified repositories."""
-        env_repos = self.environment_vars.manually_added_repos
+        env_repos = self.environment_vars.filter.manually_added_repos
         lang_cols = self.queries.get_language_colors()
 
         for repo in env_repos:
@@ -278,7 +278,7 @@ class StatsCollector:
             if repo_stats.get("language"):
                 langs = await self.queries.query_rest(f"/repos/{repo}/languages")
                 for lang, size in langs.items():
-                    if lang in self.environment_vars.exclude_langs:
+                    if lang in self.environment_vars.filter.exclude_langs:
                         continue
 
                     if lang in self._languages:
@@ -494,7 +494,7 @@ class StatsCollector:
         if self._views is not None:
             return self._views
 
-        last_viewed = self.environment_vars.repo_last_viewed
+        last_viewed = self.environment_vars.traffic.repo_last_viewed
         today = date.today().strftime(self.__DATE_FORMAT)
         yesterday = (date.today() - timedelta(1)).strftime(self.__DATE_FORMAT)
         dates = {last_viewed, yesterday}
@@ -508,25 +508,25 @@ class StatsCollector:
                 if view.get("timestamp")[:10] == today:
                     today_view_count += view.get("count", 0)
                 elif view.get("timestamp")[:10] > last_viewed:
-                    self.environment_vars.set_views(view.get("count", 0))
+                    self.environment_vars.traffic.set_views(view.get("count", 0))
                     dates.add(view.get("timestamp")[:10])
 
         if last_viewed == "0000-00-00":
             dates.remove(last_viewed)
 
-        if self.environment_vars.store_repo_view_count:
-            self.environment_vars.set_last_viewed(yesterday)
+        if self.environment_vars.traffic.store_repo_view_count:
+            self.environment_vars.traffic.set_last_viewed(yesterday)
 
-            if self.environment_vars.repo_first_viewed == "0000-00-00":
-                self.environment_vars.repo_first_viewed = min(dates)
-            self.environment_vars.set_first_viewed(
-                self.environment_vars.repo_first_viewed
+            if self.environment_vars.traffic.repo_first_viewed == "0000-00-00":
+                self.environment_vars.traffic.repo_first_viewed = min(dates)
+            self.environment_vars.traffic.set_first_viewed(
+                self.environment_vars.traffic.repo_first_viewed
             )
-            self._views_from_date = self.environment_vars.repo_first_viewed
+            self._views_from_date = self.environment_vars.traffic.repo_first_viewed
         else:
             self._views_from_date = min(dates)
 
-        self._views = self.environment_vars.repo_views + today_view_count
+        self._views = self.environment_vars.traffic.repo_views + today_view_count
         return self._views
 
     @lazy_async_property("_views_from_date", "get_views")
@@ -550,7 +550,7 @@ class StatsCollector:
         if self._clones is not None:
             return self._clones
 
-        last_cloned = self.environment_vars.repo_last_cloned
+        last_cloned = self.environment_vars.traffic.repo_last_cloned
         today = date.today().strftime(self.__DATE_FORMAT)
         yesterday = (date.today() - timedelta(1)).strftime(self.__DATE_FORMAT)
         dates = {last_cloned, yesterday}
@@ -564,25 +564,25 @@ class StatsCollector:
                 if clone.get("timestamp")[:10] == today:
                     today_clone_count += clone.get("count", 0)
                 elif clone.get("timestamp")[:10] > last_cloned:
-                    self.environment_vars.set_clones(clone.get("count", 0))
+                    self.environment_vars.traffic.set_clones(clone.get("count", 0))
                     dates.add(clone.get("timestamp")[:10])
 
         if last_cloned == "0000-00-00":
             dates.remove(last_cloned)
 
-        if self.environment_vars.store_repo_clone_count:
-            self.environment_vars.set_last_cloned(yesterday)
+        if self.environment_vars.traffic.store_repo_clone_count:
+            self.environment_vars.traffic.set_last_cloned(yesterday)
 
-            if self.environment_vars.repo_first_cloned == "0000-00-00":
-                self.environment_vars.repo_first_cloned = min(dates)
-            self.environment_vars.set_first_cloned(
-                self.environment_vars.repo_first_cloned
+            if self.environment_vars.traffic.repo_first_cloned == "0000-00-00":
+                self.environment_vars.traffic.repo_first_cloned = min(dates)
+            self.environment_vars.traffic.set_first_cloned(
+                self.environment_vars.traffic.repo_first_cloned
             )
-            self._clones_from_date = self.environment_vars.repo_first_cloned
+            self._clones_from_date = self.environment_vars.traffic.repo_first_cloned
         else:
             self._clones_from_date = min(dates)
 
-        self._clones = self.environment_vars.repo_clones + today_clone_count
+        self._clones = self.environment_vars.traffic.repo_clones + today_clone_count
         return self._clones
 
     @lazy_async_property("_clones_from_date", "get_clones")

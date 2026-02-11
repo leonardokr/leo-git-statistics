@@ -1,15 +1,10 @@
-"""
-Mock StatsCollector and Environment for testing SVG generation without GitHub API.
-"""
+"""Mock classes for testing SVG generation without GitHub API."""
 
 from typing import Dict, Any, Set, Tuple
 
 
-class MockEnvironment:
-    """
-    A mock implementation of Environment for testing.
-    All show_* properties return True by default.
-    """
+class MockDisplaySettings:
+    """Mock display settings for testing."""
 
     def __init__(self, **kwargs):
         self.show_total_contributions = kwargs.get("show_total_contributions", True)
@@ -26,23 +21,21 @@ class MockEnvironment:
         self.show_issues = kwargs.get("show_issues", True)
 
 
+class MockEnvironment:
+    """Mock Environment for testing."""
+
+    def __init__(self, **kwargs):
+        self.display = MockDisplaySettings(**kwargs)
+
+
 class MockStatsCollector:
-    """
-    A mock implementation of StatsCollector that returns predefined data.
-    Used for testing SVG templates without requiring GitHub API access.
-    """
+    """Mock StatsCollector that returns predefined data for template testing."""
 
     def __init__(self, data: Dict[str, Any] = None):
-        """
-        Initialize with optional custom mock data.
-
-        :param data: Dictionary with mock values for stats properties.
-        """
         self._data = data or self._default_data()
 
     @staticmethod
     def _default_data() -> Dict[str, Any]:
-        """Returns default mock data for testing."""
         return {
             "name": "User's",
             "stargazers": 567,
@@ -74,86 +67,65 @@ class MockStatsCollector:
             "recent_contributions": [3, 7, 2, 12, 5, 8, 0, 4, 9, 6],
         }
 
-    @property
-    async def name(self) -> str:
+    async def get_name(self) -> str:
         return self._data["name"]
 
-    @property
-    async def stargazers(self) -> int:
+    async def get_stargazers(self) -> int:
         return self._data["stargazers"]
 
-    @property
-    async def forks(self) -> int:
+    async def get_forks(self) -> int:
         return self._data["forks"]
 
-    @property
-    async def total_contributions(self) -> int:
+    async def get_total_contributions(self) -> int:
         return self._data["total_contributions"]
 
-    @property
-    async def languages(self) -> Dict[str, Any]:
+    async def get_languages(self) -> Dict[str, Any]:
         return self._data["languages"]
 
-    @property
-    async def repos(self) -> Set[str]:
+    async def get_repos(self) -> Set[str]:
         return self._data["repos"]
 
-    @property
-    async def lines_changed(self) -> Tuple[int, int]:
+    async def get_lines_changed(self) -> Tuple[int, int]:
         return self._data["lines_changed"]
 
-    @property
-    async def avg_contribution_percent(self) -> str:
+    async def get_avg_contribution_percent(self) -> str:
         return self._data["avg_contribution_percent"]
 
-    @property
-    async def views(self) -> int:
+    async def get_views(self) -> int:
         return self._data["views"]
 
-    @property
-    async def clones(self) -> int:
+    async def get_clones(self) -> int:
         return self._data["clones"]
 
-    @property
-    async def collaborators(self) -> int:
+    async def get_collaborators(self) -> int:
         return self._data["collaborators"]
 
-    @property
-    async def contributors(self) -> Set[str]:
+    async def get_contributors(self) -> Set[str]:
         return self._data["contributors"]
 
-    @property
-    async def views_from_date(self) -> str:
+    async def get_views_from_date(self) -> str:
         return self._data["views_from_date"]
 
-    @property
-    async def clones_from_date(self) -> str:
+    async def get_clones_from_date(self) -> str:
         return self._data["clones_from_date"]
 
-    @property
-    async def pull_requests(self) -> int:
+    async def get_pull_requests(self) -> int:
         return self._data["pull_requests"]
 
-    @property
-    async def issues(self) -> int:
+    async def get_issues(self) -> int:
         return self._data["issues"]
 
-    @property
-    async def current_streak(self) -> int:
+    async def get_current_streak(self) -> int:
         return self._data["current_streak"]
 
-    @property
-    async def longest_streak(self) -> int:
+    async def get_longest_streak(self) -> int:
         return self._data["longest_streak"]
 
-    @property
-    async def current_streak_range(self) -> str:
+    async def get_current_streak_range(self) -> str:
         return self._data["current_streak_range"]
 
-    @property
-    async def longest_streak_range(self) -> str:
+    async def get_longest_streak_range(self) -> str:
         return self._data["longest_streak_range"]
 
-    @property
-    async def recent_contributions(self) -> list:
+    async def get_recent_contributions(self) -> list:
         return self._data["recent_contributions"]
