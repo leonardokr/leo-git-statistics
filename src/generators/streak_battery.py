@@ -1,4 +1,5 @@
 from src.generators.base import BaseGenerator
+from src.core.protocols import BatteryProvider
 
 
 class StreakBatteryGenerator(BaseGenerator):
@@ -7,6 +8,8 @@ class StreakBatteryGenerator(BaseGenerator):
     The battery fills based on current streak relative to longest streak,
     with a glow effect when hitting a new record.
     """
+
+    stats: BatteryProvider
 
     BATTERY_MAX_HEIGHT = 87
     BATTERY_Y_OFFSET = 4

@@ -1,8 +1,11 @@
 from src.generators.base import BaseGenerator
+from src.core.protocols import LanguageProvider
 
 
 class LanguagesGenerator(BaseGenerator):
     """Generates the languages SVG template with programming language statistics."""
+
+    stats: LanguageProvider
 
     OUTPUT_NAME = "languages"
     TEMPLATE_NAME = "languages.svg"

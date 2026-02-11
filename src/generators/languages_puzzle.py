@@ -1,8 +1,11 @@
 from src.generators.base import BaseGenerator
+from src.core.protocols import LanguageProvider
 
 
 class LanguagesPuzzleGenerator(BaseGenerator):
     """Generates the languages puzzle SVG template with a treemap visualization."""
+
+    stats: LanguageProvider
 
     PUZZLE_WIDTH = 455
     PUZZLE_HEIGHT = 135

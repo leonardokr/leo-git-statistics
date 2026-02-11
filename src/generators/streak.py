@@ -1,10 +1,13 @@
 from src.generators.base import BaseGenerator
+from src.core.protocols import StreakProvider
 
 
 class StreakGenerator(BaseGenerator):
     """
     Generates the streak SVG template with contribution streak statistics.
     """
+
+    stats: StreakProvider
 
     OUTPUT_NAME = "streak"
     TEMPLATE_NAME = "streak.svg"

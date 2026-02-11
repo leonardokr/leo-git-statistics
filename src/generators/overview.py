@@ -1,10 +1,13 @@
 from src.generators.base import BaseGenerator
+from src.core.protocols import OverviewProvider
 
 
 class OverviewGenerator(BaseGenerator):
     """
     Generates the overview SVG template with general GitHub statistics.
     """
+
+    stats: OverviewProvider
 
     OUTPUT_NAME = "overview"
     TEMPLATE_NAME = "overview.svg"
