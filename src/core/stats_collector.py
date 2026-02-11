@@ -114,11 +114,12 @@ class StatsCollector:
         Project repository contributors: {contribs:,}
         Languages:\n\t\t\t- {formatted_languages}"""
 
-    async def is_repo_name_invalid(self, repo_name: str) -> bool:
+    async def is_repo_name_invalid(self, repo_name: Optional[str]) -> bool:
         """
         Check if a repository name is invalid or should be excluded.
 
         A repository is considered invalid if:
+            - It is None or empty.
             - It has already been processed.
             - It is not in the explicit inclusion list (if one is provided).
             - It is in the exclusion list.
@@ -126,6 +127,8 @@ class StatsCollector:
         :param repo_name: The name of the repository (owner/name format).
         :return: True if the repository should be excluded, False otherwise.
         """
+        if not repo_name:
+            return True
         return (
             repo_name in self._repos
             or len(self.environment_vars.only_included_repos) > 0
