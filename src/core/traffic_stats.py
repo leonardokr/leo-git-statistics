@@ -2,10 +2,11 @@
 """Traffic statistics management for views and clones."""
 
 from os import getenv
-from typing import Any
+from typing import Any, Tuple
 from datetime import datetime
 
 from src.db.db import GitRepoStatsDB
+from src.utils.helpers import to_bool
 
 
 class TrafficStats:
@@ -15,8 +16,32 @@ class TrafficStats:
 
     def __init__(self, db: GitRepoStatsDB, **kwargs):
         self._db = db
-        self._init_views(kwargs)
-        self._init_clones(kwargs)
+
+        (self.store_repo_view_count, self.repo_views,
+         self.repo_last_viewed, self.repo_first_viewed) = self._init_metric(
+            kwargs,
+            store_kwarg="store_repo_view_count", store_env="STORE_REPO_VIEWS",
+            count_kwarg="repo_views", count_env="REPO_VIEWS",
+            last_kwarg="repo_last_viewed", last_env="LAST_VIEWED",
+            first_kwarg="repo_first_viewed", first_env="FIRST_VIEWED",
+            db_count=self._db.views, db_to=self._db.views_to_date, db_from=self._db.views_from_date,
+            set_count=self._db.set_views_count,
+            set_from=self._db.set_views_from_date,
+            set_to=self._db.set_views_to_date,
+        )
+
+        (self.store_repo_clone_count, self.repo_clones,
+         self.repo_last_cloned, self.repo_first_cloned) = self._init_metric(
+            kwargs,
+            store_kwarg="store_repo_clone_count", store_env="STORE_REPO_CLONES",
+            count_kwarg="repo_clones", count_env="REPO_CLONES",
+            last_kwarg="repo_last_cloned", last_env="LAST_CLONED",
+            first_kwarg="repo_first_cloned", first_env="FIRST_CLONED",
+            db_count=self._db.clones, db_to=self._db.clones_to_date, db_from=self._db.clones_from_date,
+            set_count=self._db.set_clones_count,
+            set_from=self._db.set_clones_from_date,
+            set_to=self._db.set_clones_to_date,
+        )
 
     def _validate_date(self, date_str: str) -> str:
         """Validates date string format."""
@@ -27,61 +52,34 @@ class TrafficStats:
             pass
         return ""
 
-    def _init_views(self, kwargs) -> None:
-        """Initializes repository view statistics."""
-        store_view_count = kwargs.get("store_repo_view_count", getenv("STORE_REPO_VIEWS"))
-        self.store_repo_view_count = not store_view_count or store_view_count.strip().lower() != "false"
+    def _init_metric(self, kwargs, *, store_kwarg, store_env,
+                     count_kwarg, count_env, last_kwarg, last_env,
+                     first_kwarg, first_env, db_count, db_to, db_from,
+                     set_count, set_from, set_to) -> Tuple[bool, int, str, str]:
+        """Initializes a single traffic metric (views or clones)."""
+        store = to_bool(kwargs.get(store_kwarg, getenv(store_env)), default=True)
 
-        if not self.store_repo_view_count:
-            self.repo_views = 0
-            self._db.set_views_count(self.repo_views)
-            self.repo_last_viewed = "0000-00-00"
-            self.repo_first_viewed = "0000-00-00"
-            self._db.set_views_from_date(self.repo_first_viewed)
-            self._db.set_views_to_date(self.repo_last_viewed)
-            return
+        if not store:
+            set_count(0)
+            set_from("0000-00-00")
+            set_to("0000-00-00")
+            return store, 0, "0000-00-00", "0000-00-00"
 
-        repo_views = kwargs.get("repo_views", getenv("REPO_VIEWS"))
+        count_val = kwargs.get(count_kwarg, getenv(count_env))
         try:
-            self.repo_views = int(repo_views) if repo_views else self._db.views
-            if repo_views:
-                self._db.set_views_count(self.repo_views)
+            count = int(count_val) if count_val else db_count
+            if count_val:
+                set_count(count)
         except ValueError:
-            self.repo_views = self._db.views
+            count = db_count
 
-        last_v = kwargs.get("repo_last_viewed", getenv("LAST_VIEWED"))
-        self.repo_last_viewed = self._validate_date(last_v) if last_v else self._db.views_to_date
+        last_val = kwargs.get(last_kwarg, getenv(last_env))
+        last_date = self._validate_date(last_val) if last_val else db_to
 
-        first_v = kwargs.get("repo_first_viewed", getenv("FIRST_VIEWED"))
-        self.repo_first_viewed = self._validate_date(first_v) if first_v else self._db.views_from_date
+        first_val = kwargs.get(first_kwarg, getenv(first_env))
+        first_date = self._validate_date(first_val) if first_val else db_from
 
-    def _init_clones(self, kwargs) -> None:
-        """Initializes repository clone statistics."""
-        store_clone_count = kwargs.get("store_repo_clone_count", getenv("STORE_REPO_CLONES"))
-        self.store_repo_clone_count = not store_clone_count or store_clone_count.strip().lower() != "false"
-
-        if not self.store_repo_clone_count:
-            self.repo_clones = 0
-            self._db.set_clones_count(self.repo_clones)
-            self.repo_last_cloned = "0000-00-00"
-            self.repo_first_cloned = "0000-00-00"
-            self._db.set_clones_from_date(self.repo_first_cloned)
-            self._db.set_clones_to_date(self.repo_last_cloned)
-            return
-
-        repo_clones = kwargs.get("repo_clones", getenv("REPO_CLONES"))
-        try:
-            self.repo_clones = int(repo_clones) if repo_clones else self._db.clones
-            if repo_clones:
-                self._db.set_clones_count(self.repo_clones)
-        except ValueError:
-            self.repo_clones = self._db.clones
-
-        last_c = kwargs.get("repo_last_cloned", getenv("LAST_CLONED"))
-        self.repo_last_cloned = self._validate_date(last_c) if last_c else self._db.clones_to_date
-
-        first_c = kwargs.get("repo_first_cloned", getenv("FIRST_CLONED"))
-        self.repo_first_cloned = self._validate_date(first_c) if first_c else self._db.clones_from_date
+        return store, count, last_date, first_date
 
     def set_views(self, views: Any) -> None:
         """Updates the total repository views count and persists it."""
