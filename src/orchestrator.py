@@ -49,38 +49,19 @@ class ImageOrchestrator:
 
     def _create_generators(self) -> list[BaseGenerator]:
         """Creates the list of SVG generators to run."""
+        common = (
+            self.config,
+            self._stats,
+            self.formatter,
+            self.template_engine,
+            self.environment,
+        )
         return [
-            OverviewGenerator(
-                self.config,
-                self._stats,
-                self.formatter,
-                self.template_engine,
-                self.environment,
-            ),
-            LanguagesGenerator(
-                self.config,
-                self._stats,
-                self.formatter,
-                self.template_engine,
-            ),
-            LanguagesPuzzleGenerator(
-                self.config,
-                self._stats,
-                self.formatter,
-                self.template_engine,
-            ),
-            StreakGenerator(
-                self.config,
-                self._stats,
-                self.formatter,
-                self.template_engine,
-            ),
-            StreakBatteryGenerator(
-                self.config,
-                self._stats,
-                self.formatter,
-                self.template_engine,
-            ),
+            OverviewGenerator(*common),
+            LanguagesGenerator(*common),
+            LanguagesPuzzleGenerator(*common),
+            StreakGenerator(*common),
+            StreakBatteryGenerator(*common),
         ]
 
     async def run(self) -> None:

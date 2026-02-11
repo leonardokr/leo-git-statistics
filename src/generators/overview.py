@@ -1,15 +1,10 @@
 from src.generators.base import BaseGenerator
-from src.core.environment import Environment
 
 
 class OverviewGenerator(BaseGenerator):
     """
     Generates the overview SVG template with general GitHub statistics.
     """
-
-    def __init__(self, config, stats, formatter, template_engine, environment: Environment):
-        super().__init__(config, stats, formatter, template_engine)
-        self.environment = environment
 
     OUTPUT_NAME = "overview"
     TEMPLATE_NAME = "overview.svg"
