@@ -31,9 +31,10 @@ class StatsCollector:
 
     __DATE_FORMAT = "%Y-%m-%d"
 
-    def __init__(self, environment_vars: Environment, session: ClientSession):
+    def __init__(self, environment_vars: Environment, session: ClientSession,
+                 github_client: Optional[GitHubClient] = None):
         self.environment_vars: Environment = environment_vars
-        self.queries = GitHubClient(
+        self.queries = github_client or GitHubClient(
             username=self.environment_vars.username,
             access_token=self.environment_vars.access_token,
             session=session,
