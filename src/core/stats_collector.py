@@ -13,6 +13,7 @@ from datetime import date, timedelta
 
 from src.core.environment import Environment
 from src.core.github_client import GitHubClient
+from src.core.graphql_queries import GraphQLQueries
 from src.utils.decorators import lazy_async_property
 
 logger = logging.getLogger(__name__)
@@ -213,7 +214,7 @@ class StatsCollector:
 
         while True:
             raw_results = await self.queries.query(
-                GitHubClient.repos_overview(
+                GraphQLQueries.repos_overview(
                     owned_cursor=next_owned, contrib_cursor=next_contrib
                 )
             )
@@ -377,7 +378,7 @@ class StatsCollector:
         self._total_contributions = 0
 
         years = (
-            (await self.queries.query(GitHubClient.contributions_all_years()))
+            (await self.queries.query(GraphQLQueries.contributions_all_years()))
             .get("data", {})
             .get("viewer", {})
             .get("contributionsCollection", {})
@@ -385,7 +386,7 @@ class StatsCollector:
         )
 
         by_year = (
-            (await self.queries.query(GitHubClient.all_contributions(years)))
+            (await self.queries.query(GraphQLQueries.all_contributions(years)))
             .get("data", {})
             .get("viewer", {})
             .values()
@@ -684,7 +685,7 @@ class StatsCollector:
             return
 
         years = (
-            (await self.queries.query(GitHubClient.contributions_all_years()))
+            (await self.queries.query(GraphQLQueries.contributions_all_years()))
             .get("data", {})
             .get("viewer", {})
             .get("contributionsCollection", {})
