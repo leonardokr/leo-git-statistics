@@ -1,6 +1,6 @@
 import os
 import yaml
-from typing import Dict, Any, Optional, List
+from typing import Callable, Dict, Any, Optional, List
 from src.themes import load_all_themes
 
 
@@ -19,13 +19,16 @@ class Config:
     STREAK_TEMPLATE = "streak.svg"
     STREAK_BATTERY_TEMPLATE = "streak_battery.svg"
 
-    def __init__(self, config_path: str = "config.yml"):
+    def __init__(self, config_path: str = "config.yml",
+                 theme_loader: Callable[[], Dict[str, Dict[str, Any]]] = None):
         """
         Initializes the configuration by loading themes and reading config.yml.
 
         :param config_path: Path to the configuration file.
+        :param theme_loader: Callable that returns available themes. Defaults to
+                             ``load_all_themes``.
         """
-        self._all_themes = load_all_themes()
+        self._all_themes = (theme_loader or load_all_themes)()
         self._enabled_themes: List[str] = []
         self._load_config(config_path)
 
