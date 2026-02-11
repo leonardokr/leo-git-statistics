@@ -15,14 +15,8 @@ from src.core.config import Config
 from src.core.credentials import GitHubCredentials
 from src.presentation.stats_formatter import StatsFormatter
 from src.presentation.svg_template import SVGTemplate
-from src.generators import (
-    BaseGenerator,
-    OverviewGenerator,
-    LanguagesGenerator,
-    LanguagesPuzzleGenerator,
-    StreakGenerator,
-    StreakBatteryGenerator,
-)
+import src.generators  # noqa: F401 – triggers @register_generator decorators
+from src.generators import BaseGenerator, GeneratorRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +42,11 @@ class ImageOrchestrator:
         self._stats = None
 
     def _create_generators(self) -> list[BaseGenerator]:
-        """Creates the list of SVG generators to run."""
+        """
+        Creates generator instances from the registry.
+
+        :return: List of instantiated generators.
+        """
         common = (
             self.config,
             self._stats,
@@ -56,13 +54,7 @@ class ImageOrchestrator:
             self.template_engine,
             self.environment,
         )
-        return [
-            OverviewGenerator(*common),
-            LanguagesGenerator(*common),
-            LanguagesPuzzleGenerator(*common),
-            StreakGenerator(*common),
-            StreakBatteryGenerator(*common),
-        ]
+        return [cls(*common) for cls in GeneratorRegistry.get_all()]
 
     async def run(self) -> None:
         """

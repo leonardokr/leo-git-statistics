@@ -1,7 +1,8 @@
-from src.generators.base import BaseGenerator
+from src.generators.base import BaseGenerator, register_generator
 from src.core.protocols import StreakProvider
 
 
+@register_generator
 class StreakGenerator(BaseGenerator):
     """
     Generates the streak SVG template with contribution streak statistics.

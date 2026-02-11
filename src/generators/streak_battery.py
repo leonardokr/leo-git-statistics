@@ -1,7 +1,8 @@
-from src.generators.base import BaseGenerator
+from src.generators.base import BaseGenerator, register_generator
 from src.core.protocols import BatteryProvider
 
 
+@register_generator
 class StreakBatteryGenerator(BaseGenerator):
     """
     Generates the streak battery SVG template with a visual battery indicator.

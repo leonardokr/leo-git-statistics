@@ -1,10 +1,51 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Callable, Optional
+from typing import Dict, Any, Callable, List, Optional, Type
 
 from src.core.config import Config
 from src.core.stats_collector import StatsCollector
 from src.presentation.stats_formatter import StatsFormatter
 from src.presentation.svg_template import SVGTemplate
+
+
+class GeneratorRegistry:
+    """
+    Registry that tracks all available generator classes.
+
+    Generator classes register themselves via the :func:`register_generator`
+    decorator and the orchestrator retrieves them with :meth:`get_all`.
+    """
+
+    _generators: List[Type["BaseGenerator"]] = []
+
+    @classmethod
+    def register(cls, generator_cls: Type["BaseGenerator"]) -> Type["BaseGenerator"]:
+        """
+        Register a generator class.
+
+        :param generator_cls: The generator class to register.
+        :return: The same class, unchanged.
+        """
+        cls._generators.append(generator_cls)
+        return generator_cls
+
+    @classmethod
+    def get_all(cls) -> List[Type["BaseGenerator"]]:
+        """
+        Return all registered generator classes.
+
+        :return: List of registered generator classes.
+        """
+        return list(cls._generators)
+
+
+def register_generator(cls: Type["BaseGenerator"]) -> Type["BaseGenerator"]:
+    """
+    Class decorator that registers a generator in the :class:`GeneratorRegistry`.
+
+    :param cls: The generator class to register.
+    :return: The same class, unchanged.
+    """
+    return GeneratorRegistry.register(cls)
 
 
 class BaseGenerator(ABC):
@@ -13,18 +54,21 @@ class BaseGenerator(ABC):
     """
 
     OUTPUT_NAME: str = ""
+    TEMPLATE_NAME: str = ""
 
     def __init__(
         self,
         config: Config,
         stats: StatsCollector,
         formatter: StatsFormatter,
-        template_engine: SVGTemplate
+        template_engine: SVGTemplate,
+        environment=None,
     ):
         self.config = config
         self.stats = stats
         self.formatter = formatter
         self.template_engine = template_engine
+        self.environment = environment
 
     @abstractmethod
     async def generate(self) -> None:
