@@ -2,7 +2,7 @@
   <img src="generated_images/samples/overview_sample_light.svg" alt="GitHub Stats Overview" />
 </p>
 
-<h1 align="center">Git Statistics</h1>
+<h1 align="center">Leo's Git Statistics</h1>
 
 <p align="center">
   <strong>Generate beautiful, customizable SVG statistics cards for your GitHub profile</strong>
@@ -227,49 +227,67 @@ themes:
 
 ```
 src/
-├── core/                    # Business logic
-│   ├── config.py           # Configuration management
-│   ├── environment.py      # Environment variables
-│   ├── github_client.py    # GitHub API client (GraphQL + REST)
-│   ├── mock_stats.py       # Mock data for testing
-│   └── stats_collector.py  # Statistics aggregation
-├── db/                     # Data persistence
-│   └── db.py               # JSON database for accumulated metrics
-├── generators/             # SVG generators
-│   ├── base.py             # Base generator class
-│   ├── languages.py        # Language distribution card
-│   ├── languages_puzzle.py # Language treemap card
-│   ├── overview.py         # Overview statistics card
-│   ├── streak.py           # Contribution streak card
-│   └── streak_battery.py   # Streak battery card
-├── presentation/           # Rendering layer
-│   ├── stats_formatter.py  # Data formatting utilities
-│   └── svg_template.py     # SVG template engine
-├── templates/              # SVG templates
+├── core/                           # Business logic & domain
+│   ├── config.py                   # Theme configuration management
+│   ├── credentials.py              # GitHub token/actor resolution
+│   ├── environment.py              # Environment variables & injectable dependencies
+│   ├── display_settings.py         # Statistics visibility toggles
+│   ├── repository_filter.py        # Repository inclusion/exclusion rules
+│   ├── traffic_stats.py            # Accumulated traffic state
+│   ├── protocols.py                # Segregated Protocol interfaces (ISP)
+│   ├── github_client.py            # GitHub API client (GraphQL + REST)
+│   ├── graphql_queries.py          # GraphQL query builders
+│   ├── stats_collector.py          # Facade composing all collectors
+│   ├── repo_stats_collector.py     # Repos, stars, forks, languages
+│   ├── contribution_tracker.py     # Streaks & contribution calendar
+│   ├── code_change_analyzer.py     # Lines changed, percentages, contributors
+│   ├── traffic_collector.py        # Views & clones traffic
+│   ├── engagement_collector.py     # Pull requests, issues, collaborators
+│   └── mock_stats.py               # Mock data for local testing
+├── db/                             # Data persistence
+│   └── db.py                       # JSON database for accumulated metrics
+├── generators/                     # SVG generators (auto-discovered via registry)
+│   ├── base.py                     # BaseGenerator ABC + GeneratorRegistry
+│   ├── overview.py                 # Overview statistics card
+│   ├── languages.py                # Language distribution card
+│   ├── languages_puzzle.py         # Language treemap card
+│   ├── streak.py                   # Contribution streak card
+│   └── streak_battery.py          # Streak battery card
+├── presentation/                   # Rendering layer
+│   ├── stats_formatter.py          # Data formatting utilities
+│   ├── svg_template.py             # SVG template engine
+│   └── visual_algorithms.py        # Treemap & color palette algorithms
+├── templates/                      # SVG templates
 │   ├── overview.svg
 │   ├── languages.svg
 │   ├── languages_puzzle.svg
 │   ├── streak.svg
 │   └── streak_battery.svg
-├── themes/                 # Theme definitions
-│   ├── loader.py           # Theme loading utilities
+├── themes/                         # Theme definitions (YAML)
+│   ├── loader.py                   # Theme loading utilities
 │   ├── github.yml
 │   ├── popular.yml
 │   ├── catppuccin.yml
 │   ├── material.yml
 │   └── creative.yml
-├── utils/                  # Utility functions
-│   └── file_system.py      # File system helpers
-└── orchestrator.py         # Main coordinator
+├── utils/                          # Utility functions
+│   ├── file_system.py              # File system helpers
+│   ├── decorators.py               # Async property decorators
+│   └── helpers.py                  # Shared helper functions
+└── orchestrator.py                 # Main coordinator
 ```
 
 ### Key Design Decisions
 
+- **SOLID Architecture** - Each class has a single responsibility, dependencies are injected, and interfaces are segregated via `typing.Protocol`
+- **Facade Pattern** - `StatsCollector` composes 5 specialized collectors (`RepoStatsCollector`, `ContributionTracker`, `CodeChangeAnalyzer`, `TrafficCollector`, `EngagementCollector`) behind a unified API
+- **Registry Pattern** - Generators self-register via `@register_generator` decorator; the orchestrator discovers them automatically without hardcoded lists
+- **Protocol-based Interfaces** - Each generator depends only on the subset of stats it needs (`StreakProvider`, `LanguageProvider`, `OverviewProvider`, `BatteryProvider`)
+- **Dependency Injection** - All major classes accept optional dependencies in their constructors for testability
 - **Async/Await** - Concurrent API calls for better performance
-- **Separation of Concerns** - Clear boundaries between data, logic, and presentation
 - **YAML-based Themes** - Easy to add, remove, or modify themes
 - **Template Engine** - Simple placeholder replacement for maintainability
-- **Persistent Storage** - JSON database for accumulated metrics
+- **Persistent Storage** - JSON database for accumulated metrics beyond GitHub's 14-day limit
 
 ## Development
 
