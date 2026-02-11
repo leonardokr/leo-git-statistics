@@ -17,9 +17,9 @@ class TestEnvironment:
         
         assert env.username == "testuser"
         assert env.access_token == "testtoken"
-        assert "repo1" in env.exclude_repos
-        assert "repo2" in env.exclude_repos
-        assert "lang1" in env.exclude_langs
+        assert "repo1" in env.filter.exclude_repos
+        assert "repo2" in env.filter.exclude_repos
+        assert "lang1" in env.filter.exclude_langs
 
     def test_environment_boolean_filters(self, monkeypatch):
         """
@@ -30,14 +30,14 @@ class TestEnvironment:
         
         env = Environment(username="testuser", access_token="testtoken")
         
-        assert env.include_forked_repos is True
-        assert env.exclude_private_repos is False
+        assert env.filter.include_forked_repos is True
+        assert env.filter.exclude_private_repos is False
 
     def test_validate_date(self):
         """
         Tests date validation logic.
         """
         env = Environment(username="u", access_token="t")
-        assert env._validate_date("2023-01-01") == "2023-01-01"
-        assert env._validate_date("invalid-date") == ""
-        assert env._validate_date("01-01-2023") == ""
+        assert env.traffic._validate_date("2023-01-01") == "2023-01-01"
+        assert env.traffic._validate_date("invalid-date") == ""
+        assert env.traffic._validate_date("01-01-2023") == ""

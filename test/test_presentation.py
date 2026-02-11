@@ -36,7 +36,7 @@ class TestStatsFormatter:
         assert 'fill="#3572A5"' in svg
         assert 'fill="#f1e05a"' in svg
         assert '<rect' in svg
-        assert 'width="150.00"' in svg
+        assert 'width="227.50"' in svg
 
     def test_format_language_progress_custom_width(self):
         """

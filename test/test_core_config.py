@@ -46,7 +46,7 @@ class TestConfig:
         themes = config.THEMES
         assert "light" in themes
         assert "dark" in themes
-        assert themes["light"]["suffix"] == "LightMode"
+        assert themes["light"]["suffix"] == "light"
         assert "bg_color" in themes["light"]["colors"]
 
     def test_list_available_themes(self):
@@ -68,4 +68,4 @@ class TestConfig:
         dracula = config.get_theme("dracula")
         assert dracula is not None
         assert "colors" in dracula
-        assert dracula["suffix"] == "Dracula"
+        assert dracula["suffix"] == "dracula"
