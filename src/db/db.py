@@ -1,7 +1,11 @@
 #!/usr/bin/python3
 
 from json import load, dumps
+from pathlib import Path
 from typing import Any
+
+DB_PATH = Path(__file__).parent / "db.json"
+
 
 class GitRepoStatsDB:
     """
@@ -25,13 +29,8 @@ class GitRepoStatsDB:
         self.clones_start = None
         self.clones_end = None
 
-        try:
-            with open("src/db/db.json", "r") as db:
-                self.__db = load(db)
-        except FileNotFoundError:
-            # Fallback for different execution contexts
-            with open("../src/db/db.json", "r") as db:
-                self.__db = load(db)
+        with open(DB_PATH, "r") as db:
+            self.__db = load(db)
 
         self.views = int(self.__db['views']['count'])
         self.views_from_date = self.__db['views']['from']
@@ -45,12 +44,8 @@ class GitRepoStatsDB:
         """
         Saves the current state of the database to the JSON file.
         """
-        try:
-            with open("src/db/db.json", "w") as db:
-                db.write(dumps(self.__db, indent=2))
-        except FileNotFoundError:
-            with open("../src/db/db.json", "w") as db:
-                db.write(dumps(self.__db, indent=2))
+        with open(DB_PATH, "w") as db:
+            db.write(dumps(self.__db, indent=2))
 
     def set_views_count(self, count: Any) -> None:
         """
