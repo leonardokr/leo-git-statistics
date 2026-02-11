@@ -12,14 +12,27 @@ from src.core.display_settings import DisplaySettings
 class Environment:
     """Manages GitHub credentials and aggregates configuration settings."""
 
-    def __init__(self, username: str, access_token: str, **kwargs):
+    def __init__(self, username: str, access_token: str, *,
+                 db: GitRepoStatsDB = None,
+                 repo_filter: RepositoryFilter = None,
+                 traffic: TrafficStats = None,
+                 display: DisplaySettings = None,
+                 **kwargs):
+        """
+        :param username: GitHub username.
+        :param access_token: GitHub personal access token.
+        :param db: Database instance. Defaults to a new ``GitRepoStatsDB``.
+        :param repo_filter: Repository filter. Defaults to a new ``RepositoryFilter``.
+        :param traffic: Traffic stats tracker. Defaults to a new ``TrafficStats``.
+        :param display: Display settings. Defaults to a new ``DisplaySettings``.
+        """
         self.username = username
         self.access_token = access_token
 
-        self._db = GitRepoStatsDB()
-        self.filter = RepositoryFilter(**kwargs)
-        self.traffic = TrafficStats(self._db, **kwargs)
-        self.display = DisplaySettings(**kwargs)
+        self._db = db or GitRepoStatsDB()
+        self.filter = repo_filter or RepositoryFilter(**kwargs)
+        self.traffic = traffic or TrafficStats(self._db, **kwargs)
+        self.display = display or DisplaySettings(**kwargs)
 
         more_collabs = kwargs.get("more_collabs", getenv("MORE_COLLABS"))
         try:
