@@ -118,8 +118,8 @@
   <text x="115" y="91" font-family="'Segoe UI', Ubuntu, Sans-Serif" font-size="9" fill="#24292f" text-anchor="middle" class="animate-fade delay-7">1</text>
   <g class="animate-fill delay-8" style="transform-origin: 133px bottom;"><rect x="126" y="27" width="14" height="73" rx="2" fill="#0969da"/></g>
   <text x="133" y="22" font-family="'Segoe UI', Ubuntu, Sans-Serif" font-size="9" fill="#24292f" text-anchor="middle" class="animate-fade delay-8">64</text>
-  <g class="animate-fill delay-9" style="transform-origin: 151px bottom;"><rect x="144" y="71" width="14" height="29" rx="2" fill="#0969da"/></g>
-  <text x="151" y="66" font-family="'Segoe UI', Ubuntu, Sans-Serif" font-size="9" fill="#24292f" text-anchor="middle" class="animate-fade delay-9">26</text>
+  <g class="animate-fill delay-9" style="transform-origin: 151px bottom;"><rect x="144" y="56" width="14" height="44" rx="2" fill="#0969da"/></g>
+  <text x="151" y="51" font-family="'Segoe UI', Ubuntu, Sans-Serif" font-size="9" fill="#24292f" text-anchor="middle" class="animate-fade delay-9">39</text>
   <g class="animate-fill delay-10" style="transform-origin: 169px bottom;"><rect x="162" y="96" width="14" height="4" rx="2" fill="#0969da"/></g>
 </g>
 
