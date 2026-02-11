@@ -1,10 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Callable, List, Optional, Type
 
-from src.core.config import Config
-from src.core.stats_collector import StatsCollector
-from src.presentation.stats_formatter import StatsFormatter
-from src.presentation.svg_template import SVGTemplate
+from src.core.protocols import Formatter, TemplateRenderer
 
 
 class GeneratorRegistry:
@@ -58,11 +55,11 @@ class BaseGenerator(ABC):
 
     def __init__(
         self,
-        config: Config,
-        stats: StatsCollector,
-        formatter: StatsFormatter,
-        template_engine: SVGTemplate,
-        environment=None,
+        config: Any,
+        stats: Any,
+        formatter: Formatter,
+        template_engine: TemplateRenderer,
+        environment: Any = None,
     ):
         self.config = config
         self.stats = stats
