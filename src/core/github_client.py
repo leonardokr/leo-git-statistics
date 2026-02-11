@@ -8,10 +8,10 @@ GraphQL (v4) and REST (v3) APIs with proper error handling and rate limiting.
 
 import logging
 from asyncio import Semaphore, sleep
-from typing import Dict, Optional, List
+from typing import Dict, Optional, List, Union
 
 import aiohttp
-from requests import post, get
+import requests
 from json import loads, JSONDecodeError
 
 logger = logging.getLogger(__name__)
@@ -60,6 +60,11 @@ class GitHubClient:
         :param session: aiohttp ClientSession for making requests.
         :param max_connections: Maximum number of concurrent connections.
         """
+        if not username or not username.strip():
+            raise ValueError("GitHub username must not be empty")
+        if not access_token or not access_token.strip():
+            raise ValueError("GitHub access token must not be empty")
+
         self.username = username
         self.access_token = access_token
         self.session = session
@@ -91,7 +96,7 @@ class GitHubClient:
 
             try:
                 async with self.semaphore:
-                    r_requests = post(
+                    r_requests = requests.post(
                         self.__GITHUB_API_URL + self.__GRAPHQL_PATH,
                         headers=self.headers,
                         json={"query": generated_query},
@@ -100,14 +105,14 @@ class GitHubClient:
 
                     if result is not None:
                         return result
-            except Exception as fallback_error:
+            except (requests.RequestException, JSONDecodeError, ValueError) as fallback_error:
                 logger.error("Sync fallback also failed: %s", fallback_error)
 
         return dict()
 
     async def query_rest(self,
                          path: str,
-                         params: Optional[Dict] = None) -> Dict:
+                         params: Optional[Dict] = None) -> Union[Dict, List]:
         """
         Makes a request to the GitHub REST API.
 
@@ -143,7 +148,7 @@ class GitHubClient:
 
                 try:
                     async with self.semaphore:
-                        r_requests = get(
+                        r_requests = requests.get(
                             self.__GITHUB_API_URL + path,
                             headers=self.headers,
                             params=tuple(params.items()),
@@ -155,7 +160,7 @@ class GitHubClient:
                             continue
                         elif r_requests.status_code == 200:
                             return r_requests.json()
-                except Exception as fallback_error:
+                except (requests.RequestException, JSONDecodeError, ValueError) as fallback_error:
                     logger.error("Sync fallback failed: %s", fallback_error)
 
         logger.warning("Too many 202s for path %s. Data will be incomplete.", path)
@@ -316,11 +321,11 @@ class GitHubClient:
         :return: Dictionary mapping language names to hex color codes.
         """
         try:
-            response = get(
+            response = requests.get(
                 "https://raw.githubusercontent.com/ozh/github-colors/master/colors.json"
             )
             response.raise_for_status()
             return loads(response.text)
-        except Exception as e:
+        except (requests.RequestException, JSONDecodeError, ValueError) as e:
             logger.error("Failed to fetch language colors: %s", e)
             return dict()
