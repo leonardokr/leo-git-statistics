@@ -30,36 +30,35 @@ class StreakBatteryGenerator(BaseGenerator):
 
         is_record = current_streak > 0 and current_streak >= longest_streak
 
-        for theme_name, theme_config in self.config.THEMES.items():
-            colors = theme_config["colors"]
-            contribution_bars = self._generate_contribution_bars(
-                recent_contributions,
-                colors.get("accent_color", "#0969da"),
-                colors.get("text_color", "#24292f")
-            )
+        base_replacements = {
+            "current_streak": str(current_streak),
+            "longest_streak": str(longest_streak),
+            "current_streak_range": await self.stats.get_current_streak_range(),
+            "longest_streak_range": await self.stats.get_longest_streak_range(),
+            "streak_percentage": str(streak_percentage),
+            "battery_fill_height": str(battery_fill_height),
+            "battery_fill_y": str(battery_fill_y),
+            "is_record_class": "animate-glow" if is_record else "",
+            "record_icon_class": "animate-pulse" if is_record else "",
+            "battery_gradient_id": "glow-gradient" if is_record else "battery-gradient",
+            "shimmer_display": "block" if streak_percentage > 10 else "none",
+        }
 
-            replacements = {
-                "current_streak": str(current_streak),
-                "longest_streak": str(longest_streak),
-                "current_streak_range": await self.stats.get_current_streak_range(),
-                "longest_streak_range": await self.stats.get_longest_streak_range(),
-                "streak_percentage": str(streak_percentage),
-                "battery_fill_height": str(battery_fill_height),
-                "battery_fill_y": str(battery_fill_y),
-                "is_record_class": "animate-glow" if is_record else "",
-                "record_icon_class": "animate-pulse" if is_record else "",
-                "battery_gradient_id": "glow-gradient" if is_record else "battery-gradient",
-                "shimmer_display": "block" if streak_percentage > 10 else "none",
-                "contribution_bars": contribution_bars,
+        def theme_callback(colors):
+            return {
+                "contribution_bars": self._generate_contribution_bars(
+                    recent_contributions,
+                    colors.get("accent_color", "#0969da"),
+                    colors.get("text_color", "#24292f"),
+                ),
             }
-            replacements.update(colors)
 
-            self.template_engine.render_and_save(
-                self.config.STREAK_BATTERY_TEMPLATE,
-                output_name,
-                replacements,
-                theme_config["suffix"]
-            )
+        self.render_for_all_themes(
+            self.config.STREAK_BATTERY_TEMPLATE,
+            output_name,
+            base_replacements,
+            theme_callback,
+        )
 
     def _generate_contribution_bars(self, contributions: list, bar_color: str, text_color: str) -> str:
         if not contributions:
