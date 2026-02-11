@@ -25,6 +25,9 @@ class StatsCollector:
     """
     Facade that composes specialized collectors and exposes a unified API.
 
+    New collectors can be registered via :meth:`register_collector` so that
+    additional metrics are available without modifying this class.
+
     :param environment_vars: Configuration and environment settings.
     :param session: aiohttp ClientSession for making requests.
     :param github_client: Optional pre-built GitHubClient.
@@ -39,11 +42,38 @@ class StatsCollector:
             session=session,
         )
 
+        self._collectors: Dict[str, Any] = {}
+
         self._repo_stats = RepoStatsCollector(environment_vars, self.queries)
         self._contributions = ContributionTracker(self.queries)
         self._code_changes = CodeChangeAnalyzer(environment_vars.username, self.queries)
         self._traffic = TrafficCollector(environment_vars, self.queries)
         self._engagement = EngagementCollector(environment_vars, self.queries)
+
+        self.register_collector("repo_stats", self._repo_stats)
+        self.register_collector("contributions", self._contributions)
+        self.register_collector("code_changes", self._code_changes)
+        self.register_collector("traffic", self._traffic)
+        self.register_collector("engagement", self._engagement)
+
+    def register_collector(self, name: str, collector: Any) -> None:
+        """
+        Register a named collector for later retrieval.
+
+        :param name: Unique identifier for the collector.
+        :param collector: The collector instance.
+        """
+        self._collectors[name] = collector
+
+    def get_collector(self, name: str) -> Any:
+        """
+        Retrieve a registered collector by name.
+
+        :param name: The collector identifier.
+        :return: The collector instance.
+        :raises KeyError: If no collector is registered under the given name.
+        """
+        return self._collectors[name]
 
     async def get_stats(self) -> None:
         """Fetch and aggregate general repository statistics from GitHub."""
