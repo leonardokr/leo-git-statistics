@@ -491,51 +491,64 @@ class StatsCollector:
         """
         return "0.00%"
 
+    async def _collect_traffic_entries(
+        self, metric_type: str, last_date: str, accumulate_fn
+    ) -> Tuple[int, Set[str]]:
+        """
+        Collect traffic entries from all repos for a given metric.
+
+        :param metric_type: Either "views" or "clones".
+        :param last_date: The last recorded date for this metric.
+        :param accumulate_fn: Callable to accumulate new counts.
+        :return: Tuple of (today_count, all_relevant_dates).
+        """
+        today = date.today().strftime(self.__DATE_FORMAT)
+        yesterday = (date.today() - timedelta(1)).strftime(self.__DATE_FORMAT)
+        dates = {last_date, yesterday}
+        today_count = 0
+
+        repos = await self.get_repos()
+        for repo in repos:
+            r = await self.queries.query_rest(f"/repos/{repo}/traffic/{metric_type}")
+
+            for entry in r.get(metric_type, []):
+                timestamp = (entry.get("timestamp") or "")[:10]
+                if timestamp == today:
+                    today_count += entry.get("count", 0)
+                elif timestamp > last_date:
+                    accumulate_fn(entry.get("count", 0))
+                    dates.add(timestamp)
+
+        if last_date == "0000-00-00":
+            dates.discard(last_date)
+
+        return today_count, dates
+
     async def get_views(self) -> int:
         """
         Retrieve the cumulative count of repository views.
-
-        Note: The GitHub API only returns view data for the last 14 days.
-        This property aggregates historical data with recent data from the API.
 
         :return: Total repository view count.
         """
         if self._views is not None:
             return self._views
 
-        last_viewed = self.environment_vars.traffic.repo_last_viewed
-        today = date.today().strftime(self.__DATE_FORMAT)
+        traffic = self.environment_vars.traffic
+        today_count, dates = await self._collect_traffic_entries(
+            "views", traffic.repo_last_viewed, traffic.set_views
+        )
         yesterday = (date.today() - timedelta(1)).strftime(self.__DATE_FORMAT)
-        dates = {last_viewed, yesterday}
 
-        today_view_count = 0
-        repos = await self.get_repos()
-        for repo in repos:
-            r = await self.queries.query_rest(f"/repos/{repo}/traffic/views")
-
-            for view in r.get("views", []):
-                if view.get("timestamp")[:10] == today:
-                    today_view_count += view.get("count", 0)
-                elif view.get("timestamp")[:10] > last_viewed:
-                    self.environment_vars.traffic.set_views(view.get("count", 0))
-                    dates.add(view.get("timestamp")[:10])
-
-        if last_viewed == "0000-00-00":
-            dates.remove(last_viewed)
-
-        if self.environment_vars.traffic.store_repo_view_count:
-            self.environment_vars.traffic.set_last_viewed(yesterday)
-
-            if self.environment_vars.traffic.repo_first_viewed == "0000-00-00":
-                self.environment_vars.traffic.repo_first_viewed = min(dates)
-            self.environment_vars.traffic.set_first_viewed(
-                self.environment_vars.traffic.repo_first_viewed
-            )
-            self._views_from_date = self.environment_vars.traffic.repo_first_viewed
+        if traffic.store_repo_view_count:
+            traffic.set_last_viewed(yesterday)
+            if traffic.repo_first_viewed == "0000-00-00":
+                traffic.repo_first_viewed = min(dates)
+            traffic.set_first_viewed(traffic.repo_first_viewed)
+            self._views_from_date = traffic.repo_first_viewed
         else:
             self._views_from_date = min(dates)
 
-        self._views = self.environment_vars.traffic.repo_views + today_view_count
+        self._views = traffic.repo_views + today_count
         return self._views
 
     @lazy_async_property("_views_from_date", "get_views")
@@ -551,47 +564,27 @@ class StatsCollector:
         """
         Retrieve the cumulative count of repository clones.
 
-        Note: Similar to views, GitHub API only returns clone data for the last 14 days.
-        This property combines database records with recent API data.
-
         :return: Total repository clone count.
         """
         if self._clones is not None:
             return self._clones
 
-        last_cloned = self.environment_vars.traffic.repo_last_cloned
-        today = date.today().strftime(self.__DATE_FORMAT)
+        traffic = self.environment_vars.traffic
+        today_count, dates = await self._collect_traffic_entries(
+            "clones", traffic.repo_last_cloned, traffic.set_clones
+        )
         yesterday = (date.today() - timedelta(1)).strftime(self.__DATE_FORMAT)
-        dates = {last_cloned, yesterday}
 
-        today_clone_count = 0
-        repos = await self.get_repos()
-        for repo in repos:
-            r = await self.queries.query_rest(f"/repos/{repo}/traffic/clones")
-
-            for clone in r.get("clones", []):
-                if clone.get("timestamp")[:10] == today:
-                    today_clone_count += clone.get("count", 0)
-                elif clone.get("timestamp")[:10] > last_cloned:
-                    self.environment_vars.traffic.set_clones(clone.get("count", 0))
-                    dates.add(clone.get("timestamp")[:10])
-
-        if last_cloned == "0000-00-00":
-            dates.remove(last_cloned)
-
-        if self.environment_vars.traffic.store_repo_clone_count:
-            self.environment_vars.traffic.set_last_cloned(yesterday)
-
-            if self.environment_vars.traffic.repo_first_cloned == "0000-00-00":
-                self.environment_vars.traffic.repo_first_cloned = min(dates)
-            self.environment_vars.traffic.set_first_cloned(
-                self.environment_vars.traffic.repo_first_cloned
-            )
-            self._clones_from_date = self.environment_vars.traffic.repo_first_cloned
+        if traffic.store_repo_clone_count:
+            traffic.set_last_cloned(yesterday)
+            if traffic.repo_first_cloned == "0000-00-00":
+                traffic.repo_first_cloned = min(dates)
+            traffic.set_first_cloned(traffic.repo_first_cloned)
+            self._clones_from_date = traffic.repo_first_cloned
         else:
             self._clones_from_date = min(dates)
 
-        self._clones = self.environment_vars.traffic.repo_clones + today_clone_count
+        self._clones = traffic.repo_clones + today_count
         return self._clones
 
     @lazy_async_property("_clones_from_date", "get_clones")
