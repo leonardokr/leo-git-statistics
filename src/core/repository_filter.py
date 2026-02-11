@@ -2,14 +2,9 @@
 """Repository filtering configuration."""
 
 from os import getenv
-from typing import Optional, Set
+from typing import Set
 
-
-def _to_bool(val: Optional[str], default: bool = False) -> bool:
-    """Convert a string value to boolean with a default fallback."""
-    if val is None:
-        return default
-    return str(val).strip().lower() == "true"
+from src.utils.helpers import to_bool
 
 
 class RepositoryFilter:
@@ -30,11 +25,11 @@ class RepositoryFilter:
 
     def _init_type_filters(self, kwargs) -> None:
         """Initializes repository type filters."""
-        self.include_forked_repos = _to_bool(kwargs.get("include_forked_repos", getenv("INCLUDE_FORKED_REPOS")))
-        self.exclude_contrib_repos = _to_bool(kwargs.get("exclude_contrib_repos", getenv("EXCLUDE_CONTRIB_REPOS")))
-        self.exclude_archive_repos = _to_bool(kwargs.get("exclude_archive_repos", getenv("EXCLUDE_ARCHIVE_REPOS")))
-        self.exclude_private_repos = _to_bool(kwargs.get("exclude_private_repos", getenv("EXCLUDE_PRIVATE_REPOS")))
-        self.exclude_public_repos = _to_bool(kwargs.get("exclude_public_repos", getenv("EXCLUDE_PUBLIC_REPOS")))
+        self.include_forked_repos = to_bool(kwargs.get("include_forked_repos", getenv("INCLUDE_FORKED_REPOS")))
+        self.exclude_contrib_repos = to_bool(kwargs.get("exclude_contrib_repos", getenv("EXCLUDE_CONTRIB_REPOS")))
+        self.exclude_archive_repos = to_bool(kwargs.get("exclude_archive_repos", getenv("EXCLUDE_ARCHIVE_REPOS")))
+        self.exclude_private_repos = to_bool(kwargs.get("exclude_private_repos", getenv("EXCLUDE_PRIVATE_REPOS")))
+        self.exclude_public_repos = to_bool(kwargs.get("exclude_public_repos", getenv("EXCLUDE_PUBLIC_REPOS")))
 
     def _init_repo_lists(self, kwargs) -> None:
         """Initializes manually added and only-included repo lists."""
