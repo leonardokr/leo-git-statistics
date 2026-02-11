@@ -47,7 +47,7 @@
   <g class="animate-fade delay-2">
     <rect x="0" y="0" width="455" height="8" rx="4" ry="4" fill="#d0d7de" opacity="0.3"/>
     <g clip-path="url(#progress-clip)" class="progress-animate">
-      <rect x="0.00" y="0" width="423.20" height="8" fill="#3572A5"/><rect x="423.20" y="0" width="12.17" height="8" fill="#012456"/><rect x="435.36" y="0" width="7.94" height="8" fill="#f1e05a"/><rect x="443.30" y="0" width="5.88" height="8" fill="#A97BFF"/><rect x="449.18" y="0" width="3.33" height="8" fill="#3178c6"/><rect x="452.51" y="0" width="1.01" height="8" fill="#f34b7d"/><rect x="453.52" y="0" width="0.78" height="8" fill="#e34c26"/><rect x="454.30" y="0" width="0.31" height="8" fill="#3D6117"/><rect x="454.61" y="0" width="0.30" height="8" fill="#663399"/><rect x="454.91" y="0" width="0.09" height="8" fill="#C1F12E"/>
+      <rect x="0.00" y="0" width="423.20" height="8" fill="#3572A5"/><rect x="423.20" y="0" width="12.16" height="8" fill="#012456"/><rect x="435.37" y="0" width="7.94" height="8" fill="#f1e05a"/><rect x="443.30" y="0" width="5.87" height="8" fill="#A97BFF"/><rect x="449.18" y="0" width="3.33" height="8" fill="#3178c6"/><rect x="452.51" y="0" width="1.01" height="8" fill="#f34b7d"/><rect x="453.52" y="0" width="0.78" height="8" fill="#e34c26"/><rect x="454.30" y="0" width="0.31" height="8" fill="#3D6117"/><rect x="454.61" y="0" width="0.30" height="8" fill="#663399"/><rect x="454.91" y="0" width="0.09" height="8" fill="#C1F12E"/>
     </g>
   </g>
 </g>

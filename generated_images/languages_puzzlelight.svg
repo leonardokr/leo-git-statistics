@@ -64,17 +64,17 @@
 <g transform="translate(20, 50)">
     <g class="animate-fade delay-2">
     <g clip-path="url(#treemap-clip)">
-      <rect class="puzzle-rect delay-1" x="1.00" y="1.00" width="349.81" height="102.35" rx="4.0" fill="#0da58b"/>
+      <rect class="puzzle-rect delay-1" x="1.00" y="1.00" width="349.82" height="102.35" rx="4.0" fill="#0da58b"/>
 <text class="puzzle-text" x="175.91" y="50.18" text-anchor="middle" dominant-baseline="middle">Python</text>
 <text class="puzzle-percent" x="175.91" y="62.18" text-anchor="middle" dominant-baseline="middle">93.0%</text>
-<rect class="puzzle-rect delay-2" x="352.81" y="1.00" width="57.65" height="102.35" rx="4.0" fill="#26a8ec"/>
+<rect class="puzzle-rect delay-2" x="352.82" y="1.00" width="57.65" height="102.35" rx="4.0" fill="#26a8ec"/>
 <text class="puzzle-text" x="381.64" y="50.18" text-anchor="middle" dominant-baseline="middle">PowerShell</text>
 <text class="puzzle-percent" x="381.64" y="62.18" text-anchor="middle" dominant-baseline="middle">2.7%</text>
 <rect class="puzzle-rect delay-3" x="1.00" y="105.35" width="162.05" height="28.65" rx="4.0" fill="#1028b1"/>
 <text class="puzzle-text" x="82.02" y="117.68" text-anchor="middle" dominant-baseline="middle">JavaScript</text>
 <text class="puzzle-percent" x="82.02" y="129.68" text-anchor="middle" dominant-baseline="middle">1.7%</text>
 <rect class="puzzle-rect delay-4" x="165.05" y="105.35" width="245.42" height="15.48" rx="4.0" fill="#1fe2e8"/>
-<rect class="puzzle-rect delay-5" x="165.05" y="122.83" width="245.42" height="11.17" rx="3.3" fill="#1462bd"/>
+<rect class="puzzle-rect delay-5" x="165.05" y="122.84" width="245.42" height="11.16" rx="3.3" fill="#1462bd"/>
 <rect class="puzzle-rect delay-6" x="412.47" y="1.00" width="21.14" height="75.54" rx="4.0" fill="#2319e2"/>
 <rect class="puzzle-rect delay-7" x="435.61" y="1.00" width="18.39" height="75.54" rx="4.0" fill="#18a2c9"/>
 <rect class="puzzle-rect delay-8" x="412.47" y="78.54" width="15.33" height="55.46" rx="4.0" fill="#1b4dd5"/>
