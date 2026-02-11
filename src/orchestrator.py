@@ -12,6 +12,7 @@ from aiohttp import ClientSession
 from src.core.environment import Environment
 from src.core.stats_collector import StatsCollector
 from src.core.config import Config
+from src.core.credentials import GitHubCredentials
 from src.presentation.stats_formatter import StatsFormatter
 from src.presentation.svg_template import SVGTemplate
 from src.generators import (
@@ -117,8 +118,8 @@ class ImageOrchestrator:
         :return: Configured ImageOrchestrator instance after execution.
         """
         config = Config()
-        access_token = config.get_github_token()
-        user = config.get_github_actor()
+        access_token = GitHubCredentials.get_github_token()
+        user = GitHubCredentials.get_github_actor()
         environment = Environment(username=user, access_token=access_token)
 
         orchestrator = cls(config, environment)
