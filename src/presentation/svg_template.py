@@ -7,16 +7,18 @@ class SVGTemplate:
     Handles rendering and saving of SVG templates by applying string replacements.
     """
 
-    def __init__(self, template_path: str, output_dir: str):
+    def __init__(self, template_path: str, output_dir: str, fs: FileSystem = None):
         """
         Initializes the SVGTemplate engine.
 
         :param template_path: Directory path where templates are stored.
         :param output_dir: Directory path where rendered images will be saved.
+        :param fs: FileSystem instance for I/O operations. Defaults to a new
+                   ``FileSystem`` if not provided.
         """
         self.template_path = template_path
         self.output_dir = output_dir
-        self.fs = FileSystem()
+        self.fs = fs or FileSystem()
 
     def render_and_save(self, 
                         template_file: str, 
