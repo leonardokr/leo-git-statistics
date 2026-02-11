@@ -84,16 +84,25 @@ class ImageOrchestrator:
             await gather(*[g.generate() for g in generators])
 
     @classmethod
-    async def create_and_run(cls) -> "ImageOrchestrator":
+    async def create_and_run(
+        cls,
+        config: Config = None,
+        environment: Environment = None,
+    ) -> "ImageOrchestrator":
         """
         Factory method to create and run the orchestrator.
 
+        :param config: Optional configuration instance. Defaults to ``Config()``.
+        :param environment: Optional environment instance. Defaults to one
+                            built from ``GitHubCredentials``.
         :return: Configured ImageOrchestrator instance after execution.
         """
-        config = Config()
-        access_token = GitHubCredentials.get_github_token()
-        user = GitHubCredentials.get_github_actor()
-        environment = Environment(username=user, access_token=access_token)
+        if config is None:
+            config = Config()
+        if environment is None:
+            access_token = GitHubCredentials.get_github_token()
+            user = GitHubCredentials.get_github_actor()
+            environment = Environment(username=user, access_token=access_token)
 
         orchestrator = cls(config, environment)
         await orchestrator.run()
