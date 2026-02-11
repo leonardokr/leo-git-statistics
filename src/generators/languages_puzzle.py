@@ -8,6 +8,7 @@ class LanguagesPuzzleGenerator(BaseGenerator):
     PUZZLE_HEIGHT = 135
 
     OUTPUT_NAME = "languages_puzzle"
+    TEMPLATE_NAME = "languages_puzzle.svg"
 
     async def generate(self) -> None:
         languages = await self.stats.get_languages()
@@ -29,7 +30,7 @@ class LanguagesPuzzleGenerator(BaseGenerator):
             }
 
         self.render_for_all_themes(
-            self.config.LANGUAGES_PUZZLE_TEMPLATE,
+            self.TEMPLATE_NAME,
             self.OUTPUT_NAME,
             {},
             theme_callback

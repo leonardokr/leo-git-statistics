@@ -7,6 +7,7 @@ class StreakGenerator(BaseGenerator):
     """
 
     OUTPUT_NAME = "streak"
+    TEMPLATE_NAME = "streak.svg"
 
     async def generate(self) -> None:
         base_replacements = {
@@ -19,7 +20,7 @@ class StreakGenerator(BaseGenerator):
         }
 
         self.render_for_all_themes(
-            self.config.STREAK_TEMPLATE,
+            self.TEMPLATE_NAME,
             self.OUTPUT_NAME,
             base_replacements
         )

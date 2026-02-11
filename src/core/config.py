@@ -12,12 +12,6 @@ class Config:
     OUTPUT_DIR = "generated_images"
     TEMPLATE_PATH = "src/templates/"
 
-    OVERVIEW_TEMPLATE = "overview.svg"
-    LANGUAGES_TEMPLATE = "languages.svg"
-    LANGUAGES_PUZZLE_TEMPLATE = "languages_puzzle.svg"
-    STREAK_TEMPLATE = "streak.svg"
-    STREAK_BATTERY_TEMPLATE = "streak_battery.svg"
-
     def __init__(self, config_path: str = "config.yml",
                  theme_loader: Callable[[], Dict[str, Dict[str, Any]]] = None):
         """

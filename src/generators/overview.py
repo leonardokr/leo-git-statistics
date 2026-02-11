@@ -12,6 +12,7 @@ class OverviewGenerator(BaseGenerator):
         self.environment = environment
 
     OUTPUT_NAME = "overview"
+    TEMPLATE_NAME = "overview.svg"
 
     async def generate(self) -> None:
         lines_added, lines_removed = await self.stats.get_lines_changed()
@@ -48,7 +49,7 @@ class OverviewGenerator(BaseGenerator):
         }
 
         self.render_for_all_themes(
-            self.config.OVERVIEW_TEMPLATE,
+            self.TEMPLATE_NAME,
             self.OUTPUT_NAME,
             base_replacements
         )
