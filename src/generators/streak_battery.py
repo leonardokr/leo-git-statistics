@@ -9,9 +9,9 @@ class StreakBatteryGenerator(BaseGenerator):
     """
 
     async def generate(self, output_name: str = "streak_battery") -> None:
-        current_streak = await self.stats.current_streak
-        longest_streak = await self.stats.longest_streak
-        recent_contributions = await self.stats.recent_contributions
+        current_streak = await self.stats.get_current_streak()
+        longest_streak = await self.stats.get_longest_streak()
+        recent_contributions = await self.stats.get_recent_contributions()
 
         if longest_streak > 0:
             streak_percentage = min(100, int((current_streak / longest_streak) * 100))
@@ -35,8 +35,8 @@ class StreakBatteryGenerator(BaseGenerator):
             replacements = {
                 "current_streak": str(current_streak),
                 "longest_streak": str(longest_streak),
-                "current_streak_range": await self.stats.current_streak_range,
-                "longest_streak_range": await self.stats.longest_streak_range,
+                "current_streak_range": await self.stats.get_current_streak_range(),
+                "longest_streak_range": await self.stats.get_longest_streak_range(),
                 "streak_percentage": str(streak_percentage),
                 "battery_fill_height": str(battery_fill_height),
                 "battery_fill_y": str(battery_fill_y),

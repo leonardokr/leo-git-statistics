@@ -8,11 +8,11 @@ class StreakGenerator(BaseGenerator):
 
     async def generate(self, output_name: str = "streak") -> None:
         base_replacements = {
-            "current_streak": str(await self.stats.current_streak),
-            "longest_streak": str(await self.stats.longest_streak),
-            "current_streak_range": await self.stats.current_streak_range,
-            "longest_streak_range": await self.stats.longest_streak_range,
-            "total_contributions": self.formatter.format_number(await self.stats.total_contributions),
+            "current_streak": str(await self.stats.get_current_streak()),
+            "longest_streak": str(await self.stats.get_longest_streak()),
+            "current_streak_range": await self.stats.get_current_streak_range(),
+            "longest_streak_range": await self.stats.get_longest_streak_range(),
+            "total_contributions": self.formatter.format_number(await self.stats.get_total_contributions()),
             "contribution_year": "All time"
         }
 

@@ -12,25 +12,25 @@ class OverviewGenerator(BaseGenerator):
         self.environment = environment
 
     async def generate(self, output_name: str = "overview") -> None:
-        lines_added, lines_removed = await self.stats.lines_changed
+        lines_added, lines_removed = await self.stats.get_lines_changed()
         total_lines_changed = lines_added + lines_removed
 
         base_replacements = {
-            "name": self.formatter.format_name(await self.stats.name),
-            "views": self.formatter.format_number(await self.stats.views),
-            "clones": self.formatter.format_number(await self.stats.clones),
-            "stars": self.formatter.format_number(await self.stats.stargazers),
-            "forks": self.formatter.format_number(await self.stats.forks),
-            "contributions": self.formatter.format_number(await self.stats.total_contributions),
+            "name": self.formatter.format_name(await self.stats.get_name()),
+            "views": self.formatter.format_number(await self.stats.get_views()),
+            "clones": self.formatter.format_number(await self.stats.get_clones()),
+            "stars": self.formatter.format_number(await self.stats.get_stargazers()),
+            "forks": self.formatter.format_number(await self.stats.get_forks()),
+            "contributions": self.formatter.format_number(await self.stats.get_total_contributions()),
             "lines_changed": self.formatter.format_number(total_lines_changed),
-            "avg_contribution_percent": await self.stats.avg_contribution_percent,
-            "repos": self.formatter.format_number(len(await self.stats.repos)),
-            "collaborators": self.formatter.format_number(await self.stats.collaborators),
-            "contributors": self.formatter.format_number(max(len(await self.stats.contributors) - 1, 0)),
-            "views_from_date": f"Repository views (as of {await self.stats.views_from_date})",
-            "clones_from_date": f"Repository clones (as of {await self.stats.clones_from_date})",
-            "issues": self.formatter.format_number(await self.stats.issues),
-            "pull_requests": self.formatter.format_number(await self.stats.pull_requests),
+            "avg_contribution_percent": await self.stats.get_avg_contribution_percent(),
+            "repos": self.formatter.format_number(len(await self.stats.get_repos())),
+            "collaborators": self.formatter.format_number(await self.stats.get_collaborators()),
+            "contributors": self.formatter.format_number(max(len(await self.stats.get_contributors()) - 1, 0)),
+            "views_from_date": f"Repository views (as of {await self.stats.get_views_from_date()})",
+            "clones_from_date": f"Repository clones (as of {await self.stats.get_clones_from_date()})",
+            "issues": self.formatter.format_number(await self.stats.get_issues()),
+            "pull_requests": self.formatter.format_number(await self.stats.get_pull_requests()),
             "show_total_contributions": "table-row" if self.environment.show_total_contributions else "none",
             "show_repositories": "table-row" if self.environment.show_repositories else "none",
             "show_lines_changed": "table-row" if self.environment.show_lines_changed else "none",

@@ -1,36 +1,43 @@
 #!/usr/bin/python3
+"""
+GitHub Statistics Collector Module.
 
+This module provides functionality to retrieve and aggregate statistics
+for GitHub users by querying the GitHub API.
+"""
+
+import logging
 from typing import Dict, Optional, Set, Tuple, Any, cast
 from aiohttp import ClientSession
 from datetime import date, timedelta
 
 from src.core.environment import Environment
 from src.core.github_client import GitHubClient
+from src.utils.decorators import lazy_async_property
+
+logger = logging.getLogger(__name__)
+
 
 class StatsCollector:
     """
-    Retrieves and aggregates statistics for GitHub users.
+    Retrieve and aggregate statistics for GitHub users.
 
     This class provides a comprehensive set of statistics, including stargazers,
     forks, languages, contributions, and more, by querying the GitHub API.
+
+    :param environment_vars: Configuration and environment settings.
+    :param session: aiohttp ClientSession for making requests.
     """
 
-    __DATE_FORMAT = '%Y-%m-%d'
+    __DATE_FORMAT = "%Y-%m-%d"
 
-    def __init__(self,
-                 environment_vars: Environment,
-                 session: ClientSession):
-        """
-        Initializes the StatsCollector.
-
-        :param environment_vars: Configuration and environment settings.
-        :param session: aiohttp ClientSession for making requests.
-        """
+    def __init__(self, environment_vars: Environment, session: ClientSession):
         self.environment_vars: Environment = environment_vars
         self.queries = GitHubClient(
             username=self.environment_vars.username,
             access_token=self.environment_vars.access_token,
-            session=session)
+            session=session,
+        )
 
         self._name: Optional[str] = None
         self._stargazers: Optional[int] = None
@@ -59,16 +66,16 @@ class StatsCollector:
 
     async def to_str(self) -> str:
         """
-        Generates a string summary of all collected statistics.
+        Generate a string summary of all collected statistics.
 
         :return: A formatted summary of the statistics.
         """
-        languages = await self.languages_proportional
+        languages = await self.get_languages_proportional()
         formatted_languages = "\n\t\t\t- ".join(
             [f"{k}: {v:0.4f}%" for k, v in languages.items()]
         )
 
-        users_lines_changed = await self.lines_changed
+        users_lines_changed = await self.get_lines_changed()
         total_lines_changed = self._total_lines_changed
 
         if users_lines_changed[0] > 0:
@@ -80,18 +87,18 @@ class StatsCollector:
             prcnt_dltd = users_lines_changed[1] / total_lines_changed[1] * 100
         else:
             prcnt_dltd = 0.0
-        ttl_prcnt = await self.contributions_percentage
-        avg_prcnt = await self.avg_contribution_percent
+        ttl_prcnt = await self.get_contributions_percentage()
+        avg_prcnt = await self.get_avg_contribution_percent()
 
-        contribs = max(len(await self.contributors) - 1, 0)
+        contribs = max(len(await self.get_contributors()) - 1, 0)
 
         return f"""GitHub Repository Statistics:
-        Stargazers: {await self.stargazers:,}
-        Forks: {await self.forks:,}
-        Pull requests: {await self.pull_requests:,}
-        Issues: {await self.issues:,}
-        All-time contributions: {await self.total_contributions:,}
-        Repositories with contributions: {len(await self.repos):,}
+        Stargazers: {await self.get_stargazers():,}
+        Forks: {await self.get_forks():,}
+        Pull requests: {await self.get_pull_requests():,}
+        Issues: {await self.get_issues():,}
+        All-time contributions: {await self.get_total_contributions():,}
+        Repositories with contributions: {len(await self.get_repos()):,}
         Lines of code added: {users_lines_changed[0]:,}
         Lines of code deleted: {users_lines_changed[1]:,}
         Lines of code changed: {sum(users_lines_changed):,}
@@ -99,17 +106,17 @@ class StatsCollector:
         Percentage of total code line deletions: {prcnt_dltd:0.2f}%
         Percentage of code change contributions: {ttl_prcnt}
         Avg. % of code change contributions: {avg_prcnt}
-        Project page views: {await self.views:,}
-        Project page views from date: {await self.views_from_date}
-        Project repository clones: {await self.clones:,}
-        Project repository clones from date: {await self.clones_from_date}
-        Project repository collaborators: {await self.collaborators:,}
+        Project page views: {await self.get_views():,}
+        Project page views from date: {await self.get_views_from_date()}
+        Project repository clones: {await self.get_clones():,}
+        Project repository clones from date: {await self.get_clones_from_date()}
+        Project repository collaborators: {await self.get_collaborators():,}
         Project repository contributors: {contribs:,}
         Languages:\n\t\t\t- {formatted_languages}"""
 
     async def is_repo_name_invalid(self, repo_name: str) -> bool:
         """
-        Checks if a repository name is invalid or should be excluded.
+        Check if a repository name is invalid or should be excluded.
 
         A repository is considered invalid if:
             - It has already been processed.
@@ -119,14 +126,16 @@ class StatsCollector:
         :param repo_name: The name of the repository (owner/name format).
         :return: True if the repository should be excluded, False otherwise.
         """
-        return repo_name in self._repos \
-            or len(self.environment_vars.only_included_repos) > 0 \
-            and repo_name not in self.environment_vars.only_included_repos \
+        return (
+            repo_name in self._repos
+            or len(self.environment_vars.only_included_repos) > 0
+            and repo_name not in self.environment_vars.only_included_repos
             or repo_name in self.environment_vars.exclude_repos
+        )
 
     async def is_repo_type_excluded(self, repo_data: Dict[str, Any]) -> bool:
         """
-        Checks if a repository should be excluded based on its type and user configuration.
+        Check if a repository should be excluded based on its type.
 
         Criteria for exclusion:
             - Forks (if configured to exclude).
@@ -137,22 +146,20 @@ class StatsCollector:
         :param repo_data: Dictionary containing repository metadata from the API.
         :return: True if the repository type should be excluded, False otherwise.
         """
-        return not self.environment_vars.include_forked_repos \
-            and (repo_data.get("isFork")
-                 or repo_data.get("fork")) \
-            or self.environment_vars.exclude_archive_repos \
-            and (repo_data.get("isArchived")
-                 or repo_data.get("archived")) \
-            or self.environment_vars.exclude_private_repos \
-            and (repo_data.get("isPrivate")
-                 or repo_data.get("private")) \
-            or self.environment_vars.exclude_public_repos \
-            and (not repo_data.get("isPrivate")
-                 or not repo_data.get("private"))
+        return (
+            not self.environment_vars.include_forked_repos
+            and (repo_data.get("isFork") or repo_data.get("fork"))
+            or self.environment_vars.exclude_archive_repos
+            and (repo_data.get("isArchived") or repo_data.get("archived"))
+            or self.environment_vars.exclude_private_repos
+            and (repo_data.get("isPrivate") or repo_data.get("private"))
+            or self.environment_vars.exclude_public_repos
+            and (not repo_data.get("isPrivate") or not repo_data.get("private"))
+        )
 
     async def _process_languages(self, repo_data: Dict[str, Any]) -> None:
         """
-        Extracts and aggregates language data from a single repository's metadata.
+        Extract and aggregate language data from a single repository's metadata.
 
         :param repo_data: Dictionary containing repository metadata.
         """
@@ -164,8 +171,8 @@ class StatsCollector:
 
             size = edge.get("size", 0)
             color = edge.get("node", {}).get("color")
-            print(f"  {repo_name}: {lang_name} ({size} bytes)")
-            
+            logger.debug("  %s: %s (%d bytes)", repo_name, lang_name, size)
+
             if lang_name in self._languages:
                 self._languages[lang_name]["size"] += size
                 self._languages[lang_name]["occurrences"] += 1
@@ -178,7 +185,7 @@ class StatsCollector:
 
     async def get_stats(self) -> None:
         """
-        Fetches and aggregates general statistics from GitHub.
+        Fetch and aggregate general statistics from GitHub.
 
         This method populates multiple attributes by performing paginated queries
         to the GitHub GraphQL API.
@@ -194,8 +201,9 @@ class StatsCollector:
 
         while True:
             raw_results = await self.queries.query(
-                GitHubClient.repos_overview(owned_cursor=next_owned,
-                                            contrib_cursor=next_contrib)
+                GitHubClient.repos_overview(
+                    owned_cursor=next_owned, contrib_cursor=next_contrib
+                )
             )
             raw_results = raw_results if raw_results is not None else {}
 
@@ -216,7 +224,7 @@ class StatsCollector:
                 full_name = repo.get("nameWithOwner")
                 if await self.is_repo_name_invalid(full_name):
                     continue
-                
+
                 self._repos.add(full_name)
                 self._stargazers += repo.get("stargazers", {}).get("totalCount", 0)
                 self._forks += repo.get("forkCount", 0)
@@ -229,8 +237,10 @@ class StatsCollector:
 
             owned_page_info = owned_repos.get("pageInfo", {})
             contrib_page_info = contrib_repos.get("pageInfo", {})
-            
-            if owned_page_info.get("hasNextPage") or contrib_page_info.get("hasNextPage"):
+
+            if owned_page_info.get("hasNextPage") or contrib_page_info.get(
+                "hasNextPage"
+            ):
                 next_owned = owned_page_info.get("endCursor", next_owned)
                 next_contrib = contrib_page_info.get("endCursor", next_contrib)
             else:
@@ -242,9 +252,7 @@ class StatsCollector:
         self._calculate_language_proportions()
 
     async def _process_manually_added_repos(self) -> None:
-        """
-        Fetches and aggregates statistics for manually specified repositories.
-        """
+        """Fetch and aggregate statistics for manually specified repositories."""
         env_repos = self.environment_vars.manually_added_repos
         lang_cols = self.queries.get_language_colors()
 
@@ -255,7 +263,7 @@ class StatsCollector:
             repo_stats = await self.queries.query_rest(f"/repos/{repo}")
             if await self.is_repo_type_excluded(repo_stats):
                 continue
-            
+
             self._repos.add(repo)
             self._stargazers += repo_stats.get("stargazers_count", 0)
             self._forks += repo_stats.get("forks_count", 0)
@@ -278,13 +286,11 @@ class StatsCollector:
                         self._languages[lang] = {
                             "size": size,
                             "occurrences": 1,
-                            "color": color_data.get("color") if color_data else None
+                            "color": color_data.get("color") if color_data else None,
                         }
 
     def _calculate_language_proportions(self) -> None:
-        """
-        Calculates the percentage of usage for each programming language.
-        """
+        """Calculate the percentage of usage for each programming language."""
         langs_total = sum(v.get("size", 0) for v in self._languages.values())
         if langs_total > 0:
             for v in self._languages.values():
@@ -293,87 +299,64 @@ class StatsCollector:
             for v in self._languages.values():
                 v["prop"] = 0.0
 
-    @property
-    async def name(self) -> str:
+    @lazy_async_property("_name", "get_stats")
+    async def get_name(self) -> str:
         """
-        Retrieves the GitHub user's name or login.
+        Retrieve the GitHub user's name or login.
 
         :return: The user's name, or login if name is not available.
         """
-        if self._name is not None:
-            return self._name
-        await self.get_stats()
-        assert self._name is not None
-        return self._name
+        return "No Name"
 
-    @property
-    async def stargazers(self) -> int:
+    @lazy_async_property("_stargazers", "get_stats")
+    async def get_stargazers(self) -> int:
         """
-        Retrieves the total number of stargazers across the user's repositories.
+        Retrieve the total number of stargazers across repositories.
 
         :return: Total stargazer count.
         """
-        if self._stargazers is not None:
-            return self._stargazers
-        await self.get_stats()
-        assert self._stargazers is not None
-        return self._stargazers
+        return 0
 
-    @property
-    async def forks(self) -> int:
+    @lazy_async_property("_forks", "get_stats")
+    async def get_forks(self) -> int:
         """
-        Retrieves the total number of forks across the user's repositories.
+        Retrieve the total number of forks across repositories.
 
         :return: Total fork count.
         """
-        if self._forks is not None:
-            return self._forks
-        await self.get_stats()
-        assert self._forks is not None
-        return self._forks
+        return 0
 
-    @property
-    async def languages(self) -> Dict[str, Any]:
+    @lazy_async_property("_languages", "get_stats")
+    async def get_languages(self) -> Dict[str, Any]:
         """
-        Retrieves a summary of languages used across the user's repositories.
+        Retrieve a summary of languages used across repositories.
 
         :return: A dictionary containing language stats (size, occurrences, color).
         """
-        if self._languages is not None:
-            return self._languages
-        await self.get_stats()
-        assert self._languages is not None
-        return self._languages
+        return {}
 
-    @property
-    async def languages_proportional(self) -> Dict[str, float]:
+    async def get_languages_proportional(self) -> Dict[str, float]:
         """
-        Retrieves a summary of language usage as percentages.
+        Retrieve a summary of language usage as percentages.
 
         :return: A dictionary mapping language names to their usage percentage.
         """
         if self._languages is None:
             await self.get_stats()
-            assert self._languages is not None
-        return {k: v.get("prop", 0) for (k, v) in self._languages.items()}
+        return {k: v.get("prop", 0) for (k, v) in (self._languages or {}).items()}
 
-    @property
-    async def repos(self) -> Set[str]:
+    @lazy_async_property("_repos", "get_stats")
+    async def get_repos(self) -> Set[str]:
         """
-        Retrieves the set of names for all processed repositories.
+        Retrieve the set of names for all processed repositories.
 
         :return: A set of repository names in 'owner/repo' format.
         """
-        if self._repos is not None:
-            return self._repos
-        await self.get_stats()
-        assert self._repos is not None
-        return self._repos
+        return set()
 
-    @property
-    async def total_contributions(self) -> int:
+    async def get_total_contributions(self) -> int:
         """
-        Retrieves the total number of contributions as defined by GitHub.
+        Retrieve the total number of contributions as defined by GitHub.
 
         :return: Total contribution count.
         """
@@ -381,29 +364,30 @@ class StatsCollector:
             return self._total_contributions
         self._total_contributions = 0
 
-        years = ((await self.queries.query(GitHubClient
-                                           .contributions_all_years()))
-                 .get("data", {})
-                 .get("viewer", {})
-                 .get("contributionsCollection", {})
-                 .get("contributionYears", []))
+        years = (
+            (await self.queries.query(GitHubClient.contributions_all_years()))
+            .get("data", {})
+            .get("viewer", {})
+            .get("contributionsCollection", {})
+            .get("contributionYears", [])
+        )
 
-        by_year = ((await self.queries.query(GitHubClient
-                                             .all_contributions(years)))
-                   .get("data", {})
-                   .get("viewer", {})
-                   .values())
+        by_year = (
+            (await self.queries.query(GitHubClient.all_contributions(years)))
+            .get("data", {})
+            .get("viewer", {})
+            .values()
+        )
 
         for year in by_year:
-            self._total_contributions += year\
-                .get("contributionCalendar", {})\
-                .get("totalContributions", 0)
+            self._total_contributions += year.get("contributionCalendar", {}).get(
+                "totalContributions", 0
+            )
         return cast(int, self._total_contributions)
 
-    @property
-    async def lines_changed(self) -> Tuple[int, int]:
+    async def get_lines_changed(self) -> Tuple[int, int]:
         """
-        Calculates the total lines added and deleted by the user.
+        Calculate the total lines added and deleted by the user.
 
         This method also calculates the total lines changed across all repositories,
         the percentage of user contributions, and the set of contributors.
@@ -419,19 +403,18 @@ class StatsCollector:
         deletions = 0
         total_percentage = 0
 
-        for repo in await self.repos:
+        repos = await self.get_repos()
+        for repo in repos:
             if repo in self._empty_repos:
                 continue
             repo_total_changes = 0
             author_total_changes = 0
 
-            r = await self.queries\
-                .query_rest(f"/repos/{repo}/stats/contributors")
+            r = await self.queries.query_rest(f"/repos/{repo}/stats/contributors")
 
             for author_obj in r:
-                # Handle malformed response from API by skipping this repo
                 if not isinstance(author_obj, dict) or not isinstance(
-                        author_obj.get("author", {}), dict
+                    author_obj.get("author", {}), dict
                 ):
                     continue
                 author = author_obj.get("author", {}).get("login", "")
@@ -453,8 +436,10 @@ class StatsCollector:
             repo_total_changes += author_total_changes
             if author_total_changes > 0:
                 total_percentage += author_total_changes / repo_total_changes
-        if total_percentage > 0:
-            total_percentage /= len(self._repos) - len(self._empty_repos)
+
+        non_empty_count = len(self._repos) - len(self._empty_repos)
+        if total_percentage > 0 and non_empty_count > 0:
+            total_percentage /= non_empty_count
         else:
             total_percentage = 0.0
         self._avg_percent = f"{total_percentage * 100:0.2f}%"
@@ -476,40 +461,30 @@ class StatsCollector:
 
         return self._users_lines_changed
 
-    @property
-    async def contributions_percentage(self) -> str:
+    @lazy_async_property("_contributions_percentage", "get_lines_changed")
+    async def get_contributions_percentage(self) -> str:
         """
-        Retrieves the percentage of code changes made by the user relative to the total.
+        Retrieve the percentage of code changes made by the user.
 
         :return: A formatted percentage string (e.g., '25.00%').
         """
-        if self._contributions_percentage is not None:
-            return self._contributions_percentage
-        await self.lines_changed
-        assert self._contributions_percentage is not None
-        return self._contributions_percentage
+        return "0.00%"
 
-    @property
-    async def avg_contribution_percent(self) -> str:
+    @lazy_async_property("_avg_percent", "get_lines_changed")
+    async def get_avg_contribution_percent(self) -> str:
         """
-        Retrieves the average percentage of contributions per repository.
+        Retrieve the average percentage of contributions per repository.
 
         :return: A formatted percentage string (e.g., '10.50%').
         """
-        if self._avg_percent is not None:
-            return self._avg_percent
-        await self.lines_changed
-        assert self._avg_percent is not None
-        return self._avg_percent
+        return "0.00%"
 
-    @property
-    async def views(self) -> int:
+    async def get_views(self) -> int:
         """
-        Retrieves the cumulative count of repository views.
+        Retrieve the cumulative count of repository views.
 
         Note: The GitHub API only returns view data for the last 14 days.
-        This property aggregates historical data stored in the database with
-        recent data from the API.
+        This property aggregates historical data with recent data from the API.
 
         :return: Total repository view count.
         """
@@ -522,7 +497,8 @@ class StatsCollector:
         dates = {last_viewed, yesterday}
 
         today_view_count = 0
-        for repo in await self.repos:
+        repos = await self.get_repos()
+        for repo in repos:
             r = await self.queries.query_rest(f"/repos/{repo}/traffic/views")
 
             for view in r.get("views", []):
@@ -540,8 +516,9 @@ class StatsCollector:
 
             if self.environment_vars.repo_first_viewed == "0000-00-00":
                 self.environment_vars.repo_first_viewed = min(dates)
-            self.environment_vars. \
-                set_first_viewed(self.environment_vars.repo_first_viewed)
+            self.environment_vars.set_first_viewed(
+                self.environment_vars.repo_first_viewed
+            )
             self._views_from_date = self.environment_vars.repo_first_viewed
         else:
             self._views_from_date = min(dates)
@@ -549,23 +526,18 @@ class StatsCollector:
         self._views = self.environment_vars.repo_views + today_view_count
         return self._views
 
-    @property
-    async def views_from_date(self) -> str:
+    @lazy_async_property("_views_from_date", "get_views")
+    async def get_views_from_date(self) -> str:
         """
-        Retrieves the starting date from which repository views are being counted.
+        Retrieve the starting date from which repository views are counted.
 
         :return: A date string in 'YYYY-MM-DD' format.
         """
-        if self._views_from_date is not None:
-            return self._views_from_date
-        await self.views
-        assert self._views_from_date is not None
-        return self._views_from_date
+        return "0000-00-00"
 
-    @property
-    async def clones(self) -> int:
+    async def get_clones(self) -> int:
         """
-        Retrieves the cumulative count of repository clones.
+        Retrieve the cumulative count of repository clones.
 
         Note: Similar to views, GitHub API only returns clone data for the last 14 days.
         This property combines database records with recent API data.
@@ -581,7 +553,8 @@ class StatsCollector:
         dates = {last_cloned, yesterday}
 
         today_clone_count = 0
-        for repo in await self.repos:
+        repos = await self.get_repos()
+        for repo in repos:
             r = await self.queries.query_rest(f"/repos/{repo}/traffic/clones")
 
             for clone in r.get("clones", []):
@@ -599,8 +572,9 @@ class StatsCollector:
 
             if self.environment_vars.repo_first_cloned == "0000-00-00":
                 self.environment_vars.repo_first_cloned = min(dates)
-            self.environment_vars.\
-                set_first_cloned(self.environment_vars.repo_first_cloned)
+            self.environment_vars.set_first_cloned(
+                self.environment_vars.repo_first_cloned
+            )
             self._clones_from_date = self.environment_vars.repo_first_cloned
         else:
             self._clones_from_date = min(dates)
@@ -608,23 +582,18 @@ class StatsCollector:
         self._clones = self.environment_vars.repo_clones + today_clone_count
         return self._clones
 
-    @property
-    async def clones_from_date(self) -> str:
+    @lazy_async_property("_clones_from_date", "get_clones")
+    async def get_clones_from_date(self) -> str:
         """
-        Retrieves the starting date from which repository clones are being counted.
+        Retrieve the starting date from which repository clones are counted.
 
         :return: A date string in 'YYYY-MM-DD' format.
         """
-        if self._clones_from_date is not None:
-            return self._clones_from_date
-        await self.clones
-        assert self._clones_from_date is not None
-        return self._clones_from_date
+        return "0000-00-00"
 
-    @property
-    async def collaborators(self) -> int:
+    async def get_collaborators(self) -> int:
         """
-        Retrieves the total number of unique collaborators across all repositories.
+        Retrieve the total number of unique collaborators.
 
         :return: Total collaborator count.
         """
@@ -633,36 +602,31 @@ class StatsCollector:
 
         collaborator_set = set()
 
-        for repo in await self.repos:
-            r = await self.queries\
-                .query_rest(f"/repos/{repo}/collaborators")
+        repos = await self.get_repos()
+        for repo in repos:
+            r = await self.queries.query_rest(f"/repos/{repo}/collaborators")
 
             for obj in r:
                 if isinstance(obj, dict):
                     collaborator_set.add(obj.get("login"))
 
-        collabs = max(0, len(collaborator_set
-                             .union(await self.contributors)) - 1)
+        contributors = await self.get_contributors()
+        collabs = max(0, len(collaborator_set.union(contributors)) - 1)
         self._collaborators = self.environment_vars.more_collabs + collabs
         return self._collaborators
 
-    @property
-    async def contributors(self) -> Set[str]:
+    @lazy_async_property("_contributors", "get_lines_changed")
+    async def get_contributors(self) -> Set[str]:
         """
-        Retrieves the set of unique contributors across all repositories.
+        Retrieve the set of unique contributors across all repositories.
 
         :return: A set of contributor usernames.
         """
-        if self._contributors is not None:
-            return self._contributors
-        await self.lines_changed
-        assert self._contributors is not None
-        return self._contributors
+        return set()
 
-    @property
-    async def pull_requests(self) -> int:
+    async def get_pull_requests(self) -> int:
         """
-        Retrieves the total number of pull requests across all repositories.
+        Retrieve the total number of pull requests across all repositories.
 
         :return: Total pull request count.
         """
@@ -671,19 +635,18 @@ class StatsCollector:
 
         self._pull_requests = 0
 
-        for repo in await self.repos:
-            r = await self.queries\
-                .query_rest(f"/repos/{repo}/pulls?state=all")
+        repos = await self.get_repos()
+        for repo in repos:
+            r = await self.queries.query_rest(f"/repos/{repo}/pulls?state=all")
 
             for obj in r:
                 if isinstance(obj, dict):
                     self._pull_requests += 1
         return self._pull_requests
 
-    @property
-    async def issues(self) -> int:
+    async def get_issues(self) -> int:
         """
-        Retrieves the total number of issues across all repositories.
+        Retrieve the total number of issues across all repositories.
 
         :return: Total issue count (excluding pull requests).
         """
@@ -692,9 +655,9 @@ class StatsCollector:
 
         self._issues = 0
 
-        for repo in await self.repos:
-            r = await self.queries\
-                .query_rest(f"/repos/{repo}/issues?state=all")
+        repos = await self.get_repos()
+        for repo in repos:
+            r = await self.queries.query_rest(f"/repos/{repo}/issues?state=all")
 
             for obj in r:
                 if isinstance(obj, dict):
@@ -705,9 +668,9 @@ class StatsCollector:
                         continue
         return self._issues
 
-    async def _get_contribution_calendar(self) -> None:
+    async def get_contribution_calendar(self) -> None:
         """
-        Fetches the contribution calendar data and calculates streak information.
+        Fetch the contribution calendar data and calculate streak information.
 
         This method queries GitHub's GraphQL API to get contribution data
         and calculates both current and longest contribution streaks.
@@ -715,12 +678,13 @@ class StatsCollector:
         if self._contribution_calendar is not None:
             return
 
-        years = ((await self.queries.query(GitHubClient
-                                           .contributions_all_years()))
-                 .get("data", {})
-                 .get("viewer", {})
-                 .get("contributionsCollection", {})
-                 .get("contributionYears", []))
+        years = (
+            (await self.queries.query(GitHubClient.contributions_all_years()))
+            .get("data", {})
+            .get("viewer", {})
+            .get("contributionsCollection", {})
+            .get("contributionYears", [])
+        )
 
         all_days = []
         for year in years:
@@ -741,24 +705,28 @@ class StatsCollector:
             }}
             """
             result = await self.queries.query(query)
-            weeks = (result
-                     .get("data", {})
-                     .get("viewer", {})
-                     .get("contributionsCollection", {})
-                     .get("contributionCalendar", {})
-                     .get("weeks", []))
+            weeks = (
+                result.get("data", {})
+                .get("viewer", {})
+                .get("contributionsCollection", {})
+                .get("contributionCalendar", {})
+                .get("weeks", [])
+            )
 
             for week in weeks:
                 for day in week.get("contributionDays", []):
-                    all_days.append({
-                        "date": day.get("date"),
-                        "count": day.get("contributionCount", 0)
-                    })
+                    all_days.append(
+                        {"date": day.get("date"), "count": day.get("contributionCount", 0)}
+                    )
 
         all_days.sort(key=lambda x: x["date"])
 
         if all_days:
-            print(f"Contribution calendar: {len(all_days)} days, last 10: {all_days[-10:]}")
+            logger.debug(
+                "Contribution calendar: %d days, last 10: %s",
+                len(all_days),
+                all_days[-10:],
+            )
 
         current_streak = 0
         longest_streak = 0
@@ -799,13 +767,17 @@ class StatsCollector:
 
         self._current_streak = current_streak
         self._longest_streak = longest_streak
-        self._current_streak_range = self._format_date_range(current_streak_start, current_streak_end)
-        self._longest_streak_range = self._format_date_range(longest_streak_start, longest_streak_end)
+        self._current_streak_range = self._format_date_range(
+            current_streak_start, current_streak_end
+        )
+        self._longest_streak_range = self._format_date_range(
+            longest_streak_start, longest_streak_end
+        )
         self._contribution_calendar = {"days": all_days}
 
     def _format_date_range(self, start: Optional[str], end: Optional[str]) -> str:
         """
-        Formats a date range for display.
+        Format a date range for display.
 
         :param start: Start date string in YYYY-MM-DD format.
         :param end: End date string in YYYY-MM-DD format.
@@ -827,62 +799,49 @@ class StatsCollector:
         except ValueError:
             return "No streak"
 
-    @property
-    async def current_streak(self) -> int:
+    @lazy_async_property("_current_streak", "get_contribution_calendar")
+    async def get_current_streak(self) -> int:
         """
-        Retrieves the current contribution streak in days.
+        Retrieve the current contribution streak in days.
 
         :return: Number of consecutive days with contributions.
         """
-        if self._current_streak is not None:
-            return self._current_streak
-        await self._get_contribution_calendar()
-        return self._current_streak or 0
+        return 0
 
-    @property
-    async def longest_streak(self) -> int:
+    @lazy_async_property("_longest_streak", "get_contribution_calendar")
+    async def get_longest_streak(self) -> int:
         """
-        Retrieves the longest contribution streak in days.
+        Retrieve the longest contribution streak in days.
 
         :return: Maximum number of consecutive days with contributions.
         """
-        if self._longest_streak is not None:
-            return self._longest_streak
-        await self._get_contribution_calendar()
-        return self._longest_streak or 0
+        return 0
 
-    @property
-    async def current_streak_range(self) -> str:
+    @lazy_async_property("_current_streak_range", "get_contribution_calendar")
+    async def get_current_streak_range(self) -> str:
         """
-        Retrieves the date range of the current streak.
+        Retrieve the date range of the current streak.
 
         :return: Formatted date range string.
         """
-        if self._current_streak_range is not None:
-            return self._current_streak_range
-        await self._get_contribution_calendar()
-        return self._current_streak_range or "No streak"
+        return "No streak"
 
-    @property
-    async def longest_streak_range(self) -> str:
+    @lazy_async_property("_longest_streak_range", "get_contribution_calendar")
+    async def get_longest_streak_range(self) -> str:
         """
-        Retrieves the date range of the longest streak.
+        Retrieve the date range of the longest streak.
 
         :return: Formatted date range string.
         """
-        if self._longest_streak_range is not None:
-            return self._longest_streak_range
-        await self._get_contribution_calendar()
-        return self._longest_streak_range or "No streak"
+        return "No streak"
 
-    @property
-    async def recent_contributions(self) -> list:
+    async def get_recent_contributions(self) -> list:
         """
-        Retrieves the contribution counts for the last 10 days.
+        Retrieve the contribution counts for the last 10 days.
 
         :return: List of contribution counts (most recent last).
         """
-        await self._get_contribution_calendar()
+        await self.get_contribution_calendar()
         days = self._contribution_calendar.get("days", [])
         today = date.today().strftime(self.__DATE_FORMAT)
         past_days = [d for d in days if d["date"] <= today]

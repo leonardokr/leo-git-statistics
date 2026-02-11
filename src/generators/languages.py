@@ -7,7 +7,7 @@ class LanguagesGenerator(BaseGenerator):
     """
 
     async def generate(self, output_name: str = "languages") -> None:
-        languages = await self.stats.languages
+        languages = await self.stats.get_languages()
 
         for theme_name, theme_config in self.config.THEMES.items():
             colors = theme_config["colors"]
