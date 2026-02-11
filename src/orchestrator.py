@@ -15,6 +15,7 @@ from src.core.config import Config
 from src.presentation.stats_formatter import StatsFormatter
 from src.presentation.svg_template import SVGTemplate
 from src.generators import (
+    BaseGenerator,
     OverviewGenerator,
     LanguagesGenerator,
     LanguagesPuzzleGenerator,
@@ -45,6 +46,42 @@ class ImageOrchestrator:
         )
         self._stats = None
 
+    def _create_generators(self) -> list[BaseGenerator]:
+        """Creates the list of SVG generators to run."""
+        return [
+            OverviewGenerator(
+                self.config,
+                self._stats,
+                self.formatter,
+                self.template_engine,
+                self.environment,
+            ),
+            LanguagesGenerator(
+                self.config,
+                self._stats,
+                self.formatter,
+                self.template_engine,
+            ),
+            LanguagesPuzzleGenerator(
+                self.config,
+                self._stats,
+                self.formatter,
+                self.template_engine,
+            ),
+            StreakGenerator(
+                self.config,
+                self._stats,
+                self.formatter,
+                self.template_engine,
+            ),
+            StreakBatteryGenerator(
+                self.config,
+                self._stats,
+                self.formatter,
+                self.template_engine,
+            ),
+        ]
+
     async def run(self) -> None:
         """
         Execute the full image generation pipeline.
@@ -69,40 +106,7 @@ class ImageOrchestrator:
             )
             logger.info("Recent contributions: %s", recent)
 
-            generators = [
-                OverviewGenerator(
-                    self.config,
-                    self._stats,
-                    self.formatter,
-                    self.template_engine,
-                    self.environment,
-                ),
-                LanguagesGenerator(
-                    self.config,
-                    self._stats,
-                    self.formatter,
-                    self.template_engine,
-                ),
-                LanguagesPuzzleGenerator(
-                    self.config,
-                    self._stats,
-                    self.formatter,
-                    self.template_engine,
-                ),
-                StreakGenerator(
-                    self.config,
-                    self._stats,
-                    self.formatter,
-                    self.template_engine,
-                ),
-                StreakBatteryGenerator(
-                    self.config,
-                    self._stats,
-                    self.formatter,
-                    self.template_engine,
-                ),
-            ]
-
+            generators = self._create_generators()
             await gather(*[g.generate() for g in generators])
 
     @classmethod
