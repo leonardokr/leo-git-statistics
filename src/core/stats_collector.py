@@ -123,7 +123,7 @@ class StatsCollector:
         Project repository contributors: {contribs:,}
         Languages:\n\t\t\t- {formatted_languages}"""
 
-    async def is_repo_name_invalid(self, repo_name: Optional[str]) -> bool:
+    def is_repo_name_invalid(self, repo_name: Optional[str]) -> bool:
         """
         Check if a repository name is invalid or should be excluded.
 
@@ -145,7 +145,7 @@ class StatsCollector:
             or repo_name in self.environment_vars.filter.exclude_repos
         )
 
-    async def is_repo_type_excluded(self, repo_data: Dict[str, Any]) -> bool:
+    def is_repo_type_excluded(self, repo_data: Dict[str, Any]) -> bool:
         """
         Check if a repository should be excluded based on its type.
 
@@ -230,11 +230,11 @@ class StatsCollector:
                 repos += contrib_repos.get("nodes", [])
 
             for repo in repos:
-                if not repo or await self.is_repo_type_excluded(repo):
+                if not repo or self.is_repo_type_excluded(repo):
                     continue
 
                 full_name = repo.get("nameWithOwner")
-                if await self.is_repo_name_invalid(full_name):
+                if self.is_repo_name_invalid(full_name):
                     continue
 
                 self._repos.add(full_name)
@@ -269,11 +269,11 @@ class StatsCollector:
         lang_cols = self.queries.get_language_colors()
 
         for repo in env_repos:
-            if await self.is_repo_name_invalid(repo):
+            if self.is_repo_name_invalid(repo):
                 continue
 
             repo_stats = await self.queries.query_rest(f"/repos/{repo}")
-            if await self.is_repo_type_excluded(repo_stats):
+            if self.is_repo_type_excluded(repo_stats):
                 continue
 
             self._repos.add(repo)
