@@ -159,14 +159,14 @@ class StatsCollector:
         :return: True if the repository type should be excluded, False otherwise.
         """
         return (
-            not self.environment_vars.filter.include_forked_repos
-            and (repo_data.get("isFork") or repo_data.get("fork"))
-            or self.environment_vars.filter.exclude_archive_repos
-            and (repo_data.get("isArchived") or repo_data.get("archived"))
-            or self.environment_vars.filter.exclude_private_repos
-            and (repo_data.get("isPrivate") or repo_data.get("private"))
-            or self.environment_vars.filter.exclude_public_repos
-            and (not repo_data.get("isPrivate") or not repo_data.get("private"))
+            (not self.environment_vars.filter.include_forked_repos
+             and (repo_data.get("isFork") or repo_data.get("fork")))
+            or (self.environment_vars.filter.exclude_archive_repos
+                and (repo_data.get("isArchived") or repo_data.get("archived")))
+            or (self.environment_vars.filter.exclude_private_repos
+                and (repo_data.get("isPrivate") or repo_data.get("private")))
+            or (self.environment_vars.filter.exclude_public_repos
+                and not repo_data.get("isPrivate") and not repo_data.get("private"))
         )
 
     async def _process_languages(self, repo_data: Dict[str, Any]) -> None:
