@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Traffic statistics management for views and clones."""
 
-from os import getenv, environ
+from os import getenv
 from typing import Any
 from datetime import datetime
 
@@ -86,35 +86,29 @@ class TrafficStats:
     def set_views(self, views: Any) -> None:
         """Updates the total repository views count and persists it."""
         self.repo_views += int(views)
-        environ["REPO_VIEWS"] = str(self.repo_views)
         self._db.set_views_count(self.repo_views)
 
     def set_last_viewed(self, new_last_viewed_date: str) -> None:
         """Updates the date of the last repository view and persists it."""
         self.repo_last_viewed = new_last_viewed_date
-        environ["LAST_VIEWED"] = self.repo_last_viewed
         self._db.set_views_to_date(self.repo_last_viewed)
 
     def set_first_viewed(self, new_first_viewed_date: str) -> None:
         """Updates the date of the first repository view and persists it."""
         self.repo_first_viewed = new_first_viewed_date
-        environ["FIRST_VIEWED"] = self.repo_first_viewed
         self._db.set_views_from_date(self.repo_first_viewed)
 
     def set_clones(self, clones: Any) -> None:
         """Updates the total repository clones count and persists it."""
         self.repo_clones += int(clones)
-        environ["REPO_CLONES"] = str(self.repo_clones)
         self._db.set_clones_count(self.repo_clones)
 
     def set_last_cloned(self, new_last_cloned_date: str) -> None:
         """Updates the date of the last repository clone and persists it."""
         self.repo_last_cloned = new_last_cloned_date
-        environ["LAST_CLONED"] = self.repo_last_cloned
         self._db.set_clones_to_date(self.repo_last_cloned)
 
     def set_first_cloned(self, new_first_cloned_date: str) -> None:
         """Updates the date of the first repository clone and persists it."""
         self.repo_first_cloned = new_first_cloned_date
-        environ["FIRST_CLONED"] = self.repo_first_cloned
         self._db.set_clones_from_date(self.repo_first_cloned)
