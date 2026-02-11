@@ -7,6 +7,13 @@ from datetime import datetime
 from src.db.db import GitRepoStatsDB
 
 
+def _to_bool(val: Optional[str], default: bool = False) -> bool:
+    """Convert a string value to boolean with a default fallback."""
+    if val is None:
+        return default
+    return str(val).strip().lower() == "true"
+
+
 class Environment:
     """
     Manages environment variables and persistent statistics from the database.
@@ -48,10 +55,6 @@ class Environment:
 
     def _init_filters(self, kwargs):
         """Initializes repository filters (forked, archived, etc.)."""
-        def _to_bool(val: Optional[str], default: bool = False) -> bool:
-            if val is None: return default
-            return val.strip().lower() == "true"
-
         self.include_forked_repos = _to_bool(kwargs.get("include_forked_repos", getenv("INCLUDE_FORKED_REPOS")))
         self.exclude_contrib_repos = _to_bool(kwargs.get("exclude_contrib_repos", getenv("EXCLUDE_CONTRIB_REPOS")))
         self.exclude_archive_repos = _to_bool(kwargs.get("exclude_archive_repos", getenv("EXCLUDE_ARCHIVE_REPOS")))
@@ -114,10 +117,6 @@ class Environment:
 
     def _init_additional_configs(self, kwargs):
         """Initializes additional configurations (collabs, extra repos)."""
-        def _to_bool(val: Optional[str], default: bool = True) -> bool:
-            if val is None: return default
-            return str(val).strip().lower() == "true"
-
         more_collabs = kwargs.get("more_collabs", getenv("MORE_COLLABS"))
         try:
             self.more_collabs = int(more_collabs) if more_collabs else 0
@@ -131,18 +130,18 @@ class Environment:
         self.only_included_repos = {x.strip() for x in only_included.split(",")} if only_included and only_included != "" else set()
 
         # Visual toggles
-        self.show_total_contributions = _to_bool(kwargs.get("show_total_contributions", getenv("SHOW_TOTAL_CONTRIBUTIONS")))
-        self.show_repositories = _to_bool(kwargs.get("show_repositories", getenv("SHOW_REPOSITORIES")))
-        self.show_lines_changed = _to_bool(kwargs.get("show_lines_changed", getenv("SHOW_LINES_CHANGED")))
-        self.show_avg_percent = _to_bool(kwargs.get("show_avg_percent", getenv("SHOW_AVG_PERCENT")))
-        self.show_collaborators = _to_bool(kwargs.get("show_collaborators", getenv("SHOW_COLLABORATORS")))
-        self.show_contributors = _to_bool(kwargs.get("show_contributors", getenv("SHOW_CONTRIBUTORS")))
-        self.show_views = _to_bool(kwargs.get("show_views", getenv("SHOW_VIEWS")))
-        self.show_clones = _to_bool(kwargs.get("show_clones", getenv("SHOW_CLONES")))
-        self.show_forks = _to_bool(kwargs.get("show_forks", getenv("SHOW_FORKS")))
-        self.show_stars = _to_bool(kwargs.get("show_stars", getenv("SHOW_STARS")))
-        self.show_pull_requests = _to_bool(kwargs.get("show_pull_requests", getenv("SHOW_PULL_REQUESTS")))
-        self.show_issues = _to_bool(kwargs.get("show_issues", getenv("SHOW_ISSUES")))
+        self.show_total_contributions = _to_bool(kwargs.get("show_total_contributions", getenv("SHOW_TOTAL_CONTRIBUTIONS")), True)
+        self.show_repositories = _to_bool(kwargs.get("show_repositories", getenv("SHOW_REPOSITORIES")), True)
+        self.show_lines_changed = _to_bool(kwargs.get("show_lines_changed", getenv("SHOW_LINES_CHANGED")), True)
+        self.show_avg_percent = _to_bool(kwargs.get("show_avg_percent", getenv("SHOW_AVG_PERCENT")), True)
+        self.show_collaborators = _to_bool(kwargs.get("show_collaborators", getenv("SHOW_COLLABORATORS")), True)
+        self.show_contributors = _to_bool(kwargs.get("show_contributors", getenv("SHOW_CONTRIBUTORS")), True)
+        self.show_views = _to_bool(kwargs.get("show_views", getenv("SHOW_VIEWS")), True)
+        self.show_clones = _to_bool(kwargs.get("show_clones", getenv("SHOW_CLONES")), True)
+        self.show_forks = _to_bool(kwargs.get("show_forks", getenv("SHOW_FORKS")), True)
+        self.show_stars = _to_bool(kwargs.get("show_stars", getenv("SHOW_STARS")), True)
+        self.show_pull_requests = _to_bool(kwargs.get("show_pull_requests", getenv("SHOW_PULL_REQUESTS")), True)
+        self.show_issues = _to_bool(kwargs.get("show_issues", getenv("SHOW_ISSUES")), True)
 
     def _validate_date(self, date_str: str) -> str:
         """Validates date string format."""
