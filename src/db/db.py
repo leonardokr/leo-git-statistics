@@ -1,36 +1,24 @@
 #!/usr/bin/python3
 
-from json import load, dumps
+import logging
+from json import load, dumps, JSONDecodeError
 from pathlib import Path
 from typing import Any
 
 DB_PATH = Path(__file__).parent / "db.json"
+DEFAULT_DB = {
+    "views": {"count": "0", "from": "0000-00-00", "to": "0000-00-00"},
+    "clones": {"count": "0", "from": "0000-00-00", "to": "0000-00-00"}
+}
+
+logger = logging.getLogger(__name__)
 
 
 class GitRepoStatsDB:
-    """
-    Manages the persistence of repository statistics in a JSON database.
-
-    This class provides methods to read and update statistics like views and clones,
-    ensuring they are saved across application runs.
-    """
+    """Manages persistence of repository statistics in a JSON database."""
 
     def __init__(self):
-        """
-        Initializes the database by loading data from 'src/db/db.json'.
-        """
-        self.__db = None
-
-        self.views = None
-        self.views_start = None
-        self.views_end = None
-
-        self.clones = None
-        self.clones_start = None
-        self.clones_end = None
-
-        with open(DB_PATH, "r") as db:
-            self.__db = load(db)
+        self.__db = self._load_db()
 
         self.views = int(self.__db['views']['count'])
         self.views_from_date = self.__db['views']['from']
@@ -40,12 +28,30 @@ class GitRepoStatsDB:
         self.clones_from_date = self.__db['clones']['from']
         self.clones_to_date = self.__db['clones']['to']
 
+    def _load_db(self) -> dict:
+        """Load database from file or create with defaults if not exists."""
+        try:
+            with open(DB_PATH, "r") as db:
+                return load(db)
+        except FileNotFoundError:
+            logger.warning("Database file not found, creating with defaults: %s", DB_PATH)
+            self._write_db(DEFAULT_DB)
+            return DEFAULT_DB.copy()
+        except JSONDecodeError as e:
+            logger.error("Invalid JSON in database file: %s", e)
+            return DEFAULT_DB.copy()
+
+    def _write_db(self, data: dict) -> None:
+        """Write data to database file."""
+        try:
+            with open(DB_PATH, "w") as db:
+                db.write(dumps(data, indent=2))
+        except IOError as e:
+            logger.error("Failed to write database: %s", e)
+
     def __update_db(self) -> None:
-        """
-        Saves the current state of the database to the JSON file.
-        """
-        with open(DB_PATH, "w") as db:
-            db.write(dumps(self.__db, indent=2))
+        """Saves the current state of the database to the JSON file."""
+        self._write_db(self.__db)
 
     def set_views_count(self, count: Any) -> None:
         """
