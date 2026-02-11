@@ -5,7 +5,7 @@ from json import load, dumps, JSONDecodeError
 from pathlib import Path
 from typing import Any
 
-DB_PATH = Path(__file__).parent / "db.json"
+DEFAULT_DB_PATH = Path(__file__).parent / "db.json"
 DEFAULT_DB = {
     "views": {"count": "0", "from": "0000-00-00", "to": "0000-00-00"},
     "clones": {"count": "0", "from": "0000-00-00", "to": "0000-00-00"}
@@ -17,7 +17,12 @@ logger = logging.getLogger(__name__)
 class GitRepoStatsDB:
     """Manages persistence of repository statistics in a JSON database."""
 
-    def __init__(self):
+    def __init__(self, db_path: Path = None):
+        """
+        :param db_path: Path to the JSON database file. Defaults to ``db.json``
+                        in the same directory as this module.
+        """
+        self._db_path = db_path or DEFAULT_DB_PATH
         self.__db = self._load_db()
 
         self.views = int(self.__db['views']['count'])
@@ -31,10 +36,10 @@ class GitRepoStatsDB:
     def _load_db(self) -> dict:
         """Load database from file or create with defaults if not exists."""
         try:
-            with open(DB_PATH, "r") as db:
+            with open(self._db_path, "r") as db:
                 return load(db)
         except FileNotFoundError:
-            logger.warning("Database file not found, creating with defaults: %s", DB_PATH)
+            logger.warning("Database file not found, creating with defaults: %s", self._db_path)
             self._write_db(DEFAULT_DB)
             return DEFAULT_DB.copy()
         except JSONDecodeError as e:
@@ -44,7 +49,7 @@ class GitRepoStatsDB:
     def _write_db(self, data: dict) -> None:
         """Write data to database file."""
         try:
-            with open(DB_PATH, "w") as db:
+            with open(self._db_path, "w") as db:
                 db.write(dumps(data, indent=2))
         except IOError as e:
             logger.error("Failed to write database: %s", e)
