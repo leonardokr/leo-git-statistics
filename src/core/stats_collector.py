@@ -7,7 +7,7 @@ for GitHub users by querying the GitHub API.
 """
 
 import logging
-from typing import Dict, Optional, Set, Tuple, Any, cast
+from typing import Dict, List, Optional, Set, Tuple, Any, Union, cast
 from aiohttp import ClientSession
 from datetime import date, timedelta
 
@@ -16,6 +16,14 @@ from src.core.github_client import GitHubClient
 from src.utils.decorators import lazy_async_property
 
 logger = logging.getLogger(__name__)
+
+
+def _ensure_list(data: Union[Dict, List, Any]) -> list:
+    if isinstance(data, list):
+        return data
+    if isinstance(data, dict) and "message" in data:
+        logger.warning("API returned error response: %s", data.get("message"))
+    return []
 
 
 class StatsCollector:
@@ -414,7 +422,7 @@ class StatsCollector:
             repo_total_changes = 0
             author_total_changes = 0
 
-            r = await self.queries.query_rest(f"/repos/{repo}/stats/contributors")
+            r = _ensure_list(await self.queries.query_rest(f"/repos/{repo}/stats/contributors"))
 
             for author_obj in r:
                 if not isinstance(author_obj, dict) or not isinstance(
@@ -608,7 +616,7 @@ class StatsCollector:
 
         repos = await self.get_repos()
         for repo in repos:
-            r = await self.queries.query_rest(f"/repos/{repo}/collaborators")
+            r = _ensure_list(await self.queries.query_rest(f"/repos/{repo}/collaborators"))
 
             for obj in r:
                 if isinstance(obj, dict):
@@ -641,7 +649,7 @@ class StatsCollector:
 
         repos = await self.get_repos()
         for repo in repos:
-            r = await self.queries.query_rest(f"/repos/{repo}/pulls?state=all")
+            r = _ensure_list(await self.queries.query_rest(f"/repos/{repo}/pulls?state=all"))
 
             for obj in r:
                 if isinstance(obj, dict):
@@ -661,7 +669,7 @@ class StatsCollector:
 
         repos = await self.get_repos()
         for repo in repos:
-            r = await self.queries.query_rest(f"/repos/{repo}/issues?state=all")
+            r = _ensure_list(await self.queries.query_rest(f"/repos/{repo}/issues?state=all"))
 
             for obj in r:
                 if isinstance(obj, dict):
