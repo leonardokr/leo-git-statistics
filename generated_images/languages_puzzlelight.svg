@@ -68,8 +68,8 @@
 <text class="puzzle-text" x="175.96" y="50.19" text-anchor="middle" dominant-baseline="middle">Python</text>
 <text class="puzzle-percent" x="175.96" y="62.19" text-anchor="middle" dominant-baseline="middle">93.0%</text>
 <rect class="puzzle-rect delay-2" x="352.91" y="1.00" width="57.59" height="102.38" rx="4.0" fill="#26a8ec"/>
-<text class="puzzle-text" x="381.70" y="50.19" text-anchor="middle" dominant-baseline="middle">PowerShell</text>
-<text class="puzzle-percent" x="381.70" y="62.19" text-anchor="middle" dominant-baseline="middle">2.7%</text>
+<text class="puzzle-text" x="381.71" y="50.19" text-anchor="middle" dominant-baseline="middle">PowerShell</text>
+<text class="puzzle-percent" x="381.71" y="62.19" text-anchor="middle" dominant-baseline="middle">2.7%</text>
 <rect class="puzzle-rect delay-3" x="1.00" y="105.38" width="162.06" height="28.62" rx="4.0" fill="#1028b1"/>
 <text class="puzzle-text" x="82.03" y="117.69" text-anchor="middle" dominant-baseline="middle">JavaScript</text>
 <text class="puzzle-percent" x="82.03" y="129.69" text-anchor="middle" dominant-baseline="middle">1.7%</text>
