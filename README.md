@@ -20,7 +20,7 @@
 
 ## Features
 
-- **Multiple Statistics Cards** - Overview stats, language distribution, contribution streaks, streak battery, and language puzzle
+- **Multiple Statistics Cards** - Overview stats, language distribution, contribution streaks, streak battery, language puzzle, and weekly commit calendar
 - **25+ Built-in Themes** - From Dracula to Nord, Catppuccin to Tokyo Night
 - **Extensible Theme System** - Add your own themes via YAML files
 - **Animated SVGs** - Smooth fade-in and slide animations
@@ -70,6 +70,14 @@ Treemap visualization of your programming languages - area proportional to usage
   <img src="generated_images/samples/languages_puzzle_sample_light.svg" alt="Language Puzzle Light Mode" width="49%" />
 </p>
 
+### Weekly Commit Calendar
+Agenda-style weekly calendar where each commit is a time block, with repositories separated by color.
+
+<p align="center">
+  <img src="generated_images/samples/commit_calendar_sample_dark.svg" alt="Commit Calendar Dark Mode" width="49%" />
+  <img src="generated_images/samples/commit_calendar_sample_light.svg" alt="Commit Calendar Light Mode" width="49%" />
+</p>
+
 ## Themes
 
 Choose from **25+ built-in themes** or create your own:
@@ -94,6 +102,7 @@ Choose from **25+ built-in themes** or create your own:
 <img src="generated_images/samples/streak_battery_sample_dracula.svg" alt="Dracula Theme" width="49%" />
 <img src="generated_images/samples/languages_sample_dracula.svg" alt="Dracula Theme" width="49%" />
 <img src="generated_images/samples/languages_puzzle_sample_dracula.svg" alt="Dracula Theme" width="49%" />
+<img src="generated_images/samples/commit_calendar_sample_dracula.svg" alt="Dracula Theme" width="49%" />
 </div>
 </details>
 
@@ -107,6 +116,7 @@ Choose from **25+ built-in themes** or create your own:
 <img src="generated_images/samples/streak_battery_sample_nord.svg" alt="Nord Theme" width="49%" />
 <img src="generated_images/samples/languages_sample_nord.svg" alt="Nord Theme" width="49%" />
 <img src="generated_images/samples/languages_puzzle_sample_nord.svg" alt="Nord Theme" width="49%" />
+<img src="generated_images/samples/commit_calendar_sample_nord.svg" alt="Nord Theme" width="49%" />
 </div>
 </details>
 
@@ -120,6 +130,7 @@ Choose from **25+ built-in themes** or create your own:
 <img src="generated_images/samples/streak_battery_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
 <img src="generated_images/samples/languages_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
 <img src="generated_images/samples/languages_puzzle_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
+<img src="generated_images/samples/commit_calendar_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
 </div>
 </details>
 
@@ -133,6 +144,7 @@ Choose from **25+ built-in themes** or create your own:
 <img src="generated_images/samples/streak_battery_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
 <img src="generated_images/samples/languages_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
 <img src="generated_images/samples/languages_puzzle_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
+<img src="generated_images/samples/commit_calendar_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
 </div>
 </details>
 
@@ -277,12 +289,18 @@ src/
 └── orchestrator.py                 # Main coordinator
 ```
 
+### Weekly Commit Calendar Files
+
+- `src/core/commit_schedule_collector.py` - Collects weekly commit events by repository (private repos supported with privacy-safe description handling)
+- `src/generators/commit_calendar.py` - Generates the agenda-style weekly commit calendar SVG
+- `src/templates/commit_calendar.svg` - Template used by the commit calendar generator
+
 ### Key Design Decisions
 
 - **SOLID Architecture** - Each class has a single responsibility, dependencies are injected, and interfaces are segregated via `typing.Protocol`
-- **Facade Pattern** - `StatsCollector` composes 5 specialized collectors (`RepoStatsCollector`, `ContributionTracker`, `CodeChangeAnalyzer`, `TrafficCollector`, `EngagementCollector`) behind a unified API
+- **Facade Pattern** - `StatsCollector` composes 6 specialized collectors (`RepoStatsCollector`, `ContributionTracker`, `CommitScheduleCollector`, `CodeChangeAnalyzer`, `TrafficCollector`, `EngagementCollector`) behind a unified API
 - **Registry Pattern** - Generators self-register via `@register_generator` decorator; the orchestrator discovers them automatically without hardcoded lists
-- **Protocol-based Interfaces** - Each generator depends only on the subset of stats it needs (`StreakProvider`, `LanguageProvider`, `OverviewProvider`, `BatteryProvider`)
+- **Protocol-based Interfaces** - Each generator depends only on the subset of stats it needs (`StreakProvider`, `LanguageProvider`, `OverviewProvider`, `BatteryProvider`, `CommitCalendarProvider`)
 - **Dependency Injection** - All major classes accept optional dependencies in their constructors for testability
 - **Async/Await** - Concurrent API calls for better performance
 - **YAML-based Themes** - Easy to add, remove, or modify themes
