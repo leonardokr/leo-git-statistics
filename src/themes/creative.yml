@@ -1,203 +1,432 @@
 synthwave:
-  suffix: "synthwave"
+  suffix: synthwave
   colors:
-    bg_color: "#262335"
-    title_color: "#ff7edb"
-    text_color: "#ffffff"
-    icon_color: "#36f9f6"
-    percent_color: "#848bbd"
-    border_color: "#34294f"
-    accent_color: "#fede5d"
-    gradient_start: "#ff7edb"
-    gradient_end: "#36f9f6"
+    bg_color: '#262335'
+    title_color: '#ff7edb'
+    text_color: '#ffffff'
+    icon_color: '#36f9f6'
+    percent_color: '#848bbd'
+    border_color: '#34294f'
+    accent_color: '#fede5d'
+    gradient_start: '#ff7edb'
+    gradient_end: '#36f9f6'
     puzzle_hue: 310
-    puzzle_saturation_range: [70, 95]
-    puzzle_lightness_range: [50, 70]
+    puzzle_saturation_range:
+    - 70
+    - 95
+    puzzle_lightness_range:
+    - 50
+    - 70
     puzzle_hue_spread: 100
-
+    calendar_title_color: '#ff7edb'
+    calendar_subtitle_color: '#848bbd'
+    calendar_day_label_color: '#ffffff'
+    calendar_hour_label_color: '#848bbd'
+    calendar_grid_color: '#34294f'
+    calendar_grid_opacity: 0.55
+    calendar_legend_text_color: '#ffffff'
+    calendar_slot_opacity: 0.95
+    calendar_hue: 310
+    calendar_saturation_range:
+    - 70
+    - 95
+    calendar_lightness_range:
+    - 50
+    - 70
+    calendar_hue_spread: 100
 cyberpunk:
-  suffix: "cyberpunk"
+  suffix: cyberpunk
   colors:
-    bg_color: "#0d0221"
-    title_color: "#f706cf"
-    text_color: "#fcee0a"
-    icon_color: "#00ff9f"
-    percent_color: "#6b5b95"
-    border_color: "#1a0533"
-    accent_color: "#00d4ff"
-    gradient_start: "#f706cf"
-    gradient_end: "#00ff9f"
+    bg_color: '#0d0221'
+    title_color: '#f706cf'
+    text_color: '#fcee0a'
+    icon_color: '#00ff9f'
+    percent_color: '#6b5b95'
+    border_color: '#1a0533'
+    accent_color: '#00d4ff'
+    gradient_start: '#f706cf'
+    gradient_end: '#00ff9f'
     puzzle_hue: 300
-    puzzle_saturation_range: [80, 100]
-    puzzle_lightness_range: [45, 65]
+    puzzle_saturation_range:
+    - 80
+    - 100
+    puzzle_lightness_range:
+    - 45
+    - 65
     puzzle_hue_spread: 120
-
+    calendar_title_color: '#f706cf'
+    calendar_subtitle_color: '#6b5b95'
+    calendar_day_label_color: '#fcee0a'
+    calendar_hour_label_color: '#6b5b95'
+    calendar_grid_color: '#1a0533'
+    calendar_grid_opacity: 0.55
+    calendar_legend_text_color: '#fcee0a'
+    calendar_slot_opacity: 0.95
+    calendar_hue: 300
+    calendar_saturation_range:
+    - 80
+    - 100
+    calendar_lightness_range:
+    - 45
+    - 65
+    calendar_hue_spread: 120
 ocean:
-  suffix: "ocean"
+  suffix: ocean
   colors:
-    bg_color: "#0a192f"
-    title_color: "#64ffda"
-    text_color: "#8892b0"
-    icon_color: "#5ccfe6"
-    percent_color: "#495670"
-    border_color: "#172a45"
-    accent_color: "#f78c6c"
-    gradient_start: "#64ffda"
-    gradient_end: "#5ccfe6"
+    bg_color: '#0a192f'
+    title_color: '#64ffda'
+    text_color: '#8892b0'
+    icon_color: '#5ccfe6'
+    percent_color: '#495670'
+    border_color: '#172a45'
+    accent_color: '#f78c6c'
+    gradient_start: '#64ffda'
+    gradient_end: '#5ccfe6'
     puzzle_hue: 170
-    puzzle_saturation_range: [55, 80]
-    puzzle_lightness_range: [45, 65]
+    puzzle_saturation_range:
+    - 55
+    - 80
+    puzzle_lightness_range:
+    - 45
+    - 65
     puzzle_hue_spread: 80
-
+    calendar_title_color: '#64ffda'
+    calendar_subtitle_color: '#495670'
+    calendar_day_label_color: '#8892b0'
+    calendar_hour_label_color: '#495670'
+    calendar_grid_color: '#172a45'
+    calendar_grid_opacity: 0.55
+    calendar_legend_text_color: '#8892b0'
+    calendar_slot_opacity: 0.95
+    calendar_hue: 170
+    calendar_saturation_range:
+    - 55
+    - 80
+    calendar_lightness_range:
+    - 45
+    - 65
+    calendar_hue_spread: 80
 forest:
-  suffix: "forest"
+  suffix: forest
   colors:
-    bg_color: "#1b2820"
-    title_color: "#7ec883"
-    text_color: "#b8c4ba"
-    icon_color: "#5fb878"
-    percent_color: "#5d6b5f"
-    border_color: "#2d3d32"
-    accent_color: "#d4a656"
-    gradient_start: "#7ec883"
-    gradient_end: "#5fb878"
+    bg_color: '#1b2820'
+    title_color: '#7ec883'
+    text_color: '#b8c4ba'
+    icon_color: '#5fb878'
+    percent_color: '#5d6b5f'
+    border_color: '#2d3d32'
+    accent_color: '#d4a656'
+    gradient_start: '#7ec883'
+    gradient_end: '#5fb878'
     puzzle_hue: 130
-    puzzle_saturation_range: [45, 70]
-    puzzle_lightness_range: [40, 60]
+    puzzle_saturation_range:
+    - 45
+    - 70
+    puzzle_lightness_range:
+    - 40
+    - 60
     puzzle_hue_spread: 80
-
+    calendar_title_color: '#7ec883'
+    calendar_subtitle_color: '#5d6b5f'
+    calendar_day_label_color: '#b8c4ba'
+    calendar_hour_label_color: '#5d6b5f'
+    calendar_grid_color: '#2d3d32'
+    calendar_grid_opacity: 0.55
+    calendar_legend_text_color: '#b8c4ba'
+    calendar_slot_opacity: 0.95
+    calendar_hue: 130
+    calendar_saturation_range:
+    - 45
+    - 70
+    calendar_lightness_range:
+    - 40
+    - 60
+    calendar_hue_spread: 80
 sunset:
-  suffix: "sunset"
+  suffix: sunset
   colors:
-    bg_color: "#1f1520"
-    title_color: "#ff6b6b"
-    text_color: "#e8d5d5"
-    icon_color: "#ffa07a"
-    percent_color: "#8b7070"
-    border_color: "#3d2835"
-    accent_color: "#ffd93d"
-    gradient_start: "#ff6b6b"
-    gradient_end: "#ffa07a"
+    bg_color: '#1f1520'
+    title_color: '#ff6b6b'
+    text_color: '#e8d5d5'
+    icon_color: '#ffa07a'
+    percent_color: '#8b7070'
+    border_color: '#3d2835'
+    accent_color: '#ffd93d'
+    gradient_start: '#ff6b6b'
+    gradient_end: '#ffa07a'
     puzzle_hue: 15
-    puzzle_saturation_range: [70, 95]
-    puzzle_lightness_range: [45, 65]
+    puzzle_saturation_range:
+    - 70
+    - 95
+    puzzle_lightness_range:
+    - 45
+    - 65
     puzzle_hue_spread: 100
-
+    calendar_title_color: '#ff6b6b'
+    calendar_subtitle_color: '#8b7070'
+    calendar_day_label_color: '#e8d5d5'
+    calendar_hour_label_color: '#8b7070'
+    calendar_grid_color: '#3d2835'
+    calendar_grid_opacity: 0.55
+    calendar_legend_text_color: '#e8d5d5'
+    calendar_slot_opacity: 0.95
+    calendar_hue: 15
+    calendar_saturation_range:
+    - 70
+    - 95
+    calendar_lightness_range:
+    - 45
+    - 65
+    calendar_hue_spread: 100
 midnight:
-  suffix: "midnight"
+  suffix: midnight
   colors:
-    bg_color: "#0f0a1a"
-    title_color: "#a78bfa"
-    text_color: "#d1d5db"
-    icon_color: "#818cf8"
-    percent_color: "#6b7280"
-    border_color: "#1e1433"
-    accent_color: "#f472b6"
-    gradient_start: "#a78bfa"
-    gradient_end: "#818cf8"
+    bg_color: '#0f0a1a'
+    title_color: '#a78bfa'
+    text_color: '#d1d5db'
+    icon_color: '#818cf8'
+    percent_color: '#6b7280'
+    border_color: '#1e1433'
+    accent_color: '#f472b6'
+    gradient_start: '#a78bfa'
+    gradient_end: '#818cf8'
     puzzle_hue: 255
-    puzzle_saturation_range: [55, 80]
-    puzzle_lightness_range: [50, 70]
+    puzzle_saturation_range:
+    - 55
+    - 80
+    puzzle_lightness_range:
+    - 50
+    - 70
     puzzle_hue_spread: 90
-
+    calendar_title_color: '#a78bfa'
+    calendar_subtitle_color: '#6b7280'
+    calendar_day_label_color: '#d1d5db'
+    calendar_hour_label_color: '#6b7280'
+    calendar_grid_color: '#1e1433'
+    calendar_grid_opacity: 0.55
+    calendar_legend_text_color: '#d1d5db'
+    calendar_slot_opacity: 0.95
+    calendar_hue: 255
+    calendar_saturation_range:
+    - 55
+    - 80
+    calendar_lightness_range:
+    - 50
+    - 70
+    calendar_hue_spread: 90
 aurora:
-  suffix: "aurora"
+  suffix: aurora
   colors:
-    bg_color: "#0c1929"
-    title_color: "#00d4aa"
-    text_color: "#e0f4f1"
-    icon_color: "#7b68ee"
-    percent_color: "#5a7d8a"
-    border_color: "#1a3a4a"
-    accent_color: "#ff6ec7"
-    gradient_start: "#00d4aa"
-    gradient_end: "#7b68ee"
+    bg_color: '#0c1929'
+    title_color: '#00d4aa'
+    text_color: '#e0f4f1'
+    icon_color: '#7b68ee'
+    percent_color: '#5a7d8a'
+    border_color: '#1a3a4a'
+    accent_color: '#ff6ec7'
+    gradient_start: '#00d4aa'
+    gradient_end: '#7b68ee'
     puzzle_hue: 160
-    puzzle_saturation_range: [60, 85]
-    puzzle_lightness_range: [45, 65]
+    puzzle_saturation_range:
+    - 60
+    - 85
+    puzzle_lightness_range:
+    - 45
+    - 65
     puzzle_hue_spread: 100
-
+    calendar_title_color: '#00d4aa'
+    calendar_subtitle_color: '#5a7d8a'
+    calendar_day_label_color: '#e0f4f1'
+    calendar_hour_label_color: '#5a7d8a'
+    calendar_grid_color: '#1a3a4a'
+    calendar_grid_opacity: 0.55
+    calendar_legend_text_color: '#e0f4f1'
+    calendar_slot_opacity: 0.95
+    calendar_hue: 160
+    calendar_saturation_range:
+    - 60
+    - 85
+    calendar_lightness_range:
+    - 45
+    - 65
+    calendar_hue_spread: 100
 neon:
-  suffix: "neon"
+  suffix: neon
   colors:
-    bg_color: "#0a0a0a"
-    title_color: "#00ff87"
-    text_color: "#ffffff"
-    icon_color: "#ff00ff"
-    percent_color: "#666666"
-    border_color: "#00ff8755"
-    accent_color: "#00ffff"
-    gradient_start: "#00ff87"
-    gradient_end: "#ff00ff"
+    bg_color: '#0a0a0a'
+    title_color: '#00ff87'
+    text_color: '#ffffff'
+    icon_color: '#ff00ff'
+    percent_color: '#666666'
+    border_color: '#00ff8755'
+    accent_color: '#00ffff'
+    gradient_start: '#00ff87'
+    gradient_end: '#ff00ff'
     puzzle_hue: 150
-    puzzle_saturation_range: [80, 100]
-    puzzle_lightness_range: [45, 65]
+    puzzle_saturation_range:
+    - 80
+    - 100
+    puzzle_lightness_range:
+    - 45
+    - 65
     puzzle_hue_spread: 120
-
+    calendar_title_color: '#00ff87'
+    calendar_subtitle_color: '#666666'
+    calendar_day_label_color: '#ffffff'
+    calendar_hour_label_color: '#666666'
+    calendar_grid_color: '#00ff8755'
+    calendar_grid_opacity: 0.55
+    calendar_legend_text_color: '#ffffff'
+    calendar_slot_opacity: 0.95
+    calendar_hue: 150
+    calendar_saturation_range:
+    - 80
+    - 100
+    calendar_lightness_range:
+    - 45
+    - 65
+    calendar_hue_spread: 120
 retro:
-  suffix: "retro"
+  suffix: retro
   colors:
-    bg_color: "#f4e4ba"
-    title_color: "#8b4513"
-    text_color: "#5d4037"
-    icon_color: "#d2691e"
-    percent_color: "#a0522d"
-    border_color: "#deb887"
-    accent_color: "#228b22"
-    gradient_start: "#8b4513"
-    gradient_end: "#d2691e"
+    bg_color: '#f4e4ba'
+    title_color: '#8b4513'
+    text_color: '#5d4037'
+    icon_color: '#d2691e'
+    percent_color: '#a0522d'
+    border_color: '#deb887'
+    accent_color: '#228b22'
+    gradient_start: '#8b4513'
+    gradient_end: '#d2691e'
     puzzle_hue: 25
-    puzzle_saturation_range: [60, 85]
-    puzzle_lightness_range: [30, 55]
+    puzzle_saturation_range:
+    - 60
+    - 85
+    puzzle_lightness_range:
+    - 30
+    - 55
     puzzle_hue_spread: 90
-
+    calendar_title_color: '#8b4513'
+    calendar_subtitle_color: '#a0522d'
+    calendar_day_label_color: '#5d4037'
+    calendar_hour_label_color: '#a0522d'
+    calendar_grid_color: '#deb887'
+    calendar_grid_opacity: 0.55
+    calendar_legend_text_color: '#5d4037'
+    calendar_slot_opacity: 0.95
+    calendar_hue: 25
+    calendar_saturation_range:
+    - 60
+    - 85
+    calendar_lightness_range:
+    - 30
+    - 55
+    calendar_hue_spread: 90
 lavender:
-  suffix: "lavender"
+  suffix: lavender
   colors:
-    bg_color: "#1a1625"
-    title_color: "#b4a7d6"
-    text_color: "#e0d8f0"
-    icon_color: "#9d8cd9"
-    percent_color: "#6b5b7a"
-    border_color: "#2d2640"
-    accent_color: "#e6b3cc"
-    gradient_start: "#b4a7d6"
-    gradient_end: "#9d8cd9"
+    bg_color: '#1a1625'
+    title_color: '#b4a7d6'
+    text_color: '#e0d8f0'
+    icon_color: '#9d8cd9'
+    percent_color: '#6b5b7a'
+    border_color: '#2d2640'
+    accent_color: '#e6b3cc'
+    gradient_start: '#b4a7d6'
+    gradient_end: '#9d8cd9'
     puzzle_hue: 260
-    puzzle_saturation_range: [45, 70]
-    puzzle_lightness_range: [50, 70]
+    puzzle_saturation_range:
+    - 45
+    - 70
+    puzzle_lightness_range:
+    - 50
+    - 70
     puzzle_hue_spread: 80
-
+    calendar_title_color: '#b4a7d6'
+    calendar_subtitle_color: '#6b5b7a'
+    calendar_day_label_color: '#e0d8f0'
+    calendar_hour_label_color: '#6b5b7a'
+    calendar_grid_color: '#2d2640'
+    calendar_grid_opacity: 0.55
+    calendar_legend_text_color: '#e0d8f0'
+    calendar_slot_opacity: 0.95
+    calendar_hue: 260
+    calendar_saturation_range:
+    - 45
+    - 70
+    calendar_lightness_range:
+    - 50
+    - 70
+    calendar_hue_spread: 80
 rose_pine:
-  suffix: "rose_pine"
+  suffix: rose_pine
   colors:
-    bg_color: "#191724"
-    title_color: "#ebbcba"
-    text_color: "#e0def4"
-    icon_color: "#c4a7e7"
-    percent_color: "#6e6a86"
-    border_color: "#26233a"
-    accent_color: "#9ccfd8"
-    gradient_start: "#ebbcba"
-    gradient_end: "#c4a7e7"
+    bg_color: '#191724'
+    title_color: '#ebbcba'
+    text_color: '#e0def4'
+    icon_color: '#c4a7e7'
+    percent_color: '#6e6a86'
+    border_color: '#26233a'
+    accent_color: '#9ccfd8'
+    gradient_start: '#ebbcba'
+    gradient_end: '#c4a7e7'
     puzzle_hue: 280
-    puzzle_saturation_range: [50, 75]
-    puzzle_lightness_range: [50, 70]
+    puzzle_saturation_range:
+    - 50
+    - 75
+    puzzle_lightness_range:
+    - 50
+    - 70
     puzzle_hue_spread: 90
-
+    calendar_title_color: '#ebbcba'
+    calendar_subtitle_color: '#6e6a86'
+    calendar_day_label_color: '#e0def4'
+    calendar_hour_label_color: '#6e6a86'
+    calendar_grid_color: '#26233a'
+    calendar_grid_opacity: 0.55
+    calendar_legend_text_color: '#e0def4'
+    calendar_slot_opacity: 0.95
+    calendar_hue: 280
+    calendar_saturation_range:
+    - 50
+    - 75
+    calendar_lightness_range:
+    - 50
+    - 70
+    calendar_hue_spread: 90
 rose_pine_dawn:
-  suffix: "rose_pine_dawn"
+  suffix: rose_pine_dawn
   colors:
-    bg_color: "#faf4ed"
-    title_color: "#d7827e"
-    text_color: "#575279"
-    icon_color: "#907aa9"
-    percent_color: "#9893a5"
-    border_color: "#f2e9e1"
-    accent_color: "#56949f"
-    gradient_start: "#d7827e"
-    gradient_end: "#907aa9"
+    bg_color: '#faf4ed'
+    title_color: '#d7827e'
+    text_color: '#575279'
+    icon_color: '#907aa9'
+    percent_color: '#9893a5'
+    border_color: '#f2e9e1'
+    accent_color: '#56949f'
+    gradient_start: '#d7827e'
+    gradient_end: '#907aa9'
     puzzle_hue: 5
-    puzzle_saturation_range: [45, 70]
-    puzzle_lightness_range: [45, 65]
+    puzzle_saturation_range:
+    - 45
+    - 70
+    puzzle_lightness_range:
+    - 45
+    - 65
     puzzle_hue_spread: 90
+    calendar_title_color: '#d7827e'
+    calendar_subtitle_color: '#9893a5'
+    calendar_day_label_color: '#575279'
+    calendar_hour_label_color: '#9893a5'
+    calendar_grid_color: '#f2e9e1'
+    calendar_grid_opacity: 0.55
+    calendar_legend_text_color: '#575279'
+    calendar_slot_opacity: 0.95
+    calendar_hue: 5
+    calendar_saturation_range:
+    - 45
+    - 70
+    calendar_lightness_range:
+    - 45
+    - 65
+    calendar_hue_spread: 90

@@ -19,7 +19,19 @@ DEFAULT_COLORS = {
     "puzzle_hue": 210,
     "puzzle_saturation_range": [60, 85],
     "puzzle_lightness_range": [35, 65],
-    "puzzle_text_color": "#FFFFFF"
+    "puzzle_text_color": "#FFFFFF",
+    "calendar_title_color": "#0969da",
+    "calendar_subtitle_color": "#57606a",
+    "calendar_day_label_color": "#24292f",
+    "calendar_hour_label_color": "#57606a",
+    "calendar_grid_color": "#d0d7de",
+    "calendar_grid_opacity": 0.55,
+    "calendar_legend_text_color": "#24292f",
+    "calendar_slot_opacity": 0.95,
+    "calendar_hue": 210,
+    "calendar_saturation_range": [60, 85],
+    "calendar_lightness_range": [40, 60],
+    "calendar_hue_spread": 90,
 }
 
 
@@ -47,6 +59,27 @@ def _normalize_theme(name: str, theme_data: Dict[str, Any]) -> Dict[str, Any]:
             normalized_colors[key] = colors[key]
         else:
             normalized_colors[key] = default
+
+    if "calendar_title_color" not in colors:
+        normalized_colors["calendar_title_color"] = normalized_colors["title_color"]
+    if "calendar_subtitle_color" not in colors:
+        normalized_colors["calendar_subtitle_color"] = normalized_colors["percent_color"]
+    if "calendar_day_label_color" not in colors:
+        normalized_colors["calendar_day_label_color"] = normalized_colors["text_color"]
+    if "calendar_hour_label_color" not in colors:
+        normalized_colors["calendar_hour_label_color"] = normalized_colors["percent_color"]
+    if "calendar_grid_color" not in colors:
+        normalized_colors["calendar_grid_color"] = normalized_colors["border_color"]
+    if "calendar_legend_text_color" not in colors:
+        normalized_colors["calendar_legend_text_color"] = normalized_colors["text_color"]
+    if "calendar_hue" not in colors:
+        normalized_colors["calendar_hue"] = normalized_colors["puzzle_hue"]
+    if "calendar_saturation_range" not in colors:
+        normalized_colors["calendar_saturation_range"] = normalized_colors["puzzle_saturation_range"]
+    if "calendar_lightness_range" not in colors:
+        normalized_colors["calendar_lightness_range"] = normalized_colors["puzzle_lightness_range"]
+    if "calendar_hue_spread" not in colors:
+        normalized_colors["calendar_hue_spread"] = normalized_colors.get("puzzle_hue_spread", 90)
 
     suffix = theme_data.get("suffix")
     if suffix is None:
