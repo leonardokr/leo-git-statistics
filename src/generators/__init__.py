@@ -4,6 +4,7 @@ from src.generators.languages import LanguagesGenerator
 from src.generators.languages_puzzle import LanguagesPuzzleGenerator
 from src.generators.streak import StreakGenerator
 from src.generators.streak_battery import StreakBatteryGenerator
+from src.generators.commit_calendar import CommitCalendarGenerator
 
 __all__ = [
     "BaseGenerator",
@@ -14,4 +15,5 @@ __all__ = [
     "LanguagesPuzzleGenerator",
     "StreakGenerator",
     "StreakBatteryGenerator",
+    "CommitCalendarGenerator",
 ]

@@ -1,0 +1,58 @@
+<svg width="{{ svg_width }}" height="{{ svg_height }}" viewBox="0 0 {{ viewbox_width }} {{ viewbox_height }}" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="calendar-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:{{ gradient_start }};stop-opacity:1" />
+      <stop offset="100%" style="stop-color:{{ gradient_end }};stop-opacity:1" />
+    </linearGradient>
+    <clipPath id="calendar-rounded">
+      <rect x="0" y="0" width="{{ svg_width }}" height="{{ clip_height }}" rx="8" ry="8" />
+    </clipPath>
+  </defs>
+  <style>
+    .title {
+      font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      fill: {{ calendar_title_color }};
+    }
+    .subtitle {
+      font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      fill: {{ calendar_subtitle_color }};
+    }
+    .day-label {
+      font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      fill: {{ calendar_day_label_color }};
+    }
+    .hour-label {
+      font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', sans-serif;
+      font-size: 10px;
+      fill: {{ calendar_hour_label_color }};
+      text-anchor: end;
+      dominant-baseline: central;
+    }
+    .grid-line {
+      stroke: {{ calendar_grid_color }};
+      stroke-width: 1;
+      opacity: {{ calendar_grid_opacity }};
+    }
+    .legend-label {
+      font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', sans-serif;
+      font-size: 11px;
+      fill: {{ calendar_legend_text_color }};
+      dominant-baseline: middle;
+    }
+  </style>
+  <rect clip-path="url(#calendar-rounded)" width="100%" height="100%" fill="{{ bg_color }}" stroke="{{ border_color }}" stroke-width="1" />
+  <rect x="0" y="{{ footer_y }}" width="{{ svg_width }}" height="6" fill="url(#calendar-gradient)" clip-path="url(#calendar-rounded)" />
+  <text x="24" y="34" class="title">Weekly Commit Calendar</text>
+  <text x="24" y="54" class="subtitle">Week: {{ week_range }} | Timezone: {{ timezone_label }}</text>
+  {{ day_labels }}
+  {{ hour_labels }}
+  {{ grid_lines }}
+  {{ commit_blocks }}
+  {{ legend_items }}
+</svg>
