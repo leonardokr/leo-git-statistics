@@ -1,0 +1,58 @@
+<svg width="900" height="384" viewBox="0 0 900 384" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="calendar-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#58a6ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a371f7;stop-opacity:1" />
+    </linearGradient>
+    <clipPath id="calendar-rounded">
+      <rect x="0" y="0" width="900" height="384" rx="8" ry="8" />
+    </clipPath>
+  </defs>
+  <style>
+    .title {
+      font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      fill: #58a6ff;
+    }
+    .subtitle {
+      font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      fill: #8b949e;
+    }
+    .day-label {
+      font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      fill: #c9d1d9;
+    }
+    .hour-label {
+      font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', sans-serif;
+      font-size: 10px;
+      fill: #8b949e;
+      text-anchor: end;
+      dominant-baseline: central;
+    }
+    .grid-line {
+      stroke: #30363d;
+      stroke-width: 1;
+      opacity: 0.55;
+    }
+    .legend-label {
+      font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', sans-serif;
+      font-size: 11px;
+      fill: #c9d1d9;
+      dominant-baseline: middle;
+    }
+  </style>
+  <rect clip-path="url(#calendar-rounded)" width="100%" height="100%" fill="#0d1117" stroke="#30363d" stroke-width="1" />
+  <rect x="0" y="378" width="900" height="6" fill="url(#calendar-gradient)" clip-path="url(#calendar-rounded)" />
+  <text x="24" y="34" class="title">Weekly Commit Calendar</text>
+  <text x="24" y="54" class="subtitle">Week: 2026-02-09 to 2026-02-15 | Timezone: UTC</text>
+  <text x="160.5" y="80" text-anchor="middle" class="day-label">Mon</text><text x="261.5" y="80" text-anchor="middle" class="day-label">Tue</text><text x="362.5" y="80" text-anchor="middle" class="day-label">Wed</text><text x="463.5" y="80" text-anchor="middle" class="day-label">Thu</text><text x="564.5" y="80" text-anchor="middle" class="day-label">Fri</text><text x="665.5" y="80" text-anchor="middle" class="day-label">Sat</text><text x="766.5" y="80" text-anchor="middle" class="day-label">Sun</text>
+  <text x="56" y="94" class="hour-label">00:00</text><text x="56" y="134" class="hour-label">04:00</text><text x="56" y="174" class="hour-label">08:00</text><text x="56" y="214" class="hour-label">12:00</text><text x="56" y="254" class="hour-label">16:00</text><text x="56" y="294" class="hour-label">20:00</text><text x="56" y="334" class="hour-label">23:59</text>
+  <line x1="110" y1="84" x2="110" y2="324" class="grid-line" /><line x1="211" y1="84" x2="211" y2="324" class="grid-line" /><line x1="312" y1="84" x2="312" y2="324" class="grid-line" /><line x1="413" y1="84" x2="413" y2="324" class="grid-line" /><line x1="514" y1="84" x2="514" y2="324" class="grid-line" /><line x1="615" y1="84" x2="615" y2="324" class="grid-line" /><line x1="716" y1="84" x2="716" y2="324" class="grid-line" /><line x1="817" y1="84" x2="817" y2="324" class="grid-line" /><line x1="110" y1="84" x2="817" y2="84" class="grid-line" /><line x1="110" y1="94" x2="817" y2="94" class="grid-line" /><line x1="110" y1="104" x2="817" y2="104" class="grid-line" /><line x1="110" y1="114" x2="817" y2="114" class="grid-line" /><line x1="110" y1="124" x2="817" y2="124" class="grid-line" /><line x1="110" y1="134" x2="817" y2="134" class="grid-line" /><line x1="110" y1="144" x2="817" y2="144" class="grid-line" /><line x1="110" y1="154" x2="817" y2="154" class="grid-line" /><line x1="110" y1="164" x2="817" y2="164" class="grid-line" /><line x1="110" y1="174" x2="817" y2="174" class="grid-line" /><line x1="110" y1="184" x2="817" y2="184" class="grid-line" /><line x1="110" y1="194" x2="817" y2="194" class="grid-line" /><line x1="110" y1="204" x2="817" y2="204" class="grid-line" /><line x1="110" y1="214" x2="817" y2="214" class="grid-line" /><line x1="110" y1="224" x2="817" y2="224" class="grid-line" /><line x1="110" y1="234" x2="817" y2="234" class="grid-line" /><line x1="110" y1="244" x2="817" y2="244" class="grid-line" /><line x1="110" y1="254" x2="817" y2="254" class="grid-line" /><line x1="110" y1="264" x2="817" y2="264" class="grid-line" /><line x1="110" y1="274" x2="817" y2="274" class="grid-line" /><line x1="110" y1="284" x2="817" y2="284" class="grid-line" /><line x1="110" y1="294" x2="817" y2="294" class="grid-line" /><line x1="110" y1="304" x2="817" y2="304" class="grid-line" /><line x1="110" y1="314" x2="817" y2="314" class="grid-line" /><line x1="110" y1="324" x2="817" y2="324" class="grid-line" />
+  <g><rect x="112.0" y="186.0" width="97" height="8" rx="1.5" ry="1.5" fill="#16ceaf" opacity="{{ calendar_slot_opacity }}" /><title>leo-git-statistics | Improve overview card layout | 2026-02-09 10:12</title></g><g><rect x="213.0" y="271.5" width="97" height="8" rx="1.5" ry="1.5" fill="#16ceaf" opacity="{{ calendar_slot_opacity }}" /><title>leo-git-statistics | Refactor generators registry | 2026-02-10 18:45</title></g><g><rect x="314.0" y="107.5" width="97" height="8" rx="1.5" ry="1.5" fill="#3ecdd9" opacity="{{ calendar_slot_opacity }}" /><title>private/research-notes | c3d4e5f | 2026-02-11 02:21</title></g><g><rect x="415.0" y="229.0" width="97" height="8" rx="1.5" ry="1.5" fill="#53a1e7" opacity="{{ calendar_slot_opacity }}" /><title>portfolio-site | Update hero section | 2026-02-12 14:30</title></g><g><rect x="516.0" y="295.3" width="97" height="8" rx="1.5" ry="1.5" fill="#4837de" opacity="{{ calendar_slot_opacity }}" /><title>private/experiments | e5f6a1b | 2026-02-13 21:08</title></g>
+  <rect x="110" y="339" width="10" height="10" rx="2" ry="2" fill="#16ceaf" /><text x="126" y="348" class="legend-label">leo-git-statistics</text><rect x="280" y="339" width="10" height="10" rx="2" ry="2" fill="#53a1e7" /><text x="296" y="348" class="legend-label">portfolio-site</text><rect x="450" y="339" width="10" height="10" rx="2" ry="2" fill="#4837de" /><text x="466" y="348" class="legend-label">private/experiments</text><rect x="620" y="339" width="10" height="10" rx="2" ry="2" fill="#3ecdd9" /><text x="636" y="348" class="legend-label">private/research-notes</text>
+</svg>
