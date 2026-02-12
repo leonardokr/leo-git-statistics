@@ -37,6 +37,7 @@ class CommitCalendarGenerator(BaseGenerator):
     _LEGEND_COLUMNS = 4
     _FOOTER_HEIGHT = 6
     _BOTTOM_PADDING = 18
+    _TIME_BUCKET_MINUTES = 15
 
     async def generate(self) -> None:
         """
@@ -208,13 +209,16 @@ class CommitCalendarGenerator(BaseGenerator):
 
             day_index = local_dt.weekday()
             minute_of_day = local_dt.hour * 60 + local_dt.minute
+            bucket = self._TIME_BUCKET_MINUTES
+            snapped_minute_of_day = int(round(minute_of_day / bucket) * bucket)
 
             x = x_start + day_index * day_width + 2
-            y = y_start + (minute_of_day / 60.0) * slot_height
+            y = y_start + (snapped_minute_of_day / 60.0) * slot_height
             width = day_width - 4
             height = 8
             if y + height > y_max:
                 y = y_max - height
+            y = int(round(y))
             description = self._escape_xml(item.get("description", "Commit"))
             repo_name = self._escape_xml(repo)
 
