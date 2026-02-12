@@ -74,8 +74,10 @@ Treemap visualization of your programming languages - area proportional to usage
 Agenda-style weekly calendar where each commit is a time block, with repositories separated by color.
 
 <p align="center">
-  <img src="generated_images/samples/commit_calendar_sample_dark.svg" alt="Commit Calendar Dark Mode" width="49%" />
-  <img src="generated_images/samples/commit_calendar_sample_light.svg" alt="Commit Calendar Light Mode" width="49%" />
+  <img src="generated_images/samples/commit_calendar_sample_dark.svg" alt="Commit Calendar Dark Mode" width="98%" />
+</p>
+<p align="center">
+  <img src="generated_images/samples/commit_calendar_sample_light.svg" alt="Commit Calendar Light Mode" width="98%" />
 </p>
 
 ## Themes
@@ -102,7 +104,7 @@ Choose from **25+ built-in themes** or create your own:
 <img src="generated_images/samples/streak_battery_sample_dracula.svg" alt="Dracula Theme" width="49%" />
 <img src="generated_images/samples/languages_sample_dracula.svg" alt="Dracula Theme" width="49%" />
 <img src="generated_images/samples/languages_puzzle_sample_dracula.svg" alt="Dracula Theme" width="49%" />
-<img src="generated_images/samples/commit_calendar_sample_dracula.svg" alt="Dracula Theme" width="49%" />
+<img src="generated_images/samples/commit_calendar_sample_dracula.svg" alt="Dracula Theme" width="98%" />
 </div>
 </details>
 
@@ -116,7 +118,7 @@ Choose from **25+ built-in themes** or create your own:
 <img src="generated_images/samples/streak_battery_sample_nord.svg" alt="Nord Theme" width="49%" />
 <img src="generated_images/samples/languages_sample_nord.svg" alt="Nord Theme" width="49%" />
 <img src="generated_images/samples/languages_puzzle_sample_nord.svg" alt="Nord Theme" width="49%" />
-<img src="generated_images/samples/commit_calendar_sample_nord.svg" alt="Nord Theme" width="49%" />
+<img src="generated_images/samples/commit_calendar_sample_nord.svg" alt="Nord Theme" width="98%" />
 </div>
 </details>
 
@@ -130,7 +132,7 @@ Choose from **25+ built-in themes** or create your own:
 <img src="generated_images/samples/streak_battery_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
 <img src="generated_images/samples/languages_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
 <img src="generated_images/samples/languages_puzzle_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
-<img src="generated_images/samples/commit_calendar_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
+<img src="generated_images/samples/commit_calendar_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="98%" />
 </div>
 </details>
 
@@ -144,7 +146,7 @@ Choose from **25+ built-in themes** or create your own:
 <img src="generated_images/samples/streak_battery_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
 <img src="generated_images/samples/languages_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
 <img src="generated_images/samples/languages_puzzle_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
-<img src="generated_images/samples/commit_calendar_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
+<img src="generated_images/samples/commit_calendar_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="98%" />
 </div>
 </details>
 
