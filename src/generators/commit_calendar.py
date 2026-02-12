@@ -37,7 +37,7 @@ class CommitCalendarGenerator(BaseGenerator):
     _LEGEND_COLUMNS = 4
     _FOOTER_HEIGHT = 6
     _BOTTOM_PADDING = 18
-    _TIME_BUCKET_MINUTES = 15
+    _TIME_BUCKET_MINUTES = 2
 
     async def generate(self) -> None:
         """
