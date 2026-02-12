@@ -65,6 +65,43 @@ class MockStatsCollector:
             "current_streak_range": "Jan 25 - Feb 9",
             "longest_streak_range": "Mar 1 - Apr 12, 2024",
             "recent_contributions": [3, 7, 2, 12, 5, 8, 0, 4, 9, 6],
+            "weekly_commit_schedule": [
+                {
+                    "repo": "leo-git-statistics",
+                    "sha": "a1b2c3d4e5f6",
+                    "description": "Improve overview card layout",
+                    "is_private": False,
+                    "timestamp": "2026-02-09T10:12:00+00:00",
+                },
+                {
+                    "repo": "leo-git-statistics",
+                    "sha": "b2c3d4e5f6a1",
+                    "description": "Refactor generators registry",
+                    "is_private": False,
+                    "timestamp": "2026-02-10T18:45:00+00:00",
+                },
+                {
+                    "repo": "private/research-notes",
+                    "sha": "c3d4e5f6a1b2",
+                    "description": "c3d4e5f",
+                    "is_private": True,
+                    "timestamp": "2026-02-11T02:21:00+00:00",
+                },
+                {
+                    "repo": "portfolio-site",
+                    "sha": "d4e5f6a1b2c3",
+                    "description": "Update hero section",
+                    "is_private": False,
+                    "timestamp": "2026-02-12T14:30:00+00:00",
+                },
+                {
+                    "repo": "private/experiments",
+                    "sha": "e5f6a1b2c3d4",
+                    "description": "e5f6a1b",
+                    "is_private": True,
+                    "timestamp": "2026-02-13T21:08:00+00:00",
+                },
+            ],
         }
 
     async def get_name(self) -> str:
@@ -129,3 +166,6 @@ class MockStatsCollector:
 
     async def get_recent_contributions(self) -> list:
         return self._data["recent_contributions"]
+
+    async def get_weekly_commit_schedule(self) -> list:
+        return self._data["weekly_commit_schedule"]

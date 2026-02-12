@@ -20,6 +20,7 @@ from src.generators.languages_puzzle import LanguagesPuzzleGenerator
 from src.generators.overview import OverviewGenerator
 from src.generators.streak import StreakGenerator
 from src.generators.streak_battery import StreakBatteryGenerator
+from src.generators.commit_calendar import CommitCalendarGenerator
 
 logging.basicConfig(
     level=logging.INFO,
@@ -39,30 +40,36 @@ async def main():
     mock_stats = MockStatsCollector()
 
     languages_gen = LanguagesGenerator(config, mock_stats, formatter, template_engine)
-    await languages_gen.generate(output_name=f"languages{OUTPUT_SUFFIX}")
+    await languages_gen.generate()
     logger.info("Generated languages SVGs")
 
     languages_puzzle_gen = LanguagesPuzzleGenerator(
         config, mock_stats, formatter, template_engine
     )
-    await languages_puzzle_gen.generate(output_name=f"languages_puzzle{OUTPUT_SUFFIX}")
+    await languages_puzzle_gen.generate()
     logger.info("Generated languages_puzzle SVGs")
 
     overview_gen = OverviewGenerator(
         config, mock_stats, formatter, template_engine, environment
     )
-    await overview_gen.generate(output_name=f"overview{OUTPUT_SUFFIX}")
+    await overview_gen.generate()
     logger.info("Generated overview SVGs")
 
     streak_gen = StreakGenerator(config, mock_stats, formatter, template_engine)
-    await streak_gen.generate(output_name=f"streak{OUTPUT_SUFFIX}")
+    await streak_gen.generate()
     logger.info("Generated streak SVGs")
 
     streak_battery_gen = StreakBatteryGenerator(
         config, mock_stats, formatter, template_engine
     )
-    await streak_battery_gen.generate(output_name=f"streak_battery{OUTPUT_SUFFIX}")
+    await streak_battery_gen.generate()
     logger.info("Generated streak_battery SVGs")
+
+    commit_calendar_gen = CommitCalendarGenerator(
+        config, mock_stats, formatter, template_engine, environment
+    )
+    await commit_calendar_gen.generate()
+    logger.info("Generated commit_calendar SVGs")
 
     suffix_msg = f" with suffix: {OUTPUT_SUFFIX}" if OUTPUT_SUFFIX else ""
     logger.info("All test images generated in 'generated_images/' folder%s.", suffix_msg)
