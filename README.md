@@ -207,6 +207,87 @@ stats_generation:
   # ... more options
 ```
 
+## Publishing to Profile Repository
+
+If you keep this generator in one repository and want to publish the generated SVGs to your special profile repository (`<username>/<username>`), create a workflow in the profile repository that:
+
+1. Checks out this stats repository.
+2. Generates SVGs.
+3. Copies generated files to the profile repository.
+4. Commits and pushes the updated SVG files.
+
+Required secrets in the profile repository:
+
+- `STATS_REPO_PAT`: token with access to clone this stats repository.
+- `ACCESS_TOKEN`: token used by `generate.py` to query GitHub APIs.
+
+<details>
+<summary><b>Example Workflow (profile repository)</b></summary>
+
+```yaml
+name: Update Profile SVG Stats
+
+on:
+  schedule:
+    - cron: "0 */12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout profile repository
+        uses: actions/checkout@v4
+
+      - name: Checkout stats generator repository
+        uses: actions/checkout@v4
+        with:
+          repository: leonardokr/leo-git-statistics
+          token: ${{ secrets.STATS_REPO_PAT }}
+          path: stats-repo
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+          cache-dependency-path: stats-repo/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r stats-repo/requirements.txt
+
+      - name: Generate SVGs
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          GITHUB_ACTOR: ${{ github.repository_owner }}
+        run: |
+          cd stats-repo
+          python generate.py
+
+      - name: Copy generated SVGs to profile repository
+        run: |
+          mkdir -p generated_images
+          cp -r stats-repo/generated_images/*.svg generated_images/
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add generated_images/*.svg
+          if ! git diff --quiet --staged; then
+            git commit -m "chore(stats): update profile SVG stats"
+            git push
+          fi
+```
+
+</details>
+
 ## Creating Custom Themes
 
 Add a new `.yml` file in `src/themes/`:
@@ -252,6 +333,7 @@ src/
 │   ├── stats_collector.py          # Facade composing all collectors
 │   ├── repo_stats_collector.py     # Repos, stars, forks, languages
 │   ├── contribution_tracker.py     # Streaks & contribution calendar
+│   ├── commit_schedule_collector.py # Weekly commit schedule by repository
 │   ├── code_change_analyzer.py     # Lines changed, percentages, contributors
 │   ├── traffic_collector.py        # Views & clones traffic
 │   ├── engagement_collector.py     # Pull requests, issues, collaborators
@@ -265,6 +347,7 @@ src/
 │   ├── languages_puzzle.py         # Language treemap card
 │   ├── streak.py                   # Contribution streak card
 │   └── streak_battery.py          # Streak battery card
+│   └── commit_calendar.py         # Weekly commit calendar card
 ├── presentation/                   # Rendering layer
 │   ├── stats_formatter.py          # Data formatting utilities
 │   ├── svg_template.py             # SVG template engine
@@ -275,6 +358,7 @@ src/
 │   ├── languages_puzzle.svg
 │   ├── streak.svg
 │   └── streak_battery.svg
+│   └── commit_calendar.svg
 ├── themes/                         # Theme definitions (YAML)
 │   ├── loader.py                   # Theme loading utilities
 │   ├── github.yml
@@ -288,12 +372,6 @@ src/
 │   └── helpers.py                  # Shared helper functions
 └── orchestrator.py                 # Main coordinator
 ```
-
-### Weekly Commit Calendar Files
-
-- `src/core/commit_schedule_collector.py` - Collects weekly commit events by repository (private repos supported with privacy-safe description handling)
-- `src/generators/commit_calendar.py` - Generates the agenda-style weekly commit calendar SVG
-- `src/templates/commit_calendar.svg` - Template used by the commit calendar generator
 
 ### Key Design Decisions
 
