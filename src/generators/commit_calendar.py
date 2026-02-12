@@ -225,7 +225,7 @@ class CommitCalendarGenerator(BaseGenerator):
             blocks.append(
                 '<g>'
                 f'<rect x="{x:.1f}" y="{y:.1f}" width="{width}" height="{height}" '
-                f'rx="1.5" ry="1.5" fill="{color_map[repo]}" opacity="{{{{ calendar_slot_opacity }}}}" />'
+                f'rx="0 " ry="0" fill="{color_map[repo]}" opacity="{{{{ calendar_slot_opacity }}}}" />'
                 f"<title>{repo_name} | {description} | {local_dt.strftime('%Y-%m-%d %H:%M')}</title>"
                 "</g>"
             )
