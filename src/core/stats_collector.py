@@ -17,6 +17,7 @@ from src.core.contribution_tracker import ContributionTracker
 from src.core.code_change_analyzer import CodeChangeAnalyzer
 from src.core.traffic_collector import TrafficCollector
 from src.core.engagement_collector import EngagementCollector
+from src.core.commit_schedule_collector import CommitScheduleCollector
 
 logger = logging.getLogger(__name__)
 
@@ -49,12 +50,14 @@ class StatsCollector:
         self._code_changes = CodeChangeAnalyzer(environment_vars.username, self.queries)
         self._traffic = TrafficCollector(environment_vars, self.queries)
         self._engagement = EngagementCollector(environment_vars, self.queries)
+        self._commit_schedule = CommitScheduleCollector(environment_vars, self.queries)
 
         self.register_collector("repo_stats", self._repo_stats)
         self.register_collector("contributions", self._contributions)
         self.register_collector("code_changes", self._code_changes)
         self.register_collector("traffic", self._traffic)
         self.register_collector("engagement", self._engagement)
+        self.register_collector("commit_schedule", self._commit_schedule)
 
     def register_collector(self, name: str, collector: Any) -> None:
         """
@@ -304,3 +307,16 @@ class StatsCollector:
         """
         await self.get_contribution_calendar()
         return self._contributions.get_recent_contributions()
+
+    async def get_weekly_commit_schedule(self) -> list:
+        """
+        Retrieve commit-level events for the current week.
+
+        :return: List of commit event dictionaries.
+        """
+        repos = await self.get_repos()
+        return await self._commit_schedule.fetch_weekly_schedule(
+            repos=repos,
+            username=self.environment_vars.username,
+            timezone_name=self.environment_vars.timezone,
+        )

@@ -75,6 +75,17 @@ class OverviewProvider(Protocol):
 
 
 @runtime_checkable
+class CommitCalendarProvider(Protocol):
+    """
+    Provides commit events for weekly calendar visualization.
+
+    Used by :class:`CommitCalendarGenerator`.
+    """
+
+    async def get_weekly_commit_schedule(self) -> List[Dict[str, Any]]: ...
+
+
+@runtime_checkable
 class TemplateRenderer(Protocol):
     """
     Renders templates with variable replacements and saves to disk.

@@ -28,6 +28,7 @@ class Environment:
         """
         self.username = username
         self.access_token = access_token
+        self.timezone = kwargs.get("timezone", getenv("TIMEZONE")) or "UTC"
 
         self._db = db or GitRepoStatsDB()
         self.filter = repo_filter or RepositoryFilter(**kwargs)
