@@ -178,10 +178,10 @@ Use this action from your profile repository workflow:
 ```
 
 ### 5. Configure (Optional)
-Pass optional `with:` inputs in your profile workflow (see full list below in **Publishing to Profile Repository**).
-## Configuration
+Pass optional `with:` inputs in your profile workflow (see full list below in **Workflow Configuration (Profile Repository)**).
+## Repository Configuration (config.yml)
 
-All configuration is centralized in `config.yml`:
+This section is for repository-level configuration in `config.yml` (mainly for template/advanced customization). For normal usage via Action, prefer workflow `with:` inputs shown below.
 
 ### Theme Selection
 
@@ -218,9 +218,9 @@ stats_generation:
   # ... more options
 ```
 
-## Publishing to Profile Repository
+## Workflow Configuration (Profile Repository)
 
-Use this repository as an Action in your profile repository. You do not need to copy this repository unless you want advanced customizations not exposed by inputs.
+Use this repository as an Action in your profile repository. This is the recommended path for most users.
 
 Required secret in your profile repository:
 
@@ -480,6 +480,8 @@ GPL-3.0 License - see [LICENSE](LICENSE) for details.
 <p align="center">
   <sub>Built with Python and GitHub Actions</sub>
 </p>
+
+
 
 
 
