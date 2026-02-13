@@ -1,4 +1,5 @@
 import yaml
+from os import getenv
 from typing import Callable, Dict, Any, Optional, List
 from src.themes import load_all_themes
 
@@ -42,6 +43,12 @@ class Config:
             self._enabled_themes = ['default', 'light', 'dark']
         except Exception:
             self._enabled_themes = ['default', 'light', 'dark']
+
+        themes_override = getenv('ENABLED_THEMES')
+        if themes_override:
+            parsed = [theme.strip() for theme in themes_override.split(',') if theme.strip()]
+            if parsed:
+                self._enabled_themes = parsed
 
     @property
     def THEMES(self) -> Dict[str, Dict[str, Any]]:

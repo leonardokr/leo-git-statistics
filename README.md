@@ -25,7 +25,7 @@
 - **Extensible Theme System** - Add your own themes via YAML files
 - **Animated SVGs** - Smooth fade-in and slide animations
 - **Fully Configurable** - Control which stats to show, filter repositories, and more
-- **Automated Updates** - GitHub Actions workflow updates stats every 12 hours
+- **Reusable GitHub Action** - Run the generator from any repository (great for profile repos)
 - **Accumulated Metrics** - Track views and clones beyond GitHub's 14-day limit
 
 ## Generated Cards
@@ -152,24 +152,33 @@ Choose from **25+ built-in themes** or create your own:
 
 ## Quick Start
 
-### 1. Use This Template
-Click the **"Use this template"** button to create your own copy.
+### 1. Choose How You Want to Use It
+- Recommended: call this repository as a reusable GitHub Action from your profile repository.
+- Use **Use this template** only when you need advanced customization not exposed by action inputs (for example: editing generators, templates, themes source files, architecture, or custom business rules).
 
 ### 2. Create a Personal Access Token
-1. Go to **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)**
+1. Go to **Settings** -> **Developer settings** -> **Personal access tokens** -> **Tokens (classic)**
 2. Generate a new token with scopes: `repo`, `read:user`, `read:org`
 3. Copy the token
 
 ### 3. Add Repository Secret
-1. In your repository: **Settings** → **Secrets and variables** → **Actions**
-2. Create secret named `ACCESS_TOKEN` with your token
+1. In your profile repository (`<username>/<username>`): **Settings** -> **Secrets and variables** -> **Actions**
+2. Create secret named `PROFILE_STATS_TOKEN` with your token
 
-### 4. Configure (Optional)
-Edit `config.yml` to customize themes, filters, and statistics.
+### 4. Add a Workflow in Your Profile Repository
+Use this action from your profile repository workflow:
 
-### 5. Run the Workflow
-Go to **Actions** → **Update Stats** → **Run workflow**
+```yaml
+- name: Generate profile SVG stats
+  uses: leonardokr/leo-git-statistics@v1
+  with:
+    github-token: ${{ secrets.PROFILE_STATS_TOKEN }}
+    github-username: leonardokr
+    output-dir: profile
+```
 
+### 5. Configure (Optional)
+Pass optional `with:` inputs in your profile workflow (see full list below in **Publishing to Profile Repository**).
 ## Configuration
 
 All configuration is centralized in `config.yml`:
@@ -211,20 +220,13 @@ stats_generation:
 
 ## Publishing to Profile Repository
 
-If you keep this generator in one repository and want to publish the generated SVGs to your special profile repository (`<username>/<username>`), create a workflow in the profile repository that:
+Use this repository as an Action in your profile repository. You do not need to copy this repository unless you want advanced customizations not exposed by inputs.
 
-1. Checks out this stats repository.
-2. Generates SVGs.
-3. Copies generated files to the profile repository.
-4. Commits and pushes the updated SVG files.
+Required secret in your profile repository:
 
-Required secrets in the profile repository:
+- `PROFILE_STATS_TOKEN`: token used by `generate.py` to query GitHub APIs.
 
-- `STATS_REPO_PAT`: token with access to clone this stats repository.
-- `ACCESS_TOKEN`: token used by `generate.py` to query GitHub APIs.
-
-<details>
-<summary><b>Example Workflow (profile repository)</b></summary>
+### Example Workflow (profile repository)
 
 ```yaml
 name: Update Profile SVG Stats
@@ -245,51 +247,68 @@ jobs:
       - name: Checkout profile repository
         uses: actions/checkout@v4
 
-      - name: Checkout stats generator repository
-        uses: actions/checkout@v4
+      - name: Generate SVGs via leo-git-statistics action
+        uses: leonardokr/leo-git-statistics@v1
         with:
-          repository: leonardokr/leo-git-statistics
-          token: ${{ secrets.STATS_REPO_PAT }}
-          path: stats-repo
+          github-token: ${{ secrets.PROFILE_STATS_TOKEN }}
+          github-username: leonardokr
+          output-dir: profile
+          themes: dark,light
+          excluded-repos: owner/repo1,owner/repo2
+          exclude-archive-repos: "true"
+          show-stars: "true"
+          show-issues: "false"
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-          cache: "pip"
-          cache-dependency-path: stats-repo/requirements.txt
-
-      - name: Install dependencies
+      - name: Keep README-friendly filenames
         run: |
-          python -m pip install --upgrade pip
-          pip install -r stats-repo/requirements.txt
-
-      - name: Generate SVGs
-        env:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          GITHUB_ACTOR: ${{ github.repository_owner }}
-        run: |
-          cd stats-repo
-          python generate.py
-
-      - name: Copy generated SVGs to profile repository
-        run: |
-          mkdir -p generated_images
-          cp -r stats-repo/generated_images/*.svg generated_images/
+          cp profile/overviewdark.svg profile/stats.svg
+          cp profile/languagesdark.svg profile/top-langs.svg
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add generated_images/*.svg
+          git add profile/*.svg
           if ! git diff --quiet --staged; then
             git commit -m "chore(stats): update profile SVG stats"
             git push
           fi
 ```
 
-</details>
+### Action Inputs (`with:`)
 
+| Input | Required | Default | Description |
+|---|---|---|---|
+| `github-token` | Yes | - | GitHub token consumed as `ACCESS_TOKEN`. |
+| `github-username` | No | `github.actor` | GitHub user to collect stats for. |
+| `python-version` | No | `3.11` | Python runtime version. |
+| `output-dir` | No | `generated_images` | Destination folder in caller repository. |
+| `themes` | No | from `config.yml` | Comma-separated themes (example: `dark,light`) or `all`. |
+| `timezone` | No | from `config.yml` or `UTC` | IANA timezone (example: `America/Sao_Paulo`). |
+| `excluded-repos` | No | from `config.yml` | Comma-separated repos to exclude. |
+| `excluded-langs` | No | from `config.yml` | Comma-separated languages to exclude. |
+| `include-forked-repos` | No | from `config.yml` | `true` or `false`. |
+| `exclude-contrib-repos` | No | from `config.yml` | `true` or `false`. |
+| `exclude-archive-repos` | No | from `config.yml` | `true` or `false`. |
+| `exclude-private-repos` | No | from `config.yml` | `true` or `false`. |
+| `exclude-public-repos` | No | from `config.yml` | `true` or `false`. |
+| `store-repo-views` | No | from `config.yml` | `true` or `false`. |
+| `store-repo-clones` | No | from `config.yml` | `true` or `false`. |
+| `more-collabs` | No | from `config.yml` | Integer to manually add collaborator count. |
+| `manually-added-repos` | No | from `config.yml` | Comma-separated `owner/repo` list to include. |
+| `only-included-repos` | No | from `config.yml` | If set, only these `owner/repo` entries are used. |
+| `show-total-contributions` | No | from `config.yml` | `true` or `false`. |
+| `show-repositories` | No | from `config.yml` | `true` or `false`. |
+| `show-lines-changed` | No | from `config.yml` | `true` or `false`. |
+| `show-avg-percent` | No | from `config.yml` | `true` or `false`. |
+| `show-collaborators` | No | from `config.yml` | `true` or `false`. |
+| `show-contributors` | No | from `config.yml` | `true` or `false`. |
+| `show-views` | No | from `config.yml` | `true` or `false`. |
+| `show-clones` | No | from `config.yml` | `true` or `false`. |
+| `show-forks` | No | from `config.yml` | `true` or `false`. |
+| `show-stars` | No | from `config.yml` | `true` or `false`. |
+| `show-pull-requests` | No | from `config.yml` | `true` or `false`. |
+| `show-issues` | No | from `config.yml` | `true` or `false`. |
 ## Creating Custom Themes
 
 Add a new `.yml` file in `src/themes/`:
@@ -448,3 +467,5 @@ GPL-3.0 License - see [LICENSE](LICENSE) for details.
 <p align="center">
   <sub>Built with Python and GitHub Actions</sub>
 </p>
+
+

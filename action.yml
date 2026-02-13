@@ -1,0 +1,226 @@
+name: "Generate GitHub Stats SVGs"
+description: "Generate SVG cards using leo-git-statistics and copy them to caller repository"
+
+inputs:
+  github-token:
+    description: "GitHub token used by generate.py (ACCESS_TOKEN)"
+    required: true
+  github-username:
+    description: "GitHub username to generate stats for (defaults to github.actor)"
+    required: false
+    default: ""
+  python-version:
+    description: "Python version"
+    required: false
+    default: "3.11"
+  output-dir:
+    description: "Destination folder in caller repository"
+    required: false
+    default: "generated_images"
+  themes:
+    description: "Comma-separated themes or 'all'"
+    required: false
+    default: ""
+  timezone:
+    description: "IANA timezone (for example: America/Sao_Paulo)"
+    required: false
+    default: ""
+  excluded-repos:
+    description: "Comma-separated repositories to exclude"
+    required: false
+    default: ""
+  excluded-langs:
+    description: "Comma-separated languages to exclude"
+    required: false
+    default: ""
+  include-forked-repos:
+    description: "Include forked repositories (true/false)"
+    required: false
+    default: ""
+  exclude-contrib-repos:
+    description: "Exclude repositories where user is only contributor (true/false)"
+    required: false
+    default: ""
+  exclude-archive-repos:
+    description: "Exclude archived repositories (true/false)"
+    required: false
+    default: ""
+  exclude-private-repos:
+    description: "Exclude private repositories (true/false)"
+    required: false
+    default: ""
+  exclude-public-repos:
+    description: "Exclude public repositories (true/false)"
+    required: false
+    default: ""
+  store-repo-views:
+    description: "Persist repository views over time (true/false)"
+    required: false
+    default: ""
+  store-repo-clones:
+    description: "Persist repository clones over time (true/false)"
+    required: false
+    default: ""
+  more-collabs:
+    description: "Manually add collaborators count"
+    required: false
+    default: ""
+  manually-added-repos:
+    description: "Comma-separated owner/repo entries to force include"
+    required: false
+    default: ""
+  only-included-repos:
+    description: "If set, only these owner/repo entries are included"
+    required: false
+    default: ""
+  show-total-contributions:
+    description: "Show total contributions (true/false)"
+    required: false
+    default: ""
+  show-repositories:
+    description: "Show repositories count (true/false)"
+    required: false
+    default: ""
+  show-lines-changed:
+    description: "Show lines changed (true/false)"
+    required: false
+    default: ""
+  show-avg-percent:
+    description: "Show average percentage metric (true/false)"
+    required: false
+    default: ""
+  show-collaborators:
+    description: "Show collaborators count (true/false)"
+    required: false
+    default: ""
+  show-contributors:
+    description: "Show contributors count (true/false)"
+    required: false
+    default: ""
+  show-views:
+    description: "Show views metric (true/false)"
+    required: false
+    default: ""
+  show-clones:
+    description: "Show clones metric (true/false)"
+    required: false
+    default: ""
+  show-forks:
+    description: "Show forks metric (true/false)"
+    required: false
+    default: ""
+  show-stars:
+    description: "Show stars metric (true/false)"
+    required: false
+    default: ""
+  show-pull-requests:
+    description: "Show pull requests metric (true/false)"
+    required: false
+    default: ""
+  show-issues:
+    description: "Show issues metric (true/false)"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: pip
+        cache-dependency-path: ${{ github.action_path }}/requirements.txt
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        set -euo pipefail
+        python -m pip install --upgrade pip
+        pip install -r "${{ github.action_path }}/requirements.txt"
+
+    - name: Generate SVGs
+      shell: bash
+      env:
+        ACCESS_TOKEN: ${{ inputs.github-token }}
+        INPUT_GITHUB_USERNAME: ${{ inputs.github-username }}
+        FALLBACK_GITHUB_ACTOR: ${{ github.actor }}
+        INPUT_THEMES: ${{ inputs.themes }}
+        INPUT_TIMEZONE: ${{ inputs.timezone }}
+        INPUT_EXCLUDED_REPOS: ${{ inputs.excluded-repos }}
+        INPUT_EXCLUDED_LANGS: ${{ inputs.excluded-langs }}
+        INPUT_INCLUDE_FORKED_REPOS: ${{ inputs.include-forked-repos }}
+        INPUT_EXCLUDE_CONTRIB_REPOS: ${{ inputs.exclude-contrib-repos }}
+        INPUT_EXCLUDE_ARCHIVE_REPOS: ${{ inputs.exclude-archive-repos }}
+        INPUT_EXCLUDE_PRIVATE_REPOS: ${{ inputs.exclude-private-repos }}
+        INPUT_EXCLUDE_PUBLIC_REPOS: ${{ inputs.exclude-public-repos }}
+        INPUT_STORE_REPO_VIEWS: ${{ inputs.store-repo-views }}
+        INPUT_STORE_REPO_CLONES: ${{ inputs.store-repo-clones }}
+        INPUT_MORE_COLLABS: ${{ inputs.more-collabs }}
+        INPUT_MANUALLY_ADDED_REPOS: ${{ inputs.manually-added-repos }}
+        INPUT_ONLY_INCLUDED_REPOS: ${{ inputs.only-included-repos }}
+        INPUT_SHOW_TOTAL_CONTRIBUTIONS: ${{ inputs.show-total-contributions }}
+        INPUT_SHOW_REPOSITORIES: ${{ inputs.show-repositories }}
+        INPUT_SHOW_LINES_CHANGED: ${{ inputs.show-lines-changed }}
+        INPUT_SHOW_AVG_PERCENT: ${{ inputs.show-avg-percent }}
+        INPUT_SHOW_COLLABORATORS: ${{ inputs.show-collaborators }}
+        INPUT_SHOW_CONTRIBUTORS: ${{ inputs.show-contributors }}
+        INPUT_SHOW_VIEWS: ${{ inputs.show-views }}
+        INPUT_SHOW_CLONES: ${{ inputs.show-clones }}
+        INPUT_SHOW_FORKS: ${{ inputs.show-forks }}
+        INPUT_SHOW_STARS: ${{ inputs.show-stars }}
+        INPUT_SHOW_PULL_REQUESTS: ${{ inputs.show-pull-requests }}
+        INPUT_SHOW_ISSUES: ${{ inputs.show-issues }}
+      run: |
+        set -euo pipefail
+
+        export_if_set() {
+          local name="$1"
+          local value="$2"
+          if [ -n "$value" ]; then
+            export "$name=$value"
+          fi
+        }
+
+        ACTOR="${INPUT_GITHUB_USERNAME}"
+        if [ -z "${ACTOR}" ]; then
+          ACTOR="${FALLBACK_GITHUB_ACTOR}"
+        fi
+        export GITHUB_ACTOR="${ACTOR}"
+
+        export_if_set "ENABLED_THEMES" "${INPUT_THEMES}"
+        export_if_set "TIMEZONE" "${INPUT_TIMEZONE}"
+        export_if_set "EXCLUDED" "${INPUT_EXCLUDED_REPOS}"
+        export_if_set "EXCLUDED_LANGS" "${INPUT_EXCLUDED_LANGS}"
+        export_if_set "INCLUDE_FORKED_REPOS" "${INPUT_INCLUDE_FORKED_REPOS}"
+        export_if_set "EXCLUDE_CONTRIB_REPOS" "${INPUT_EXCLUDE_CONTRIB_REPOS}"
+        export_if_set "EXCLUDE_ARCHIVE_REPOS" "${INPUT_EXCLUDE_ARCHIVE_REPOS}"
+        export_if_set "EXCLUDE_PRIVATE_REPOS" "${INPUT_EXCLUDE_PRIVATE_REPOS}"
+        export_if_set "EXCLUDE_PUBLIC_REPOS" "${INPUT_EXCLUDE_PUBLIC_REPOS}"
+        export_if_set "STORE_REPO_VIEWS" "${INPUT_STORE_REPO_VIEWS}"
+        export_if_set "STORE_REPO_CLONES" "${INPUT_STORE_REPO_CLONES}"
+        export_if_set "MORE_COLLABS" "${INPUT_MORE_COLLABS}"
+        export_if_set "MORE_REPOS" "${INPUT_MANUALLY_ADDED_REPOS}"
+        export_if_set "ONLY_INCLUDED" "${INPUT_ONLY_INCLUDED_REPOS}"
+        export_if_set "SHOW_TOTAL_CONTRIBUTIONS" "${INPUT_SHOW_TOTAL_CONTRIBUTIONS}"
+        export_if_set "SHOW_REPOSITORIES" "${INPUT_SHOW_REPOSITORIES}"
+        export_if_set "SHOW_LINES_CHANGED" "${INPUT_SHOW_LINES_CHANGED}"
+        export_if_set "SHOW_AVG_PERCENT" "${INPUT_SHOW_AVG_PERCENT}"
+        export_if_set "SHOW_COLLABORATORS" "${INPUT_SHOW_COLLABORATORS}"
+        export_if_set "SHOW_CONTRIBUTORS" "${INPUT_SHOW_CONTRIBUTORS}"
+        export_if_set "SHOW_VIEWS" "${INPUT_SHOW_VIEWS}"
+        export_if_set "SHOW_CLONES" "${INPUT_SHOW_CLONES}"
+        export_if_set "SHOW_FORKS" "${INPUT_SHOW_FORKS}"
+        export_if_set "SHOW_STARS" "${INPUT_SHOW_STARS}"
+        export_if_set "SHOW_PULL_REQUESTS" "${INPUT_SHOW_PULL_REQUESTS}"
+        export_if_set "SHOW_ISSUES" "${INPUT_SHOW_ISSUES}"
+
+        cd "${{ github.action_path }}"
+        python generate.py
+
+    - name: Copy SVGs to caller repository
+      shell: bash
+      run: |
+        set -euo pipefail
+        mkdir -p "${{ github.workspace }}/${{ inputs.output-dir }}"
+        cp -f "${{ github.action_path }}/generated_images/"*.svg "${{ github.workspace }}/${{ inputs.output-dir }}/"
