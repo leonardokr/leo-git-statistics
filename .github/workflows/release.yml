@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run release-please
+        id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          release-type: simple
+
+      - name: Checkout repository
+        if: ${{ steps.release.outputs.release_created == 'true' || steps.release.outputs.releases_created == 'true' }}
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Move major tag (v1, v2, ...)
+        if: ${{ steps.release.outputs.release_created == 'true' || steps.release.outputs.releases_created == 'true' }}
+        shell: bash
+        env:
+          TAG_NAME: ${{ steps.release.outputs.tag_name }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${TAG_NAME}" ]; then
+            echo "No tag_name output found. Skipping major tag update."
+            exit 0
+          fi
+
+          if [[ ! "${TAG_NAME}" =~ ^v?([0-9]+)\.[0-9]+\.[0-9]+ ]]; then
+            echo "Tag '${TAG_NAME}' is not semver-like. Skipping major tag update."
+            exit 0
+          fi
+
+          MAJOR_TAG="v${BASH_REMATCH[1]}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch --tags origin
+          git tag -f "${MAJOR_TAG}" "${TAG_NAME}"
+          git push origin "refs/tags/${MAJOR_TAG}" --force
+
+          echo "Updated ${MAJOR_TAG} -> ${TAG_NAME}"

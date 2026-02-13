@@ -309,6 +309,19 @@ jobs:
 | `show-stars` | No | from `config.yml` | `true` or `false`. |
 | `show-pull-requests` | No | from `config.yml` | `true` or `false`. |
 | `show-issues` | No | from `config.yml` | `true` or `false`. |
+## Versioning and Releases
+
+This repository uses automated releases with `release-please` on `main`.
+
+- Create changes in branches and merge with Conventional Commits.
+- `release-please` opens/updates a release PR with changelog entries.
+- When the release PR is merged, it creates a GitHub Release and a semver tag (`v1.2.3`).
+- The workflow also updates the floating major tag (`v1`, `v2`, ...) to the latest patch/minor of that major.
+
+For consumers:
+
+- Use `@v1` for stable major updates with automatic minor/patch refreshes.
+- Pin exact versions (`@v1.2.3`) only when strict reproducibility is required.
 ## Creating Custom Themes
 
 Add a new `.yml` file in `src/themes/`:
@@ -467,5 +480,6 @@ GPL-3.0 License - see [LICENSE](LICENSE) for details.
 <p align="center">
   <sub>Built with Python and GitHub Actions</sub>
 </p>
+
 
 
