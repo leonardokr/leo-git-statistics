@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/leonardokr/leo-git-statistics/compare/v1.0.0...v1.0.1) (2026-02-13)
+
+
+### Bug Fixes
+
+* **action:** remove setup-python cache path for reusable action context ([a545027](https://github.com/leonardokr/leo-git-statistics/commit/a545027aa94501f7529c8f88effea502985f1405))
+
 ## 1.0.0 (2026-02-13)
 
 
