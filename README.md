@@ -179,44 +179,6 @@ Use this action from your profile repository workflow:
 
 ### 5. Configure (Optional)
 Pass optional `with:` inputs in your profile workflow (see full list below in **Workflow Configuration (Profile Repository)**).
-## Repository Configuration (config.yml)
-
-This section is for repository-level configuration in `config.yml` (mainly for template/advanced customization). For normal usage via Action, prefer workflow `with:` inputs shown below.
-
-### Theme Selection
-
-```yaml
-themes:
-  enabled:
-    - default
-    - dark
-    - dracula
-    - nord
-    # Use 'all' to generate all themes
-```
-
-### Repository Filters
-
-```yaml
-stats_generation:
-  excluded_repos: "repo1,repo2"
-  excluded_langs: "HTML,CSS"
-  include_forked_repos: "false"
-  exclude_private_repos: "false"
-  exclude_archive_repos: "true"
-```
-
-### Statistics Visibility
-
-```yaml
-stats_generation:
-  show_total_contributions: "true"
-  show_repositories: "true"
-  show_lines_changed: "true"
-  show_stars: "true"
-  show_pull_requests: "true"
-  # ... more options
-```
 
 ## Workflow Configuration (Profile Repository)
 
@@ -277,38 +239,78 @@ jobs:
 
 ### Action Inputs (`with:`)
 
-| Input | Required | Default | Description |
-|---|---|---|---|
-| `github-token` | Yes | - | GitHub token consumed as `ACCESS_TOKEN`. |
-| `github-username` | No | `github.actor` | GitHub user to collect stats for. |
-| `python-version` | No | `3.11` | Python runtime version. |
-| `output-dir` | No | `generated_images` | Destination folder in caller repository. |
-| `themes` | No | from `config.yml` | Comma-separated themes (example: `dark,light`) or `all`. |
-| `timezone` | No | from `config.yml` or `UTC` | IANA timezone (example: `America/Sao_Paulo`). |
-| `excluded-repos` | No | from `config.yml` | Comma-separated repos to exclude. |
-| `excluded-langs` | No | from `config.yml` | Comma-separated languages to exclude. |
-| `include-forked-repos` | No | from `config.yml` | `true` or `false`. |
-| `exclude-contrib-repos` | No | from `config.yml` | `true` or `false`. |
-| `exclude-archive-repos` | No | from `config.yml` | `true` or `false`. |
-| `exclude-private-repos` | No | from `config.yml` | `true` or `false`. |
-| `exclude-public-repos` | No | from `config.yml` | `true` or `false`. |
-| `store-repo-views` | No | from `config.yml` | `true` or `false`. |
-| `store-repo-clones` | No | from `config.yml` | `true` or `false`. |
-| `more-collabs` | No | from `config.yml` | Integer to manually add collaborator count. |
-| `manually-added-repos` | No | from `config.yml` | Comma-separated `owner/repo` list to include. |
-| `only-included-repos` | No | from `config.yml` | If set, only these `owner/repo` entries are used. |
-| `show-total-contributions` | No | from `config.yml` | `true` or `false`. |
-| `show-repositories` | No | from `config.yml` | `true` or `false`. |
-| `show-lines-changed` | No | from `config.yml` | `true` or `false`. |
-| `show-avg-percent` | No | from `config.yml` | `true` or `false`. |
-| `show-collaborators` | No | from `config.yml` | `true` or `false`. |
-| `show-contributors` | No | from `config.yml` | `true` or `false`. |
-| `show-views` | No | from `config.yml` | `true` or `false`. |
-| `show-clones` | No | from `config.yml` | `true` or `false`. |
-| `show-forks` | No | from `config.yml` | `true` or `false`. |
-| `show-stars` | No | from `config.yml` | `true` or `false`. |
-| `show-pull-requests` | No | from `config.yml` | `true` or `false`. |
-| `show-issues` | No | from `config.yml` | `true` or `false`. |
+| Input                      | Required | Default                    | Description                                              |
+| ----------------------------| ----------| ----------------------------| ----------------------------------------------------------|
+| `github-token`             | Yes      | -                          | GitHub token consumed as `ACCESS_TOKEN`.                 |
+| `github-username`          | No       | `github.actor`             | GitHub user to collect stats for.                        |
+| `python-version`           | No       | `3.11`                     | Python runtime version.                                  |
+| `output-dir`               | No       | `generated_images`         | Destination folder in caller repository.                 |
+| `themes`                   | No       | from `config.yml`          | Comma-separated themes (example: `dark,light`) or `all`. |
+| `timezone`                 | No       | from `config.yml` or `UTC` | IANA timezone (example: `America/Sao_Paulo`).            |
+| `excluded-repos`           | No       | from `config.yml`          | Comma-separated repos to exclude.                        |
+| `excluded-langs`           | No       | from `config.yml`          | Comma-separated languages to exclude.                    |
+| `include-forked-repos`     | No       | from `config.yml`          | `true` or `false`.                                       |
+| `exclude-contrib-repos`    | No       | from `config.yml`          | `true` or `false`.                                       |
+| `exclude-archive-repos`    | No       | from `config.yml`          | `true` or `false`.                                       |
+| `exclude-private-repos`    | No       | from `config.yml`          | `true` or `false`.                                       |
+| `exclude-public-repos`     | No       | from `config.yml`          | `true` or `false`.                                       |
+| `store-repo-views`         | No       | from `config.yml`          | `true` or `false`.                                       |
+| `store-repo-clones`        | No       | from `config.yml`          | `true` or `false`.                                       |
+| `more-collabs`             | No       | from `config.yml`          | Integer to manually add collaborator count.              |
+| `manually-added-repos`     | No       | from `config.yml`          | Comma-separated `owner/repo` list to include.            |
+| `only-included-repos`      | No       | from `config.yml`          | If set, only these `owner/repo` entries are used.        |
+| `show-total-contributions` | No       | from `config.yml`          | `true` or `false`.                                       |
+| `show-repositories`        | No       | from `config.yml`          | `true` or `false`.                                       |
+| `show-lines-changed`       | No       | from `config.yml`          | `true` or `false`.                                       |
+| `show-avg-percent`         | No       | from `config.yml`          | `true` or `false`.                                       |
+| `show-collaborators`       | No       | from `config.yml`          | `true` or `false`.                                       |
+| `show-contributors`        | No       | from `config.yml`          | `true` or `false`.                                       |
+| `show-views`               | No       | from `config.yml`          | `true` or `false`.                                       |
+| `show-clones`              | No       | from `config.yml`          | `true` or `false`.                                       |
+| `show-forks`               | No       | from `config.yml`          | `true` or `false`.                                       |
+| `show-stars`               | No       | from `config.yml`          | `true` or `false`.                                       |
+| `show-pull-requests`       | No       | from `config.yml`          | `true` or `false`.                                       |
+| `show-issues`              | No       | from `config.yml`          | `true` or `false`.                                       |
+
+## Repository Configuration (config.yml)
+
+This section is for repository-level configuration in `config.yml` (mainly for template/advanced customization). For normal usage via Action, prefer workflow `with:` inputs shown below.
+
+### Theme Selection
+
+```yaml
+themes:
+  enabled:
+    - default
+    - dark
+    - dracula
+    - nord
+    # Use 'all' to generate all themes
+```
+
+### Repository Filters
+
+```yaml
+stats_generation:
+  excluded_repos: "repo1,repo2"
+  excluded_langs: "HTML,CSS"
+  include_forked_repos: "false"
+  exclude_private_repos: "false"
+  exclude_archive_repos: "true"
+```
+
+### Statistics Visibility
+
+```yaml
+stats_generation:
+  show_total_contributions: "true"
+  show_repositories: "true"
+  show_lines_changed: "true"
+  show_stars: "true"
+  show_pull_requests: "true"
+  # ... more options
+```
+
 ## Versioning and Releases
 
 This repository uses automated releases with `release-please` on `main`.
