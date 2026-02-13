@@ -133,8 +133,6 @@ runs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ inputs.python-version }}
-        cache: pip
-        cache-dependency-path: ${{ github.action_path }}/requirements.txt
 
     - name: Install dependencies
       shell: bash
@@ -228,4 +226,5 @@ runs:
         set -euo pipefail
         mkdir -p "${{ github.workspace }}/${{ inputs.output-dir }}"
         cp -f "${{ github.action_path }}/generated_images/"*.svg "${{ github.workspace }}/${{ inputs.output-dir }}/"
+
 
