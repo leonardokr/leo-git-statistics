@@ -1,6 +1,10 @@
 name: "Generate GitHub Stats SVGs"
 description: "Generate SVG cards using leo-git-statistics and copy them to caller repository"
 
+branding:
+  icon: "bar-chart-2"
+  color: "blue"
+
 inputs:
   github-token:
     description: "GitHub token used by generate.py (ACCESS_TOKEN)"
@@ -224,3 +228,4 @@ runs:
         set -euo pipefail
         mkdir -p "${{ github.workspace }}/${{ inputs.output-dir }}"
         cp -f "${{ github.action_path }}/generated_images/"*.svg "${{ github.workspace }}/${{ inputs.output-dir }}/"
+
