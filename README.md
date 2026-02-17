@@ -18,14 +18,25 @@
 
 ---
 
+## Entry Points
+
+| Entry point | Description | Reads snapshots? | Writes snapshots? |
+|---|---|---|---|
+| `generate.py` | Generates SVG cards (including stats history) | Yes (for stats_history chart) | No |
+| `generate_test.py` | Generates SVG cards with mock data | No (mock returns fake history) | No |
+| `api/` | Serves live stats + SVG cards via HTTP | Yes (for history endpoint + stats-history card) | Yes (POST /history/snapshot) |
+| `api/generate_static_api.py` | Generates JSON files + saves snapshot | No | Yes |
+| `.github/workflows/snapshot.yml` | Daily cron job that saves a stats snapshot | No | Yes |
+
 ## Features
 
-- **Multiple Statistics Cards** - Overview stats, language distribution, contribution streaks, streak battery, language puzzle, and weekly commit calendar
+- **Multiple Statistics Cards** - Overview stats, language distribution, contribution streaks, streak battery, language puzzle, weekly commit calendar, and stats history line chart
 - **25+ Built-in Themes** - From Dracula to Nord, Catppuccin to Tokyo Night
 - **Extensible Theme System** - Add your own themes via YAML files
 - **Animated SVGs** - Smooth fade-in and slide animations
 - **Fully Configurable** - Control which stats to show, filter repositories, and more
 - **Reusable GitHub Action** - Run the generator from any repository (great for profile repos)
+- **Historical Statistics Tracking** - Daily snapshots via GitHub Actions cron, with multi-series line chart visualization
 - **Accumulated Metrics** - Track views and clones beyond GitHub's 14-day limit using SQLite with WAL mode
 - **REST API** - FastAPI-based async API with JSON and SVG card endpoints, Swagger docs, caching (Redis or in-memory), rate limiting, API key auth, and Prometheus metrics
 - **Production-Ready** - Docker/docker-compose deployment with gunicorn, Redis cache, structured logging, circuit breaker, and retry with exponential backoff
@@ -80,6 +91,16 @@ Agenda-style weekly calendar where each commit is a time block, with repositorie
 </p>
 <p align="center">
   <img src="generated_images/samples/commit_calendar_sample_light.svg" alt="Commit Calendar Light Mode" width="98%" />
+</p>
+
+### Stats History
+Multi-series line chart showing how your stats (stars, followers, following, contributions, forks, PRs, issues) evolve over time. Requires historical snapshots collected via the daily cron workflow or `POST /history/snapshot`.
+
+<p align="center">
+  <img src="generated_images/samples/stats_history_sample_dark.svg" alt="Stats History Dark Mode" width="98%" />
+</p>
+<p align="center">
+  <img src="generated_images/samples/stats_history_sample_light.svg" alt="Stats History Light Mode" width="98%" />
 </p>
 
 ## Themes
