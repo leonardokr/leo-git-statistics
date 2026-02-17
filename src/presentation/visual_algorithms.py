@@ -6,10 +6,10 @@ from typing import List, Tuple
 
 def generate_palette_colors(
     count: int,
-    hue: int = 210,
-    saturation_range: List[int] = None,
-    lightness_range: List[int] = None,
-    hue_spread: int = 60
+    hue: int,
+    saturation_range: List[int],
+    lightness_range: List[int],
+    hue_spread: int
 ) -> List[str]:
     """
     Generates a list of visually distinct colors within a harmonious palette.
@@ -21,11 +21,6 @@ def generate_palette_colors(
     :param hue_spread: Total spread of hues around the base (0-180).
     :return: List of hex color strings.
     """
-    if saturation_range is None:
-        saturation_range = [65, 85]
-    if lightness_range is None:
-        lightness_range = [40, 60]
-
     colors = []
     sat_min, sat_max = saturation_range[0] / 100, saturation_range[1] / 100
     light_min, light_max = lightness_range[0] / 100, lightness_range[1] / 100
