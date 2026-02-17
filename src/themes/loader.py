@@ -32,6 +32,16 @@ DEFAULT_COLORS = {
     "calendar_saturation_range": [60, 85],
     "calendar_lightness_range": [40, 60],
     "calendar_hue_spread": 90,
+    "line_chart_title_color": "#0969da",
+    "line_chart_subtitle_color": "#57606a",
+    "line_chart_axis_color": "#57606a",
+    "line_chart_grid_color": "#d0d7de",
+    "line_chart_grid_opacity": 0.3,
+    "line_chart_legend_text_color": "#24292f",
+    "line_chart_hue": 210,
+    "line_chart_saturation_range": [60, 85],
+    "line_chart_lightness_range": [40, 65],
+    "line_chart_hue_spread": 120,
 }
 
 
@@ -80,6 +90,26 @@ def _normalize_theme(name: str, theme_data: Dict[str, Any]) -> Dict[str, Any]:
         normalized_colors["calendar_lightness_range"] = normalized_colors["puzzle_lightness_range"]
     if "calendar_hue_spread" not in colors:
         normalized_colors["calendar_hue_spread"] = normalized_colors.get("puzzle_hue_spread", 90)
+
+    if "line_chart_title_color" not in colors:
+        normalized_colors["line_chart_title_color"] = normalized_colors["calendar_title_color"]
+    if "line_chart_subtitle_color" not in colors:
+        normalized_colors["line_chart_subtitle_color"] = normalized_colors["calendar_subtitle_color"]
+    if "line_chart_axis_color" not in colors:
+        normalized_colors["line_chart_axis_color"] = normalized_colors["calendar_hour_label_color"]
+    if "line_chart_grid_color" not in colors:
+        normalized_colors["line_chart_grid_color"] = normalized_colors["calendar_grid_color"]
+    if "line_chart_legend_text_color" not in colors:
+        normalized_colors["line_chart_legend_text_color"] = normalized_colors["calendar_legend_text_color"]
+    if "line_chart_hue" not in colors:
+        normalized_colors["line_chart_hue"] = normalized_colors["calendar_hue"]
+    if "line_chart_saturation_range" not in colors:
+        normalized_colors["line_chart_saturation_range"] = normalized_colors["calendar_saturation_range"]
+    if "line_chart_lightness_range" not in colors:
+        cal_range = normalized_colors["calendar_lightness_range"]
+        normalized_colors["line_chart_lightness_range"] = [cal_range[0] + 5, cal_range[1] + 5]
+    if "line_chart_hue_spread" not in colors:
+        normalized_colors["line_chart_hue_spread"] = 120
 
     suffix = theme_data.get("suffix")
     if suffix is None:
