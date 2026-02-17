@@ -9,62 +9,68 @@ class OverviewResponse(BaseModel):
     """Response model for user overview statistics."""
 
     username: str
-    name: str
-    total_contributions: int
-    repositories_count: int
-    total_stars: int
-    total_forks: int
-    total_views: int
-    views_from_date: str
-    total_clones: int
-    clones_from_date: str
-    total_pull_requests: int
-    total_issues: int
-    lines_added: int
-    lines_deleted: int
-    avg_contribution_percent: str
-    collaborators_count: int
-    contributors_count: int
+    name: Optional[str] = None
+    total_contributions: Optional[int] = None
+    repositories_count: Optional[int] = None
+    total_stars: Optional[int] = None
+    total_forks: Optional[int] = None
+    total_views: Optional[int] = None
+    views_from_date: Optional[str] = None
+    total_clones: Optional[int] = None
+    clones_from_date: Optional[str] = None
+    total_pull_requests: Optional[int] = None
+    total_issues: Optional[int] = None
+    lines_added: Optional[int] = None
+    lines_deleted: Optional[int] = None
+    avg_contribution_percent: Optional[str] = None
+    collaborators_count: Optional[int] = None
+    contributors_count: Optional[int] = None
+    warnings: Optional[List[str]] = None
 
 
 class LanguagesResponse(BaseModel):
     """Response model for language distribution statistics."""
 
     username: str
-    languages: Dict[str, Any]
+    languages: Optional[Dict[str, Any]] = None
+    warnings: Optional[List[str]] = None
 
 
 class StreakResponse(BaseModel):
     """Response model for contribution streak statistics."""
 
     username: str
-    current_streak: int
-    current_streak_range: str
-    longest_streak: int
-    longest_streak_range: str
-    total_contributions: int
+    current_streak: Optional[int] = None
+    current_streak_range: Optional[str] = None
+    longest_streak: Optional[int] = None
+    longest_streak_range: Optional[str] = None
+    total_contributions: Optional[int] = None
+    warnings: Optional[List[str]] = None
 
 
 class RecentContributionsResponse(BaseModel):
     """Response model for recent contribution counts."""
 
     username: str
-    recent_contributions: List[int]
+    recent_contributions: Optional[List[int]] = None
+    warnings: Optional[List[str]] = None
 
 
 class WeeklyCommitsResponse(BaseModel):
     """Response model for weekly commit schedule."""
 
     username: str
-    weekly_commits: List[Dict[str, Any]]
+    weekly_commits: Optional[List[Dict[str, Any]]] = None
+    warnings: Optional[List[str]] = None
 
 
 class RepositoriesResponse(BaseModel):
     """Response model for repository listing."""
 
     username: str
-    repositories_count: int
-    repositories: List[str]
+    repositories_count: Optional[int] = None
+    repositories: Optional[List[str]] = None
+    warnings: Optional[List[str]] = None
 
 
 class DetailedRepoItem(BaseModel):
@@ -96,18 +102,20 @@ class DetailedRepositoriesResponse(BaseModel):
     username: str
     repositories_count: int
     repositories: List[DetailedRepoItem]
+    warnings: Optional[List[str]] = None
 
 
 class FullStatsResponse(BaseModel):
     """Response model for full statistics."""
 
     username: str
-    overview: Dict[str, Any]
-    languages: Dict[str, Any]
-    streak: Dict[str, Any]
-    contributions: Dict[str, Any]
-    repositories: Dict[str, Any]
-    weekly_commits: List[Dict[str, Any]]
+    overview: Optional[Dict[str, Any]] = None
+    languages: Optional[Dict[str, Any]] = None
+    streak: Optional[Dict[str, Any]] = None
+    contributions: Optional[Dict[str, Any]] = None
+    repositories: Optional[Dict[str, Any]] = None
+    weekly_commits: Optional[List[Dict[str, Any]]] = None
+    warnings: Optional[List[str]] = None
 
 
 class HealthResponse(BaseModel):

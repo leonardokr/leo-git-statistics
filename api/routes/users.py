@@ -23,8 +23,8 @@ from api.models.responses import (
     StreakResponse,
     WeeklyCommitsResponse,
 )
-from api.services.stats_service import create_stats_collector
-from src.core.github_client import GitHubClient
+from api.services.stats_service import PartialCollector, create_stats_collector
+from src.core.github_client import GitHubClient, rate_limit_state
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +37,15 @@ router = APIRouter(
 
 def _set_cache_header(response: Response, hit: bool) -> None:
     response.headers["X-Cache"] = "HIT" if hit else "MISS"
+
+
+def _set_rate_limit_headers(response: Response) -> None:
+    if rate_limit_state.remaining is not None:
+        response.headers["X-GitHub-RateLimit-Remaining"] = str(rate_limit_state.remaining)
+    if rate_limit_state.limit is not None:
+        response.headers["X-GitHub-RateLimit-Limit"] = str(rate_limit_state.limit)
+    if rate_limit_state.reset is not None:
+        response.headers["X-GitHub-RateLimit-Reset"] = str(rate_limit_state.reset)
 
 
 @router.get("/overview", response_model=OverviewResponse, responses={500: {"model": ErrorResponse}})
@@ -61,27 +70,28 @@ async def get_user_overview(
         username, session, token=resolved.token, repo_filter=resolved.repo_filter,
     )
 
-    name = await collector.get_name()
-    total_contributions = await collector.get_total_contributions()
-    repos = await collector.get_repos()
-    stars = await collector.get_stargazers()
-    forks = await collector.get_forks()
-    views = await collector.get_views()
-    views_from = await collector.get_views_from_date()
-    clones = await collector.get_clones()
-    clones_from = await collector.get_clones_from_date()
-    pull_requests = await collector.get_pull_requests()
-    issues = await collector.get_issues()
-    lines_added, lines_deleted = await collector.get_lines_changed()
-    avg_percent = await collector.get_avg_contribution_percent()
-    collaborators = await collector.get_collaborators()
-    contributors = await collector.get_contributors()
+    pc = PartialCollector()
+    name = await pc.safe(collector.get_name(), None, "name")
+    total_contributions = await pc.safe(collector.get_total_contributions(), None, "total contributions")
+    repos = await pc.safe(collector.get_repos(), set(), "repositories")
+    stars = await pc.safe(collector.get_stargazers(), None, "stargazers")
+    forks = await pc.safe(collector.get_forks(), None, "forks")
+    views = await pc.safe(collector.get_views(), None, "views")
+    views_from = await pc.safe(collector.get_views_from_date(), None, "views from date")
+    clones = await pc.safe(collector.get_clones(), None, "clones")
+    clones_from = await pc.safe(collector.get_clones_from_date(), None, "clones from date")
+    pull_requests = await pc.safe(collector.get_pull_requests(), None, "pull requests")
+    issues = await pc.safe(collector.get_issues(), None, "issues")
+    lines = await pc.safe(collector.get_lines_changed(), (None, None), "lines changed")
+    avg_percent = await pc.safe(collector.get_avg_contribution_percent(), None, "avg contribution percent")
+    collaborators = await pc.safe(collector.get_collaborators(), None, "collaborators")
+    contributors = await pc.safe(collector.get_contributors(), set(), "contributors")
 
     data = {
         "username": username,
         "name": name,
         "total_contributions": total_contributions,
-        "repositories_count": len(repos),
+        "repositories_count": len(repos) if repos is not None else None,
         "total_stars": stars,
         "total_forks": forks,
         "total_views": views,
@@ -90,15 +100,17 @@ async def get_user_overview(
         "clones_from_date": clones_from,
         "total_pull_requests": pull_requests,
         "total_issues": issues,
-        "lines_added": lines_added,
-        "lines_deleted": lines_deleted,
+        "lines_added": lines[0],
+        "lines_deleted": lines[1],
         "avg_contribution_percent": avg_percent,
         "collaborators_count": collaborators,
-        "contributors_count": len(contributors),
+        "contributors_count": len(contributors) if contributors is not None else None,
+        **pc.warnings_payload(),
     }
 
     cache_set(username, endpoint, data)
     _set_cache_header(response, False)
+    _set_rate_limit_headers(response)
     return data
 
 
@@ -126,18 +138,21 @@ async def get_user_languages(
         username, session, token=resolved.token, repo_filter=resolved.repo_filter,
     )
 
+    pc = PartialCollector()
     if proportional:
-        languages = await collector.get_languages_proportional()
+        languages = await pc.safe(collector.get_languages_proportional(), None, "languages")
     else:
-        languages = await collector.get_languages()
+        languages = await pc.safe(collector.get_languages(), None, "languages")
 
     data = {
         "username": username,
         "languages": languages,
+        **pc.warnings_payload(),
     }
 
     cache_set(username, endpoint, data)
     _set_cache_header(response, False)
+    _set_rate_limit_headers(response)
     return data
 
 
@@ -163,11 +178,12 @@ async def get_user_streak(
         username, session, token=resolved.token, repo_filter=resolved.repo_filter,
     )
 
-    current_streak = await collector.get_current_streak()
-    current_range = await collector.get_current_streak_range()
-    longest_streak = await collector.get_longest_streak()
-    longest_range = await collector.get_longest_streak_range()
-    total_contributions = await collector.get_total_contributions()
+    pc = PartialCollector()
+    current_streak = await pc.safe(collector.get_current_streak(), None, "current streak")
+    current_range = await pc.safe(collector.get_current_streak_range(), None, "current streak range")
+    longest_streak = await pc.safe(collector.get_longest_streak(), None, "longest streak")
+    longest_range = await pc.safe(collector.get_longest_streak_range(), None, "longest streak range")
+    total_contributions = await pc.safe(collector.get_total_contributions(), None, "total contributions")
 
     data = {
         "username": username,
@@ -176,10 +192,12 @@ async def get_user_streak(
         "longest_streak": longest_streak,
         "longest_streak_range": longest_range,
         "total_contributions": total_contributions,
+        **pc.warnings_payload(),
     }
 
     cache_set(username, endpoint, data)
     _set_cache_header(response, False)
+    _set_rate_limit_headers(response)
     return data
 
 
@@ -208,15 +226,19 @@ async def get_recent_contributions(
     collector = await create_stats_collector(
         username, session, token=resolved.token, repo_filter=resolved.repo_filter,
     )
-    recent = await collector.get_recent_contributions()
+
+    pc = PartialCollector()
+    recent = await pc.safe(collector.get_recent_contributions(), None, "recent contributions")
 
     data = {
         "username": username,
         "recent_contributions": recent,
+        **pc.warnings_payload(),
     }
 
     cache_set(username, endpoint, data)
     _set_cache_header(response, False)
+    _set_rate_limit_headers(response)
     return data
 
 
@@ -245,15 +267,19 @@ async def get_weekly_commits(
     collector = await create_stats_collector(
         username, session, token=resolved.token, repo_filter=resolved.repo_filter,
     )
-    weekly = await collector.get_weekly_commit_schedule()
+
+    pc = PartialCollector()
+    weekly = await pc.safe(collector.get_weekly_commit_schedule(), None, "weekly commits")
 
     data = {
         "username": username,
         "weekly_commits": weekly,
+        **pc.warnings_payload(),
     }
 
     cache_set(username, endpoint, data)
     _set_cache_header(response, False)
+    _set_rate_limit_headers(response)
     return data
 
 
@@ -282,16 +308,20 @@ async def get_user_repositories(
     collector = await create_stats_collector(
         username, session, token=resolved.token, repo_filter=resolved.repo_filter,
     )
-    repos = await collector.get_repos()
+
+    pc = PartialCollector()
+    repos = await pc.safe(collector.get_repos(), None, "repositories")
 
     data = {
         "username": username,
-        "repositories_count": len(repos),
-        "repositories": sorted(list(repos)),
+        "repositories_count": len(repos) if repos is not None else None,
+        "repositories": sorted(list(repos)) if repos is not None else None,
+        **pc.warnings_payload(),
     }
 
     cache_set(username, endpoint, data)
     _set_cache_header(response, False)
+    _set_rate_limit_headers(response)
     return data
 
 
@@ -335,6 +365,7 @@ async def get_user_repositories_detailed(
 
     if not raw_repos:
         _set_cache_header(response, False)
+        _set_rate_limit_headers(response)
         return {"username": username, "repositories_count": 0, "repositories": []}
 
     repositories = []
@@ -386,6 +417,7 @@ async def get_user_repositories_detailed(
 
     cache_set(username, endpoint, data)
     _set_cache_header(response, False)
+    _set_rate_limit_headers(response)
     return data
 
 
@@ -415,35 +447,36 @@ async def get_full_stats(
         username, session, token=resolved.token, repo_filter=resolved.repo_filter,
     )
 
-    name = await collector.get_name()
-    total_contributions = await collector.get_total_contributions()
-    repos = await collector.get_repos()
-    stars = await collector.get_stargazers()
-    forks = await collector.get_forks()
-    views = await collector.get_views()
-    views_from = await collector.get_views_from_date()
-    clones = await collector.get_clones()
-    clones_from = await collector.get_clones_from_date()
-    pull_requests = await collector.get_pull_requests()
-    issues = await collector.get_issues()
-    lines_added, lines_deleted = await collector.get_lines_changed()
-    avg_percent = await collector.get_avg_contribution_percent()
-    collaborators = await collector.get_collaborators()
-    contributors = await collector.get_contributors()
-    languages = await collector.get_languages()
-    current_streak = await collector.get_current_streak()
-    current_range = await collector.get_current_streak_range()
-    longest_streak = await collector.get_longest_streak()
-    longest_range = await collector.get_longest_streak_range()
-    recent = await collector.get_recent_contributions()
-    weekly = await collector.get_weekly_commit_schedule()
+    pc = PartialCollector()
+    name = await pc.safe(collector.get_name(), None, "name")
+    total_contributions = await pc.safe(collector.get_total_contributions(), None, "total contributions")
+    repos = await pc.safe(collector.get_repos(), set(), "repositories")
+    stars = await pc.safe(collector.get_stargazers(), None, "stargazers")
+    forks = await pc.safe(collector.get_forks(), None, "forks")
+    views = await pc.safe(collector.get_views(), None, "views")
+    views_from = await pc.safe(collector.get_views_from_date(), None, "views from date")
+    clones = await pc.safe(collector.get_clones(), None, "clones")
+    clones_from = await pc.safe(collector.get_clones_from_date(), None, "clones from date")
+    pull_requests = await pc.safe(collector.get_pull_requests(), None, "pull requests")
+    issues = await pc.safe(collector.get_issues(), None, "issues")
+    lines = await pc.safe(collector.get_lines_changed(), (None, None), "lines changed")
+    avg_percent = await pc.safe(collector.get_avg_contribution_percent(), None, "avg contribution percent")
+    collaborators = await pc.safe(collector.get_collaborators(), None, "collaborators")
+    contributors = await pc.safe(collector.get_contributors(), set(), "contributors")
+    languages = await pc.safe(collector.get_languages(), None, "languages")
+    current_streak = await pc.safe(collector.get_current_streak(), None, "current streak")
+    current_range = await pc.safe(collector.get_current_streak_range(), None, "current streak range")
+    longest_streak = await pc.safe(collector.get_longest_streak(), None, "longest streak")
+    longest_range = await pc.safe(collector.get_longest_streak_range(), None, "longest streak range")
+    recent = await pc.safe(collector.get_recent_contributions(), None, "recent contributions")
+    weekly = await pc.safe(collector.get_weekly_commit_schedule(), None, "weekly commits")
 
     data = {
         "username": username,
         "overview": {
             "name": name,
             "total_contributions": total_contributions,
-            "repositories_count": len(repos),
+            "repositories_count": len(repos) if repos is not None else None,
             "total_stars": stars,
             "total_forks": forks,
             "total_views": views,
@@ -452,11 +485,11 @@ async def get_full_stats(
             "clones_from_date": clones_from,
             "total_pull_requests": pull_requests,
             "total_issues": issues,
-            "lines_added": lines_added,
-            "lines_deleted": lines_deleted,
+            "lines_added": lines[0],
+            "lines_deleted": lines[1],
             "avg_contribution_percent": avg_percent,
             "collaborators_count": collaborators,
-            "contributors_count": len(contributors),
+            "contributors_count": len(contributors) if contributors is not None else None,
         },
         "languages": languages,
         "streak": {
@@ -470,12 +503,14 @@ async def get_full_stats(
             "recent": recent,
         },
         "repositories": {
-            "count": len(repos),
-            "list": sorted(list(repos)),
+            "count": len(repos) if repos is not None else None,
+            "list": sorted(list(repos)) if repos is not None else None,
         },
         "weekly_commits": weekly,
+        **pc.warnings_payload(),
     }
 
     cache_set(username, endpoint, data)
     _set_cache_header(response, False)
+    _set_rate_limit_headers(response)
     return data
