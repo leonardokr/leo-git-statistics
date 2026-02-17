@@ -22,7 +22,7 @@ from api.deps.http_session import close_shared_session, create_shared_session
 from api.middleware.logging import RequestLoggingMiddleware, configure_structlog
 from api.middleware.metrics import update_infrastructure_gauges
 from api.middleware.rate_limiter import limiter
-from api.routes import health, users
+from api.routes import cards, compare, health, history, users, webhooks
 
 configure_structlog()
 
@@ -68,7 +68,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=os.getenv("CORS_ORIGINS", "*").split(","),
     allow_credentials=True,
-    allow_methods=["GET", "OPTIONS"],
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -76,6 +76,10 @@ app.add_middleware(RequestLoggingMiddleware)
 
 app.include_router(health.router)
 app.include_router(users.router)
+app.include_router(cards.router)
+app.include_router(compare.router)
+app.include_router(history.router)
+app.include_router(webhooks.router)
 
 Instrumentator(
     should_group_status_codes=True,
