@@ -6,6 +6,7 @@ Provides REST endpoints to access GitHub repository data with enriched statistic
 The same data used to generate SVG cards is available via JSON endpoints.
 """
 
+import atexit
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -13,14 +14,15 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 import asyncio
 import logging
 import os
+import threading
 from functools import wraps
-from typing import Optional
 
-from aiohttp import ClientSession
-from flask import Flask, jsonify, request
+import aiohttp
+from flask import Flask, jsonify, request, make_response
 from flask_cors import CORS
-from flasgger import Swagger, swag_from
+from flasgger import Swagger
 
+from api.cache import cache_get, cache_set
 from src.core.environment import Environment
 from src.core.github_client import GitHubClient
 from src.core.stats_collector import StatsCollector
@@ -89,13 +91,64 @@ swagger_template = {
 
 swagger = Swagger(app, config=swagger_config, template=swagger_template)
 
+_loop = asyncio.new_event_loop()
+_loop_thread = threading.Thread(target=_loop.run_forever, daemon=True)
+_loop_thread.start()
+
+_shared_session = None
+_session_lock = threading.Lock()
+
+
+def _get_shared_session() -> aiohttp.ClientSession:
+    """
+    Return the shared aiohttp.ClientSession, creating it on the persistent
+    event loop if it does not exist yet.
+
+    :returns: The shared ClientSession bound to the persistent event loop.
+    :rtype: aiohttp.ClientSession
+    """
+    global _shared_session
+    with _session_lock:
+        if _shared_session is None or _shared_session.closed:
+            connector = aiohttp.TCPConnector(limit=20, ttl_dns_cache=300)
+            _shared_session = asyncio.run_coroutine_threadsafe(
+                _create_session(connector), _loop
+            ).result()
+        return _shared_session
+
+
+async def _create_session(connector: aiohttp.TCPConnector) -> aiohttp.ClientSession:
+    """
+    Coroutine that creates a ClientSession on the running event loop.
+
+    :param connector: TCP connector with pooling configuration.
+    :returns: A new ClientSession instance.
+    :rtype: aiohttp.ClientSession
+    """
+    return aiohttp.ClientSession(connector=connector)
+
+
+def _shutdown_session() -> None:
+    """Close the shared session and stop the persistent event loop on exit."""
+    global _shared_session
+    if _shared_session and not _shared_session.closed:
+        asyncio.run_coroutine_threadsafe(_shared_session.close(), _loop).result(timeout=5)
+    _loop.call_soon_threadsafe(_loop.stop)
+
+
+atexit.register(_shutdown_session)
+
 
 def async_route(f):
-    """Decorator to run async functions in Flask routes."""
+    """
+    Decorator that submits an async route handler to the persistent event loop
+    instead of creating a new loop per request.
+    """
 
     @wraps(f)
     def wrapper(*args, **kwargs):
-        return asyncio.run(f(*args, **kwargs))
+        future = asyncio.run_coroutine_threadsafe(f(*args, **kwargs), _loop)
+        return future.result()
 
     return wrapper
 
@@ -112,18 +165,37 @@ async def create_stats_collector(username: str) -> StatsCollector:
     """
     Create a StatsCollector instance for the given username.
 
-    :param username: GitHub username
-    :return: Configured StatsCollector instance
+    :param username: GitHub username.
+    :returns: Configured StatsCollector instance.
+    :rtype: StatsCollector
     """
     token = get_github_token()
-
     env = Environment(username=username, access_token=token)
+    session = _get_shared_session()
+    return StatsCollector(env, session)
 
-    session = ClientSession()
 
-    collector = StatsCollector(env, session)
+def _no_cache_requested() -> bool:
+    """
+    Check whether the caller explicitly requested to bypass the cache.
 
-    return collector, session
+    :returns: True when the ``no_cache`` query parameter is truthy.
+    :rtype: bool
+    """
+    return request.args.get("no_cache", "false").lower() in ("true", "1", "yes")
+
+
+def _make_json_response(data, cache_hit: bool):
+    """
+    Build a JSON response with the ``X-Cache`` header.
+
+    :param data: Serializable response payload.
+    :param cache_hit: Whether the response came from cache.
+    :returns: Flask response with JSON body and cache header.
+    """
+    resp = make_response(jsonify(data))
+    resp.headers["X-Cache"] = "HIT" if cache_hit else "MISS"
+    return resp
 
 
 @app.route("/health", methods=["GET"])
@@ -163,6 +235,11 @@ async def get_user_overview(username):
         type: string
         required: true
         description: GitHub username
+      - name: no_cache
+        in: query
+        type: boolean
+        required: false
+        description: Bypass cache and fetch fresh data
     responses:
       200:
         description: User overview statistics
@@ -206,9 +283,14 @@ async def get_user_overview(username):
       500:
         description: Internal server error
     """
-    session = None
+    endpoint = "overview"
+    if not _no_cache_requested():
+        hit, cached = cache_get(username, endpoint)
+        if hit:
+            return _make_json_response(cached, cache_hit=True)
+
     try:
-        collector, session = await create_stats_collector(username)
+        collector = await create_stats_collector(username)
 
         name = await collector.get_name()
         total_contributions = await collector.get_total_contributions()
@@ -226,7 +308,7 @@ async def get_user_overview(username):
         collaborators = await collector.get_collaborators()
         contributors = await collector.get_contributors()
 
-        return jsonify({
+        data = {
             "username": username,
             "name": name,
             "total_contributions": total_contributions,
@@ -244,16 +326,16 @@ async def get_user_overview(username):
             "avg_contribution_percent": avg_percent,
             "collaborators_count": collaborators,
             "contributors_count": len(contributors),
-        })
+        }
+
+        cache_set(username, endpoint, data)
+        return _make_json_response(data, cache_hit=False)
     except ValueError as e:
-        logger.error(f"Configuration error: {e}")
+        logger.error("Configuration error: %s", e)
         return jsonify({"error": str(e)}), 500
     except Exception as e:
-        logger.error(f"Error fetching overview for {username}: {e}")
+        logger.error("Error fetching overview for %s: %s", username, e)
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
-    finally:
-        if session:
-            await session.close()
 
 
 @app.route("/users/<username>/languages", methods=["GET"])
@@ -275,6 +357,11 @@ async def get_user_languages(username):
         type: boolean
         required: false
         description: Return only proportional percentages (simplified format)
+      - name: no_cache
+        in: query
+        type: boolean
+        required: false
+        description: Bypass cache and fetch fresh data
     responses:
       200:
         description: Language distribution statistics
@@ -289,30 +376,35 @@ async def get_user_languages(username):
       500:
         description: Internal server error
     """
-    session = None
-    try:
-        collector, session = await create_stats_collector(username)
+    proportional = request.args.get("proportional", "false").lower() == "true"
+    endpoint = "languages_proportional" if proportional else "languages"
 
-        proportional = request.args.get("proportional", "false").lower() == "true"
+    if not _no_cache_requested():
+        hit, cached = cache_get(username, endpoint)
+        if hit:
+            return _make_json_response(cached, cache_hit=True)
+
+    try:
+        collector = await create_stats_collector(username)
 
         if proportional:
             languages = await collector.get_languages_proportional()
         else:
             languages = await collector.get_languages()
 
-        return jsonify({
+        data = {
             "username": username,
             "languages": languages,
-        })
+        }
+
+        cache_set(username, endpoint, data)
+        return _make_json_response(data, cache_hit=False)
     except ValueError as e:
-        logger.error(f"Configuration error: {e}")
+        logger.error("Configuration error: %s", e)
         return jsonify({"error": str(e)}), 500
     except Exception as e:
-        logger.error(f"Error fetching languages for {username}: {e}")
+        logger.error("Error fetching languages for %s: %s", username, e)
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
-    finally:
-        if session:
-            await session.close()
 
 
 @app.route("/users/<username>/streak", methods=["GET"])
@@ -329,6 +421,11 @@ async def get_user_streak(username):
         type: string
         required: true
         description: GitHub username
+      - name: no_cache
+        in: query
+        type: boolean
+        required: false
+        description: Bypass cache and fetch fresh data
     responses:
       200:
         description: Contribution streak statistics
@@ -350,9 +447,14 @@ async def get_user_streak(username):
       500:
         description: Internal server error
     """
-    session = None
+    endpoint = "streak"
+    if not _no_cache_requested():
+        hit, cached = cache_get(username, endpoint)
+        if hit:
+            return _make_json_response(cached, cache_hit=True)
+
     try:
-        collector, session = await create_stats_collector(username)
+        collector = await create_stats_collector(username)
 
         current_streak = await collector.get_current_streak()
         current_range = await collector.get_current_streak_range()
@@ -360,23 +462,23 @@ async def get_user_streak(username):
         longest_range = await collector.get_longest_streak_range()
         total_contributions = await collector.get_total_contributions()
 
-        return jsonify({
+        data = {
             "username": username,
             "current_streak": current_streak,
             "current_streak_range": current_range,
             "longest_streak": longest_streak,
             "longest_streak_range": longest_range,
             "total_contributions": total_contributions,
-        })
+        }
+
+        cache_set(username, endpoint, data)
+        return _make_json_response(data, cache_hit=False)
     except ValueError as e:
-        logger.error(f"Configuration error: {e}")
+        logger.error("Configuration error: %s", e)
         return jsonify({"error": str(e)}), 500
     except Exception as e:
-        logger.error(f"Error fetching streak for {username}: {e}")
+        logger.error("Error fetching streak for %s: %s", username, e)
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
-    finally:
-        if session:
-            await session.close()
 
 
 @app.route("/users/<username>/contributions/recent", methods=["GET"])
@@ -393,6 +495,11 @@ async def get_recent_contributions(username):
         type: string
         required: true
         description: GitHub username
+      - name: no_cache
+        in: query
+        type: boolean
+        required: false
+        description: Bypass cache and fetch fresh data
     responses:
       200:
         description: Recent contribution counts
@@ -409,25 +516,30 @@ async def get_recent_contributions(username):
       500:
         description: Internal server error
     """
-    session = None
+    endpoint = "contributions_recent"
+    if not _no_cache_requested():
+        hit, cached = cache_get(username, endpoint)
+        if hit:
+            return _make_json_response(cached, cache_hit=True)
+
     try:
-        collector, session = await create_stats_collector(username)
+        collector = await create_stats_collector(username)
 
         recent = await collector.get_recent_contributions()
 
-        return jsonify({
+        data = {
             "username": username,
             "recent_contributions": recent,
-        })
+        }
+
+        cache_set(username, endpoint, data)
+        return _make_json_response(data, cache_hit=False)
     except ValueError as e:
-        logger.error(f"Configuration error: {e}")
+        logger.error("Configuration error: %s", e)
         return jsonify({"error": str(e)}), 500
     except Exception as e:
-        logger.error(f"Error fetching recent contributions for {username}: {e}")
+        logger.error("Error fetching recent contributions for %s: %s", username, e)
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
-    finally:
-        if session:
-            await session.close()
 
 
 @app.route("/users/<username>/commits/weekly", methods=["GET"])
@@ -444,6 +556,11 @@ async def get_weekly_commits(username):
         type: string
         required: true
         description: GitHub username
+      - name: no_cache
+        in: query
+        type: boolean
+        required: false
+        description: Bypass cache and fetch fresh data
     responses:
       200:
         description: Weekly commit schedule
@@ -466,25 +583,30 @@ async def get_weekly_commits(username):
       500:
         description: Internal server error
     """
-    session = None
+    endpoint = "commits_weekly"
+    if not _no_cache_requested():
+        hit, cached = cache_get(username, endpoint)
+        if hit:
+            return _make_json_response(cached, cache_hit=True)
+
     try:
-        collector, session = await create_stats_collector(username)
+        collector = await create_stats_collector(username)
 
         weekly = await collector.get_weekly_commit_schedule()
 
-        return jsonify({
+        data = {
             "username": username,
             "weekly_commits": weekly,
-        })
+        }
+
+        cache_set(username, endpoint, data)
+        return _make_json_response(data, cache_hit=False)
     except ValueError as e:
-        logger.error(f"Configuration error: {e}")
+        logger.error("Configuration error: %s", e)
         return jsonify({"error": str(e)}), 500
     except Exception as e:
-        logger.error(f"Error fetching weekly commits for {username}: {e}")
+        logger.error("Error fetching weekly commits for %s: %s", username, e)
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
-    finally:
-        if session:
-            await session.close()
 
 
 @app.route("/users/<username>/repositories", methods=["GET"])
@@ -501,6 +623,11 @@ async def get_user_repositories(username):
         type: string
         required: true
         description: GitHub username
+      - name: no_cache
+        in: query
+        type: boolean
+        required: false
+        description: Bypass cache and fetch fresh data
     responses:
       200:
         description: User repositories
@@ -518,26 +645,31 @@ async def get_user_repositories(username):
       500:
         description: Internal server error
     """
-    session = None
+    endpoint = "repositories"
+    if not _no_cache_requested():
+        hit, cached = cache_get(username, endpoint)
+        if hit:
+            return _make_json_response(cached, cache_hit=True)
+
     try:
-        collector, session = await create_stats_collector(username)
+        collector = await create_stats_collector(username)
 
         repos = await collector.get_repos()
 
-        return jsonify({
+        data = {
             "username": username,
             "repositories_count": len(repos),
             "repositories": sorted(list(repos)),
-        })
+        }
+
+        cache_set(username, endpoint, data)
+        return _make_json_response(data, cache_hit=False)
     except ValueError as e:
-        logger.error(f"Configuration error: {e}")
+        logger.error("Configuration error: %s", e)
         return jsonify({"error": str(e)}), 500
     except Exception as e:
-        logger.error(f"Error fetching repositories for {username}: {e}")
+        logger.error("Error fetching repositories for %s: %s", username, e)
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
-    finally:
-        if session:
-            await session.close()
 
 
 @app.route("/users/<username>/repositories/detailed", methods=["GET"])
@@ -584,6 +716,11 @@ async def get_user_repositories_detailed(username):
         required: false
         description: Exclude archived repositories
         default: true
+      - name: no_cache
+        in: query
+        type: boolean
+        required: false
+        description: Bypass cache and fetch fresh data
     responses:
       200:
         description: Detailed repository information
@@ -630,19 +767,27 @@ async def get_user_repositories_detailed(username):
       500:
         description: Internal server error
     """
-    session = None
+    visibility = request.args.get("visibility", "public")
+    sort_by = request.args.get("sort", "updated")
+    limit = int(request.args.get("limit", "100"))
+    exclude_forks = request.args.get("exclude_forks", "true").lower() == "true"
+    exclude_archived = request.args.get("exclude_archived", "true").lower() == "true"
+
+    endpoint = f"repositories_detailed:{visibility}:{sort_by}:{limit}:{exclude_forks}:{exclude_archived}"
+    if not _no_cache_requested():
+        hit, cached = cache_get(username, endpoint)
+        if hit:
+            return _make_json_response(cached, cache_hit=True)
+
     try:
         token = get_github_token()
-        client = GitHubClient(username=username, access_token=token)
+        session = _get_shared_session()
+        client = GitHubClient(
+            username=username, access_token=token, session=session
+        )
 
-        visibility = request.args.get("visibility", "public")
-        sort = request.args.get("sort", "updated")
-        limit = int(request.args.get("limit", "100"))
-        exclude_forks = request.args.get("exclude_forks", "true").lower() == "true"
-        exclude_archived = request.args.get("exclude_archived", "true").lower() == "true"
-
-        repos_url = f"users/{username}/repos?per_page={limit}&sort={sort}&type={visibility}"
-        response = await client.query_rest_async(repos_url)
+        repos_url = f"users/{username}/repos?per_page={limit}&sort={sort_by}&type={visibility}"
+        response = await client.query_rest(repos_url)
 
         if not response:
             return jsonify({"error": "Failed to fetch repositories"}), 500
@@ -675,28 +820,31 @@ async def get_user_repositories_detailed(username):
             }
 
             try:
-                languages = await client.query_rest_async(
+                languages = await client.query_rest(
                     f"repos/{username}/{repo.get('name')}/languages"
                 )
                 if languages:
                     repo_data["languages"] = languages
             except Exception as e:
-                logger.warning(f"Failed to fetch languages for {repo.get('name')}: {e}")
+                logger.warning("Failed to fetch languages for %s: %s", repo.get("name"), e)
                 repo_data["languages"] = {}
 
             repositories.append(repo_data)
 
-        return jsonify({
+        data = {
             "username": username,
             "repositories_count": len(repositories),
             "repositories": repositories,
-        })
+        }
+
+        cache_set(username, endpoint, data)
+        return _make_json_response(data, cache_hit=False)
 
     except ValueError as e:
-        logger.error(f"Configuration error: {e}")
+        logger.error("Configuration error: %s", e)
         return jsonify({"error": str(e)}), 500
     except Exception as e:
-        logger.error(f"Error fetching detailed repositories for {username}: {e}")
+        logger.error("Error fetching detailed repositories for %s: %s", username, e)
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
 
@@ -715,6 +863,11 @@ async def get_full_stats(username):
         type: string
         required: true
         description: GitHub username
+      - name: no_cache
+        in: query
+        type: boolean
+        required: false
+        description: Bypass cache and fetch fresh data
     responses:
       200:
         description: Complete user statistics
@@ -736,9 +889,14 @@ async def get_full_stats(username):
       500:
         description: Internal server error
     """
-    session = None
+    endpoint = "stats_full"
+    if not _no_cache_requested():
+        hit, cached = cache_get(username, endpoint)
+        if hit:
+            return _make_json_response(cached, cache_hit=True)
+
     try:
-        collector, session = await create_stats_collector(username)
+        collector = await create_stats_collector(username)
 
         name = await collector.get_name()
         total_contributions = await collector.get_total_contributions()
@@ -763,7 +921,7 @@ async def get_full_stats(username):
         recent = await collector.get_recent_contributions()
         weekly = await collector.get_weekly_commit_schedule()
 
-        return jsonify({
+        data = {
             "username": username,
             "overview": {
                 "name": name,
@@ -799,16 +957,16 @@ async def get_full_stats(username):
                 "list": sorted(list(repos)),
             },
             "weekly_commits": weekly,
-        })
+        }
+
+        cache_set(username, endpoint, data)
+        return _make_json_response(data, cache_hit=False)
     except ValueError as e:
-        logger.error(f"Configuration error: {e}")
+        logger.error("Configuration error: %s", e)
         return jsonify({"error": str(e)}), 500
     except Exception as e:
-        logger.error(f"Error fetching full stats for {username}: {e}")
+        logger.error("Error fetching full stats for %s: %s", username, e)
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
-    finally:
-        if session:
-            await session.close()
 
 
 @app.errorhandler(404)
