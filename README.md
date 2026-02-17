@@ -20,13 +20,32 @@
 
 ## Entry Points
 
-| Entry point | Description | Reads snapshots? | Writes snapshots? |
-|---|---|---|---|
-| `generate.py` | Generates SVG cards (including stats history) | Yes (for stats_history chart) | No |
-| `generate_test.py` | Generates SVG cards with mock data | No (mock returns fake history) | No |
-| `api/` | Serves live stats + SVG cards via HTTP | Yes (for history endpoint + stats-history card) | Yes (POST /history/snapshot) |
-| `api/generate_static_api.py` | Generates JSON files + saves snapshot | No | Yes |
-| `.github/workflows/snapshot.yml` | Daily cron job that saves a stats snapshot | No | Yes |
+### CLI
+
+| Entry point        | Description                        |
+|--------------------|------------------------------------|
+| `generate.py`      | Generates SVG cards from live data |
+| `generate_test.py` | Generates SVG cards with mock data |
+
+### API
+
+| Entry point                  | Description                            |
+|------------------------------|----------------------------------------|
+| `api/`                       | Serves live stats + SVG cards via HTTP |
+| `api/generate_static_api.py` | Generates JSON files + saves snapshot  |
+
+### CI
+
+| Entry point                      | Description                         |
+|----------------------------------|-------------------------------------|
+| `.github/workflows/snapshot.yml` | Daily cron job that saves a snapshot |
+
+### Snapshot Data Flow
+
+A snapshot is a timestamped record of a user's GitHub statistics (stars, forks, followers, contributions, PRs, issues) saved to a SQLite database. Because GitHub does not provide historical data for most of these metrics, snapshots are the only way to track how they change over time. The stats history line chart is built entirely from these accumulated snapshots.
+
+- **Writers:** `api/` (POST /history/snapshot), `api/generate_static_api.py`, `.github/workflows/snapshot.yml`
+- **Readers:** `generate.py` (stats_history chart), `api/` (history endpoint + stats-history card)
 
 ## Features
 
