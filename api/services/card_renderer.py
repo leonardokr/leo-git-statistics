@@ -129,8 +129,8 @@ async def render_languages(collector: StatsCollector, theme: str, formatter: Sta
         return {
             "lang_list": formatter.format_language_list(
                 languages,
-                text_color=colors.get("text_color", "#24292f"),
-                percent_color=colors.get("percent_color", "#57606a"),
+                text_color=colors["text_color"],
+                percent_color=colors["percent_color"],
             )
         }
 
@@ -172,11 +172,11 @@ async def render_languages_puzzle(collector: StatsCollector, theme: str, formatt
     base: Dict[str, Any] = {}
 
     def theme_callback(colors: Dict[str, Any]) -> Dict[str, Any]:
-        hue = int(colors.get("puzzle_hue", 210))
-        sat = colors.get("puzzle_saturation_range", [60, 85])
-        light = colors.get("puzzle_lightness_range", [35, 65])
-        hue_spread = int(colors.get("puzzle_hue_spread", 60))
-        puzzle_text_color = colors.get("puzzle_text_color", "#FFFFFF")
+        hue = int(colors["puzzle_hue"])
+        sat = colors["puzzle_saturation_range"]
+        light = colors["puzzle_lightness_range"]
+        hue_spread = int(colors["puzzle_hue_spread"])
+        puzzle_text_color = colors["puzzle_text_color"]
 
         return {
             "puzzle_blocks": formatter.format_puzzle_blocks(
@@ -264,8 +264,8 @@ async def render_streak_battery(collector: StatsCollector, theme: str, formatter
         return {
             "contribution_bars": _generate_bars(
                 recent_contributions,
-                colors.get("accent_color", "#0969da"),
-                colors.get("text_color", "#24292f"),
+                colors["accent_color"],
+                colors["text_color"],
             ),
         }
 
@@ -388,22 +388,22 @@ async def render_stats_history(collector: StatsCollector, theme: str, formatter:
     def theme_callback(colors: Dict[str, Any]) -> Dict[str, Any]:
         palette = generate_palette_colors(
             count=max(len(visible_series), 1),
-            hue=int(colors.get("line_chart_hue", 210)),
+            hue=int(colors["line_chart_hue"]),
             saturation_range=gen._parse_range(
-                colors.get("line_chart_saturation_range", [60, 85])
+                colors["line_chart_saturation_range"]
             ),
             lightness_range=gen._parse_range(
-                colors.get("line_chart_lightness_range", [40, 65])
+                colors["line_chart_lightness_range"]
             ),
-            hue_spread=int(colors.get("line_chart_hue_spread", 120)),
+            hue_spread=int(colors["line_chart_hue_spread"]),
         )
         color_map = {
             series: palette[idx % len(palette)]
             for idx, series in enumerate(visible_series)
         }
         return {
-            "y_axis_labels": gen._build_y_axis_labels(y_ticks, colors),
-            "x_axis_labels": gen._build_x_axis_labels(dates, colors),
+            "y_axis_labels": gen._build_y_axis_labels(y_ticks),
+            "x_axis_labels": gen._build_x_axis_labels(dates),
             "grid_lines": gen._build_grid_lines(y_ticks),
             "chart_lines": gen._build_chart_lines(
                 history, visible_series, color_map, y_max

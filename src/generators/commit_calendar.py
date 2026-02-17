@@ -318,6 +318,4 @@ class CommitCalendarGenerator(BaseGenerator):
         :param value: Sequence-like range value.
         :return: Two-item integer range.
         """
-        if isinstance(value, list) and len(value) >= 2:
-            return [int(value[0]), int(value[1])]
-        return [60, 85]
+        return [int(value[0]), int(value[1])]

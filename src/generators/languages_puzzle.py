@@ -22,15 +22,15 @@ class LanguagesPuzzleGenerator(BaseGenerator):
                 languages,
                 width=self.PUZZLE_WIDTH,
                 height=self.PUZZLE_HEIGHT,
-                hue=colors.get("puzzle_hue", 210),
-                saturation_range=colors.get("puzzle_saturation_range", [65, 85]),
-                lightness_range=colors.get("puzzle_lightness_range", [40, 60]),
-                hue_spread=colors.get("puzzle_hue_spread", 80),
-                gap=colors.get("puzzle_gap", 2)
+                hue=colors["puzzle_hue"],
+                saturation_range=colors["puzzle_saturation_range"],
+                lightness_range=colors["puzzle_lightness_range"],
+                hue_spread=colors["puzzle_hue_spread"],
+                gap=colors["puzzle_gap"]
             )
             return {
                 "puzzle_blocks": puzzle_blocks,
-                "puzzle_text_color": colors.get("puzzle_text_color", "#FFFFFF")
+                "puzzle_text_color": colors["puzzle_text_color"]
             }
 
         self.render_for_all_themes(

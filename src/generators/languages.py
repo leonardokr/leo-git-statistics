@@ -22,8 +22,8 @@ class LanguagesGenerator(BaseGenerator):
             return {
                 "lang_list": self.formatter.format_language_list(
                     languages,
-                    text_color=colors.get("text_color", "#24292f"),
-                    percent_color=colors.get("percent_color", "#57606a")
+                    text_color=colors["text_color"],
+                    percent_color=colors["percent_color"]
                 )
             }
 

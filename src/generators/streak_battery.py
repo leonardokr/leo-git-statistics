@@ -55,8 +55,8 @@ class StreakBatteryGenerator(BaseGenerator):
             return {
                 "contribution_bars": self._generate_contribution_bars(
                     recent_contributions,
-                    colors.get("accent_color", "#0969da"),
-                    colors.get("text_color", "#24292f"),
+                    colors["accent_color"],
+                    colors["text_color"],
                 ),
             }
 
