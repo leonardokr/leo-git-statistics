@@ -21,6 +21,7 @@ from src.generators.overview import OverviewGenerator
 from src.generators.streak import StreakGenerator
 from src.generators.streak_battery import StreakBatteryGenerator
 from src.generators.commit_calendar import CommitCalendarGenerator
+from src.generators.stats_history import StatsHistoryGenerator
 
 logging.basicConfig(
     level=logging.INFO,
@@ -70,6 +71,12 @@ async def main():
     )
     await commit_calendar_gen.generate()
     logger.info("Generated commit_calendar SVGs")
+
+    stats_history_gen = StatsHistoryGenerator(
+        config, mock_stats, formatter, template_engine, environment
+    )
+    await stats_history_gen.generate()
+    logger.info("Generated stats_history SVGs")
 
     suffix_msg = f" with suffix: {OUTPUT_SUFFIX}" if OUTPUT_SUFFIX else ""
     logger.info("All test images generated in 'generated_images/' folder%s.", suffix_msg)

@@ -1,0 +1,50 @@
+<svg width="{{ svg_width }}" height="{{ svg_height }}" viewBox="0 0 {{ viewbox_width }} {{ viewbox_height }}" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="history-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:{{ gradient_start }};stop-opacity:1" />
+      <stop offset="100%" style="stop-color:{{ gradient_end }};stop-opacity:1" />
+    </linearGradient>
+    <clipPath id="history-rounded">
+      <rect x="0" y="0" width="{{ svg_width }}" height="{{ clip_height }}" rx="8" ry="8" />
+    </clipPath>
+  </defs>
+  <style>
+    .title {
+      font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      fill: {{ line_chart_title_color }};
+    }
+    .subtitle {
+      font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      fill: {{ line_chart_subtitle_color }};
+    }
+    .axis-label {
+      font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', sans-serif;
+      font-size: 10px;
+      fill: {{ line_chart_axis_color }};
+    }
+    .grid-line {
+      stroke: {{ line_chart_grid_color }};
+      stroke-width: 1;
+      opacity: {{ line_chart_grid_opacity }};
+    }
+    .legend-label {
+      font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', sans-serif;
+      font-size: 11px;
+      fill: {{ line_chart_legend_text_color }};
+      dominant-baseline: middle;
+    }
+  </style>
+  <rect clip-path="url(#history-rounded)" width="100%" height="100%" fill="{{ bg_color }}" stroke="{{ border_color }}" stroke-width="1" />
+  <rect x="0" y="{{ footer_y }}" width="{{ svg_width }}" height="6" fill="url(#history-gradient)" clip-path="url(#history-rounded)" />
+  <text x="24" y="34" class="title">{{ chart_title }}</text>
+  <text x="24" y="54" class="subtitle">{{ chart_subtitle }}</text>
+  {{ y_axis_labels }}
+  {{ x_axis_labels }}
+  {{ grid_lines }}
+  {{ chart_lines }}
+  {{ legend_items }}
+</svg>

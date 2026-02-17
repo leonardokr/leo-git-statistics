@@ -342,6 +342,78 @@ async def render_commit_calendar(collector: StatsCollector, theme: str, formatte
     return _render("commit_calendar.svg", theme, base, theme_callback)
 
 
+async def render_stats_history(collector: StatsCollector, theme: str, formatter: StatsFormatter) -> str:
+    """Render the stats history line chart SVG card.
+
+    :param collector: Populated stats collector.
+    :param theme: Theme name.
+    :param formatter: Stats formatter instance.
+    :returns: Rendered SVG string.
+    :rtype: str
+    """
+    from src.generators.stats_history import StatsHistoryGenerator
+
+    history = await collector.get_stats_history()
+    if not history:
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="900" height="100"><text x="24" y="50" font-size="14">No history data available</text></svg>'
+
+    name = await collector.get_name()
+    gen = StatsHistoryGenerator.__new__(StatsHistoryGenerator)
+
+    visible_series = gen._filter_active_series(history)
+    if not visible_series:
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="900" height="100"><text x="24" y="50" font-size="14">No history data available</text></svg>'
+
+    y_max = gen._compute_y_max(history, visible_series)
+    y_ticks = gen._compute_y_ticks(y_max)
+    dates = [entry.get("date", "") for entry in history]
+
+    svg_height = gen._compute_svg_height(len(visible_series))
+    footer_y = svg_height - StatsHistoryGenerator._FOOTER_HEIGHT
+
+    chart_title = gen._escape_xml(f"{name} Stats History")
+    date_range = f"{dates[0]} to {dates[-1]}" if len(dates) > 1 else dates[0]
+
+    base = {
+        "chart_title": chart_title,
+        "chart_subtitle": f"Period: {date_range}",
+        "svg_width": StatsHistoryGenerator._SVG_WIDTH,
+        "svg_height": svg_height,
+        "viewbox_width": StatsHistoryGenerator._SVG_WIDTH,
+        "viewbox_height": svg_height,
+        "clip_height": svg_height,
+        "footer_y": footer_y,
+    }
+
+    def theme_callback(colors: Dict[str, Any]) -> Dict[str, Any]:
+        palette = generate_palette_colors(
+            count=max(len(visible_series), 1),
+            hue=int(colors.get("line_chart_hue", 210)),
+            saturation_range=gen._parse_range(
+                colors.get("line_chart_saturation_range", [60, 85])
+            ),
+            lightness_range=gen._parse_range(
+                colors.get("line_chart_lightness_range", [40, 65])
+            ),
+            hue_spread=int(colors.get("line_chart_hue_spread", 120)),
+        )
+        color_map = {
+            series: palette[idx % len(palette)]
+            for idx, series in enumerate(visible_series)
+        }
+        return {
+            "y_axis_labels": gen._build_y_axis_labels(y_ticks, colors),
+            "x_axis_labels": gen._build_x_axis_labels(dates, colors),
+            "grid_lines": gen._build_grid_lines(y_ticks),
+            "chart_lines": gen._build_chart_lines(
+                history, visible_series, color_map, y_max
+            ),
+            "legend_items": gen._build_legend_items(visible_series, color_map),
+        }
+
+    return _render("stats_history.svg", theme, base, theme_callback)
+
+
 CARD_RENDERERS = {
     "overview": render_overview,
     "languages": render_languages,
@@ -349,4 +421,5 @@ CARD_RENDERERS = {
     "languages-puzzle": render_languages_puzzle,
     "streak-battery": render_streak_battery,
     "commit-calendar": render_commit_calendar,
+    "stats-history": render_stats_history,
 }

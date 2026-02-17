@@ -11,6 +11,7 @@ from aiohttp import ClientSession
 
 from src.core.environment import Environment
 from src.core.stats_collector import StatsCollector
+from src.db.snapshots import SnapshotStore
 from src.core.config import Config
 from src.core.credentials import GitHubCredentials
 from src.presentation.stats_formatter import StatsFormatter
@@ -63,9 +64,11 @@ class ImageOrchestrator:
         Fetches statistics from GitHub and generates all configured SVG images.
         """
         async with ClientSession() as session:
+            snapshot_store = SnapshotStore()
             self._stats = StatsCollector(
                 environment_vars=self.environment,
                 session=session,
+                snapshot_store=snapshot_store,
             )
 
             await self._stats.get_stats()
