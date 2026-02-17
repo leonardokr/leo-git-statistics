@@ -12,8 +12,11 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from api.deps.http_session import close_shared_session, create_shared_session
+from api.middleware.rate_limiter import limiter
 from api.routes import health, users
 
 logging.basicConfig(
@@ -38,11 +41,14 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=os.getenv("CORS_ORIGINS", "*").split(","),
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -54,17 +60,14 @@ app.include_router(users.router)
 async def value_error_handler(request: Request, exc: ValueError) -> JSONResponse:
     """Handle configuration and validation errors."""
     logger.error("Configuration error: %s", exc)
-    return JSONResponse(status_code=500, content={"error": str(exc)})
+    return JSONResponse(status_code=500, content={"error": "Internal server error"})
 
 
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """Handle unexpected errors."""
     logger.error("Unhandled error on %s: %s", request.url.path, exc)
-    return JSONResponse(
-        status_code=500,
-        content={"error": "Internal server error", "message": str(exc)},
-    )
+    return JSONResponse(status_code=500, content={"error": "Internal server error"})
 
 
 if __name__ == "__main__":

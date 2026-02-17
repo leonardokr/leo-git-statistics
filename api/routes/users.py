@@ -2,11 +2,15 @@
 
 import logging
 
-from fastapi import APIRouter, Depends, Query, Response
 from aiohttp import ClientSession
+from fastapi import APIRouter, Depends, Query, Request, Response
 
+from api.deps.auth import verify_api_key
 from api.deps.cache import cache_get, cache_set
+from api.deps.github_token import ResolvedToken, resolve_github_token
 from api.deps.http_session import get_shared_session
+from api.middleware.rate_limiter import AUTH_LIMIT, DEFAULT_LIMIT, HEAVY_LIMIT, limiter
+from api.models.requests import RepoQueryParams, validated_username
 from api.models.responses import (
     DetailedRepoItem,
     DetailedRepositoriesResponse,
@@ -19,12 +23,16 @@ from api.models.responses import (
     StreakResponse,
     WeeklyCommitsResponse,
 )
-from api.services.stats_service import create_stats_collector, get_github_token
+from api.services.stats_service import create_stats_collector
 from src.core.github_client import GitHubClient
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/users/{username}", tags=["Users"])
+router = APIRouter(
+    prefix="/users/{username}",
+    tags=["Users"],
+    dependencies=[Depends(verify_api_key)],
+)
 
 
 def _set_cache_header(response: Response, hit: bool) -> None:
@@ -32,11 +40,14 @@ def _set_cache_header(response: Response, hit: bool) -> None:
 
 
 @router.get("/overview", response_model=OverviewResponse, responses={500: {"model": ErrorResponse}})
+@limiter.limit(DEFAULT_LIMIT)
 async def get_user_overview(
-    username: str,
+    request: Request,
     response: Response,
+    username: str = Depends(validated_username),
     no_cache: bool = Query(False),
     session: ClientSession = Depends(get_shared_session),
+    resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get comprehensive overview statistics for a GitHub user."""
     endpoint = "overview"
@@ -46,7 +57,9 @@ async def get_user_overview(
             _set_cache_header(response, True)
             return cached
 
-    collector = await create_stats_collector(username, session)
+    collector = await create_stats_collector(
+        username, session, token=resolved.token, repo_filter=resolved.repo_filter,
+    )
 
     name = await collector.get_name()
     total_contributions = await collector.get_total_contributions()
@@ -90,12 +103,15 @@ async def get_user_overview(
 
 
 @router.get("/languages", response_model=LanguagesResponse, responses={500: {"model": ErrorResponse}})
+@limiter.limit(DEFAULT_LIMIT)
 async def get_user_languages(
-    username: str,
+    request: Request,
     response: Response,
+    username: str = Depends(validated_username),
     proportional: bool = Query(False),
     no_cache: bool = Query(False),
     session: ClientSession = Depends(get_shared_session),
+    resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get programming language distribution for a GitHub user."""
     endpoint = "languages_proportional" if proportional else "languages"
@@ -106,7 +122,9 @@ async def get_user_languages(
             _set_cache_header(response, True)
             return cached
 
-    collector = await create_stats_collector(username, session)
+    collector = await create_stats_collector(
+        username, session, token=resolved.token, repo_filter=resolved.repo_filter,
+    )
 
     if proportional:
         languages = await collector.get_languages_proportional()
@@ -124,11 +142,14 @@ async def get_user_languages(
 
 
 @router.get("/streak", response_model=StreakResponse, responses={500: {"model": ErrorResponse}})
+@limiter.limit(DEFAULT_LIMIT)
 async def get_user_streak(
-    username: str,
+    request: Request,
     response: Response,
+    username: str = Depends(validated_username),
     no_cache: bool = Query(False),
     session: ClientSession = Depends(get_shared_session),
+    resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get contribution streak information for a GitHub user."""
     endpoint = "streak"
@@ -138,7 +159,9 @@ async def get_user_streak(
             _set_cache_header(response, True)
             return cached
 
-    collector = await create_stats_collector(username, session)
+    collector = await create_stats_collector(
+        username, session, token=resolved.token, repo_filter=resolved.repo_filter,
+    )
 
     current_streak = await collector.get_current_streak()
     current_range = await collector.get_current_streak_range()
@@ -165,11 +188,14 @@ async def get_user_streak(
     response_model=RecentContributionsResponse,
     responses={500: {"model": ErrorResponse}},
 )
+@limiter.limit(DEFAULT_LIMIT)
 async def get_recent_contributions(
-    username: str,
+    request: Request,
     response: Response,
+    username: str = Depends(validated_username),
     no_cache: bool = Query(False),
     session: ClientSession = Depends(get_shared_session),
+    resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get recent contribution counts (last 10 days)."""
     endpoint = "contributions_recent"
@@ -179,7 +205,9 @@ async def get_recent_contributions(
             _set_cache_header(response, True)
             return cached
 
-    collector = await create_stats_collector(username, session)
+    collector = await create_stats_collector(
+        username, session, token=resolved.token, repo_filter=resolved.repo_filter,
+    )
     recent = await collector.get_recent_contributions()
 
     data = {
@@ -197,11 +225,14 @@ async def get_recent_contributions(
     response_model=WeeklyCommitsResponse,
     responses={500: {"model": ErrorResponse}},
 )
+@limiter.limit(DEFAULT_LIMIT)
 async def get_weekly_commits(
-    username: str,
+    request: Request,
     response: Response,
+    username: str = Depends(validated_username),
     no_cache: bool = Query(False),
     session: ClientSession = Depends(get_shared_session),
+    resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get weekly commit schedule for a GitHub user."""
     endpoint = "commits_weekly"
@@ -211,7 +242,9 @@ async def get_weekly_commits(
             _set_cache_header(response, True)
             return cached
 
-    collector = await create_stats_collector(username, session)
+    collector = await create_stats_collector(
+        username, session, token=resolved.token, repo_filter=resolved.repo_filter,
+    )
     weekly = await collector.get_weekly_commit_schedule()
 
     data = {
@@ -229,11 +262,14 @@ async def get_weekly_commits(
     response_model=RepositoriesResponse,
     responses={500: {"model": ErrorResponse}},
 )
+@limiter.limit(DEFAULT_LIMIT)
 async def get_user_repositories(
-    username: str,
+    request: Request,
     response: Response,
+    username: str = Depends(validated_username),
     no_cache: bool = Query(False),
     session: ClientSession = Depends(get_shared_session),
+    resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get list of repositories for a GitHub user."""
     endpoint = "repositories"
@@ -243,7 +279,9 @@ async def get_user_repositories(
             _set_cache_header(response, True)
             return cached
 
-    collector = await create_stats_collector(username, session)
+    collector = await create_stats_collector(
+        username, session, token=resolved.token, repo_filter=resolved.repo_filter,
+    )
     repos = await collector.get_repos()
 
     data = {
@@ -262,29 +300,37 @@ async def get_user_repositories(
     response_model=DetailedRepositoriesResponse,
     responses={500: {"model": ErrorResponse}},
 )
+@limiter.limit(DEFAULT_LIMIT)
 async def get_user_repositories_detailed(
-    username: str,
+    request: Request,
     response: Response,
-    visibility: str = Query("public"),
-    sort: str = Query("updated"),
-    limit: int = Query(100),
-    exclude_forks: bool = Query(True),
-    exclude_archived: bool = Query(True),
+    username: str = Depends(validated_username),
+    params: RepoQueryParams = Depends(),
     no_cache: bool = Query(False),
     session: ClientSession = Depends(get_shared_session),
+    resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get detailed repository information for a GitHub user."""
-    endpoint = f"repositories_detailed:{visibility}:{sort}:{limit}:{exclude_forks}:{exclude_archived}"
+    visibility = params.visibility
+    if not resolved.user_owns_token and visibility in ("private", "all"):
+        visibility = "public"
+
+    endpoint = (
+        f"repositories_detailed:{visibility}:{params.sort}:{params.limit}"
+        f":{params.exclude_forks}:{params.exclude_archived}"
+    )
     if not no_cache:
         hit, cached = cache_get(username, endpoint)
         if hit:
             _set_cache_header(response, True)
             return cached
 
-    token = get_github_token()
-    client = GitHubClient(username=username, access_token=token, session=session)
+    client = GitHubClient(username=username, access_token=resolved.token, session=session)
 
-    repos_url = f"users/{username}/repos?per_page={limit}&sort={sort}&type={visibility}"
+    repos_url = (
+        f"users/{username}/repos?per_page={params.limit}"
+        f"&sort={params.sort}&type={visibility}"
+    )
     raw_repos = await client.query_rest(repos_url)
 
     if not raw_repos:
@@ -293,9 +339,11 @@ async def get_user_repositories_detailed(
 
     repositories = []
     for repo in raw_repos:
-        if exclude_forks and repo.get("fork", False):
+        if params.exclude_forks and repo.get("fork", False):
             continue
-        if exclude_archived and repo.get("archived", False):
+        if params.exclude_archived and repo.get("archived", False):
+            continue
+        if not resolved.user_owns_token and repo.get("private", False):
             continue
 
         repo_data = {
@@ -346,11 +394,14 @@ async def get_user_repositories_detailed(
     response_model=FullStatsResponse,
     responses={500: {"model": ErrorResponse}},
 )
+@limiter.limit(HEAVY_LIMIT)
 async def get_full_stats(
-    username: str,
+    request: Request,
     response: Response,
+    username: str = Depends(validated_username),
     no_cache: bool = Query(False),
     session: ClientSession = Depends(get_shared_session),
+    resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get all statistics for a GitHub user in a single request."""
     endpoint = "stats_full"
@@ -360,7 +411,9 @@ async def get_full_stats(
             _set_cache_header(response, True)
             return cached
 
-    collector = await create_stats_collector(username, session)
+    collector = await create_stats_collector(
+        username, session, token=resolved.token, repo_filter=resolved.repo_filter,
+    )
 
     name = await collector.get_name()
     total_contributions = await collector.get_total_contributions()
