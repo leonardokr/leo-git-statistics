@@ -34,6 +34,22 @@ synthwave:
     - 50
     - 70
     calendar_hue_spread: 100
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#ff7edb'
+    line_chart_subtitle_color: '#848bbd'
+    line_chart_axis_color: '#848bbd'
+    line_chart_grid_color: '#34294f'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#ffffff'
+    line_chart_hue: 310
+    line_chart_saturation_range:
+    - 70
+    - 95
+    line_chart_lightness_range:
+    - 55
+    - 75
+    line_chart_hue_spread: 120
 cyberpunk:
   suffix: cyberpunk
   colors:
@@ -70,6 +86,22 @@ cyberpunk:
     - 45
     - 65
     calendar_hue_spread: 120
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#f706cf'
+    line_chart_subtitle_color: '#6b5b95'
+    line_chart_axis_color: '#6b5b95'
+    line_chart_grid_color: '#1a0533'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#fcee0a'
+    line_chart_hue: 300
+    line_chart_saturation_range:
+    - 80
+    - 100
+    line_chart_lightness_range:
+    - 50
+    - 70
+    line_chart_hue_spread: 120
 ocean:
   suffix: ocean
   colors:
@@ -106,6 +138,22 @@ ocean:
     - 45
     - 65
     calendar_hue_spread: 80
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#64ffda'
+    line_chart_subtitle_color: '#495670'
+    line_chart_axis_color: '#495670'
+    line_chart_grid_color: '#172a45'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#8892b0'
+    line_chart_hue: 170
+    line_chart_saturation_range:
+    - 55
+    - 80
+    line_chart_lightness_range:
+    - 50
+    - 70
+    line_chart_hue_spread: 120
 forest:
   suffix: forest
   colors:
@@ -142,6 +190,22 @@ forest:
     - 40
     - 60
     calendar_hue_spread: 80
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#7ec883'
+    line_chart_subtitle_color: '#5d6b5f'
+    line_chart_axis_color: '#5d6b5f'
+    line_chart_grid_color: '#2d3d32'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#b8c4ba'
+    line_chart_hue: 130
+    line_chart_saturation_range:
+    - 45
+    - 70
+    line_chart_lightness_range:
+    - 45
+    - 65
+    line_chart_hue_spread: 120
 sunset:
   suffix: sunset
   colors:
@@ -178,6 +242,22 @@ sunset:
     - 45
     - 65
     calendar_hue_spread: 100
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#ff6b6b'
+    line_chart_subtitle_color: '#8b7070'
+    line_chart_axis_color: '#8b7070'
+    line_chart_grid_color: '#3d2835'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#e8d5d5'
+    line_chart_hue: 15
+    line_chart_saturation_range:
+    - 70
+    - 95
+    line_chart_lightness_range:
+    - 50
+    - 70
+    line_chart_hue_spread: 120
 midnight:
   suffix: midnight
   colors:
@@ -214,6 +294,22 @@ midnight:
     - 50
     - 70
     calendar_hue_spread: 90
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#a78bfa'
+    line_chart_subtitle_color: '#6b7280'
+    line_chart_axis_color: '#6b7280'
+    line_chart_grid_color: '#1e1433'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#d1d5db'
+    line_chart_hue: 255
+    line_chart_saturation_range:
+    - 55
+    - 80
+    line_chart_lightness_range:
+    - 55
+    - 75
+    line_chart_hue_spread: 120
 aurora:
   suffix: aurora
   colors:
@@ -250,6 +346,22 @@ aurora:
     - 45
     - 65
     calendar_hue_spread: 100
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#00d4aa'
+    line_chart_subtitle_color: '#5a7d8a'
+    line_chart_axis_color: '#5a7d8a'
+    line_chart_grid_color: '#1a3a4a'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#e0f4f1'
+    line_chart_hue: 160
+    line_chart_saturation_range:
+    - 60
+    - 85
+    line_chart_lightness_range:
+    - 50
+    - 70
+    line_chart_hue_spread: 120
 neon:
   suffix: neon
   colors:
@@ -286,6 +398,22 @@ neon:
     - 45
     - 65
     calendar_hue_spread: 120
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#00ff87'
+    line_chart_subtitle_color: '#666666'
+    line_chart_axis_color: '#666666'
+    line_chart_grid_color: '#00ff8755'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#ffffff'
+    line_chart_hue: 150
+    line_chart_saturation_range:
+    - 80
+    - 100
+    line_chart_lightness_range:
+    - 50
+    - 70
+    line_chart_hue_spread: 120
 retro:
   suffix: retro
   colors:
@@ -322,6 +450,22 @@ retro:
     - 30
     - 55
     calendar_hue_spread: 90
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#8b4513'
+    line_chart_subtitle_color: '#a0522d'
+    line_chart_axis_color: '#a0522d'
+    line_chart_grid_color: '#deb887'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#5d4037'
+    line_chart_hue: 25
+    line_chart_saturation_range:
+    - 60
+    - 85
+    line_chart_lightness_range:
+    - 35
+    - 60
+    line_chart_hue_spread: 120
 lavender:
   suffix: lavender
   colors:
@@ -358,6 +502,22 @@ lavender:
     - 50
     - 70
     calendar_hue_spread: 80
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#b4a7d6'
+    line_chart_subtitle_color: '#6b5b7a'
+    line_chart_axis_color: '#6b5b7a'
+    line_chart_grid_color: '#2d2640'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#e0d8f0'
+    line_chart_hue: 260
+    line_chart_saturation_range:
+    - 45
+    - 70
+    line_chart_lightness_range:
+    - 55
+    - 75
+    line_chart_hue_spread: 120
 rose_pine:
   suffix: rose_pine
   colors:
@@ -394,6 +554,22 @@ rose_pine:
     - 50
     - 70
     calendar_hue_spread: 90
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#ebbcba'
+    line_chart_subtitle_color: '#6e6a86'
+    line_chart_axis_color: '#6e6a86'
+    line_chart_grid_color: '#26233a'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#e0def4'
+    line_chart_hue: 280
+    line_chart_saturation_range:
+    - 50
+    - 75
+    line_chart_lightness_range:
+    - 55
+    - 75
+    line_chart_hue_spread: 120
 rose_pine_dawn:
   suffix: rose_pine_dawn
   colors:
@@ -430,3 +606,19 @@ rose_pine_dawn:
     - 45
     - 65
     calendar_hue_spread: 90
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#d7827e'
+    line_chart_subtitle_color: '#9893a5'
+    line_chart_axis_color: '#9893a5'
+    line_chart_grid_color: '#f2e9e1'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#575279'
+    line_chart_hue: 5
+    line_chart_saturation_range:
+    - 45
+    - 70
+    line_chart_lightness_range:
+    - 50
+    - 70
+    line_chart_hue_spread: 120

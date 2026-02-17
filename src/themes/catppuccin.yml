@@ -34,8 +34,24 @@ catppuccin_latte:
     - 40
     - 60
     calendar_hue_spread: 90
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#8839ef'
+    line_chart_subtitle_color: '#9ca0b0'
+    line_chart_axis_color: '#9ca0b0'
+    line_chart_grid_color: '#ccd0da'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#4c4f69'
+    line_chart_hue: 267
+    line_chart_saturation_range:
+    - 55
+    - 80
+    line_chart_lightness_range:
+    - 45
+    - 65
+    line_chart_hue_spread: 120
 catppuccin_frappe:
-  suffix: catppuccin_grappe
+  suffix: catppuccin_frappe
   colors:
     bg_color: '#303446'
     title_color: '#ca9ee6'
@@ -70,6 +86,22 @@ catppuccin_frappe:
     - 50
     - 70
     calendar_hue_spread: 90
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#ca9ee6'
+    line_chart_subtitle_color: '#737994'
+    line_chart_axis_color: '#737994'
+    line_chart_grid_color: '#414559'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#c6d0f5'
+    line_chart_hue: 277
+    line_chart_saturation_range:
+    - 55
+    - 80
+    line_chart_lightness_range:
+    - 55
+    - 75
+    line_chart_hue_spread: 120
 catppuccin_macchiato:
   suffix: catppuccin_macchiato
   colors:
@@ -106,6 +138,22 @@ catppuccin_macchiato:
     - 50
     - 70
     calendar_hue_spread: 90
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#c6a0f6'
+    line_chart_subtitle_color: '#6e738d'
+    line_chart_axis_color: '#6e738d'
+    line_chart_grid_color: '#363a4f'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#cad3f5'
+    line_chart_hue: 267
+    line_chart_saturation_range:
+    - 55
+    - 80
+    line_chart_lightness_range:
+    - 55
+    - 75
+    line_chart_hue_spread: 120
 catppuccin_mocha:
   suffix: catppuccin_mocha
   colors:
@@ -142,3 +190,19 @@ catppuccin_mocha:
     - 50
     - 70
     calendar_hue_spread: 90
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#cba6f7'
+    line_chart_subtitle_color: '#6c7086'
+    line_chart_axis_color: '#6c7086'
+    line_chart_grid_color: '#313244'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#cdd6f4'
+    line_chart_hue: 267
+    line_chart_saturation_range:
+    - 55
+    - 80
+    line_chart_lightness_range:
+    - 55
+    - 75
+    line_chart_hue_spread: 120

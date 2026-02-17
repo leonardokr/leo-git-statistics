@@ -34,6 +34,22 @@ palenight:
     - 50
     - 70
     calendar_hue_spread: 90
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#c792ea'
+    line_chart_subtitle_color: '#676e95'
+    line_chart_axis_color: '#676e95'
+    line_chart_grid_color: '#3a3f58'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#a6accd'
+    line_chart_hue: 280
+    line_chart_saturation_range:
+    - 55
+    - 80
+    line_chart_lightness_range:
+    - 55
+    - 75
+    line_chart_hue_spread: 120
 material_darker:
   suffix: material_darker
   colors:
@@ -70,6 +86,22 @@ material_darker:
     - 50
     - 70
     calendar_hue_spread: 90
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#82aaff'
+    line_chart_subtitle_color: '#545454'
+    line_chart_axis_color: '#545454'
+    line_chart_grid_color: '#2b2b2b'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#eeffff'
+    line_chart_hue: 220
+    line_chart_saturation_range:
+    - 55
+    - 80
+    line_chart_lightness_range:
+    - 55
+    - 75
+    line_chart_hue_spread: 120
 material_ocean:
   suffix: material_ocean
   colors:
@@ -106,6 +138,22 @@ material_ocean:
     - 50
     - 70
     calendar_hue_spread: 90
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#82aaff'
+    line_chart_subtitle_color: '#464b5d'
+    line_chart_axis_color: '#464b5d'
+    line_chart_grid_color: '#1a1c25'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#8f93a2'
+    line_chart_hue: 220
+    line_chart_saturation_range:
+    - 55
+    - 80
+    line_chart_lightness_range:
+    - 55
+    - 75
+    line_chart_hue_spread: 120
 ayu:
   suffix: ayu
   colors:
@@ -142,6 +190,22 @@ ayu:
     - 45
     - 65
     calendar_hue_spread: 100
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#ffb454'
+    line_chart_subtitle_color: '#626a73'
+    line_chart_axis_color: '#626a73'
+    line_chart_grid_color: '#1d252c'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#b3b1ad'
+    line_chart_hue: 35
+    line_chart_saturation_range:
+    - 65
+    - 90
+    line_chart_lightness_range:
+    - 50
+    - 70
+    line_chart_hue_spread: 120
 ayu_light:
   suffix: ayu_light
   colors:
@@ -178,6 +242,22 @@ ayu_light:
     - 40
     - 60
     calendar_hue_spread: 100
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#ff9940'
+    line_chart_subtitle_color: '#abb0b6'
+    line_chart_axis_color: '#abb0b6'
+    line_chart_grid_color: '#f0f0f0'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#5c6773'
+    line_chart_hue: 30
+    line_chart_saturation_range:
+    - 70
+    - 90
+    line_chart_lightness_range:
+    - 45
+    - 65
+    line_chart_hue_spread: 120
 ayu_mirage:
   suffix: ayu_mirage
   colors:
@@ -214,3 +294,19 @@ ayu_mirage:
     - 45
     - 65
     calendar_hue_spread: 100
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#ffcc66'
+    line_chart_subtitle_color: '#707a8c'
+    line_chart_axis_color: '#707a8c'
+    line_chart_grid_color: '#2a2f3e'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#cbccc6'
+    line_chart_hue: 45
+    line_chart_saturation_range:
+    - 65
+    - 90
+    line_chart_lightness_range:
+    - 50
+    - 70
+    line_chart_hue_spread: 120

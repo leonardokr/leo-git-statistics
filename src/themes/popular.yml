@@ -34,6 +34,22 @@ dracula:
     - 45
     - 65
     calendar_hue_spread: 90
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#ff79c6'
+    line_chart_subtitle_color: '#6272a4'
+    line_chart_axis_color: '#6272a4'
+    line_chart_grid_color: '#44475a'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#f8f8f2'
+    line_chart_hue: 270
+    line_chart_saturation_range:
+    - 60
+    - 85
+    line_chart_lightness_range:
+    - 50
+    - 70
+    line_chart_hue_spread: 120
 nord:
   suffix: nord
   colors:
@@ -70,6 +86,22 @@ nord:
     - 45
     - 65
     calendar_hue_spread: 80
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#88c0d0'
+    line_chart_subtitle_color: '#4c566a'
+    line_chart_axis_color: '#4c566a'
+    line_chart_grid_color: '#3b4252'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#eceff4'
+    line_chart_hue: 193
+    line_chart_saturation_range:
+    - 45
+    - 70
+    line_chart_lightness_range:
+    - 50
+    - 70
+    line_chart_hue_spread: 120
 gruvbox:
   suffix: gruvbox
   colors:
@@ -106,6 +138,22 @@ gruvbox:
     - 40
     - 60
     calendar_hue_spread: 100
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#fabd2f'
+    line_chart_subtitle_color: '#928374'
+    line_chart_axis_color: '#928374'
+    line_chart_grid_color: '#3c3836'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#ebdbb2'
+    line_chart_hue: 40
+    line_chart_saturation_range:
+    - 65
+    - 90
+    line_chart_lightness_range:
+    - 45
+    - 65
+    line_chart_hue_spread: 120
 gruvbox_light:
   suffix: gruvbox_light
   colors:
@@ -142,6 +190,22 @@ gruvbox_light:
     - 30
     - 55
     calendar_hue_spread: 100
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#b57614'
+    line_chart_subtitle_color: '#7c6f64'
+    line_chart_axis_color: '#7c6f64'
+    line_chart_grid_color: '#d5c4a1'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#3c3836'
+    line_chart_hue: 35
+    line_chart_saturation_range:
+    - 65
+    - 90
+    line_chart_lightness_range:
+    - 35
+    - 60
+    line_chart_hue_spread: 120
 one_dark:
   suffix: one_dark
   colors:
@@ -178,6 +242,22 @@ one_dark:
     - 45
     - 65
     calendar_hue_spread: 90
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#61afef'
+    line_chart_subtitle_color: '#5c6370'
+    line_chart_axis_color: '#5c6370'
+    line_chart_grid_color: '#3e4451'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#abb2bf'
+    line_chart_hue: 207
+    line_chart_saturation_range:
+    - 55
+    - 80
+    line_chart_lightness_range:
+    - 50
+    - 70
+    line_chart_hue_spread: 120
 monokai:
   suffix: monokai
   colors:
@@ -214,6 +294,22 @@ monokai:
     - 45
     - 65
     calendar_hue_spread: 100
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#ffd866'
+    line_chart_subtitle_color: '#939293'
+    line_chart_axis_color: '#939293'
+    line_chart_grid_color: '#403e41'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#fcfcfa'
+    line_chart_hue: 50
+    line_chart_saturation_range:
+    - 70
+    - 95
+    line_chart_lightness_range:
+    - 50
+    - 70
+    line_chart_hue_spread: 120
 tokyo_night:
   suffix: tokyo_night
   colors:
@@ -250,6 +346,22 @@ tokyo_night:
     - 50
     - 70
     calendar_hue_spread: 90
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#7aa2f7'
+    line_chart_subtitle_color: '#565f89'
+    line_chart_axis_color: '#565f89'
+    line_chart_grid_color: '#292e42'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#a9b1d6'
+    line_chart_hue: 225
+    line_chart_saturation_range:
+    - 55
+    - 80
+    line_chart_lightness_range:
+    - 55
+    - 75
+    line_chart_hue_spread: 120
 solarized_dark:
   suffix: solarized_dark
   colors:
@@ -286,6 +398,22 @@ solarized_dark:
     - 40
     - 60
     calendar_hue_spread: 80
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#268bd2'
+    line_chart_subtitle_color: '#586e75'
+    line_chart_axis_color: '#586e75'
+    line_chart_grid_color: '#073642'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#839496'
+    line_chart_hue: 175
+    line_chart_saturation_range:
+    - 50
+    - 75
+    line_chart_lightness_range:
+    - 45
+    - 65
+    line_chart_hue_spread: 120
 solarized_light:
   suffix: solarized_light
   colors:
@@ -322,3 +450,19 @@ solarized_light:
     - 35
     - 55
     calendar_hue_spread: 80
+    puzzle_text_color: '#FFFFFF'
+    puzzle_gap: 2
+    line_chart_title_color: '#268bd2'
+    line_chart_subtitle_color: '#93a1a1'
+    line_chart_axis_color: '#93a1a1'
+    line_chart_grid_color: '#eee8d5'
+    line_chart_grid_opacity: 0.3
+    line_chart_legend_text_color: '#657b83'
+    line_chart_hue: 175
+    line_chart_saturation_range:
+    - 50
+    - 75
+    line_chart_lightness_range:
+    - 40
+    - 60
+    line_chart_hue_spread: 120
