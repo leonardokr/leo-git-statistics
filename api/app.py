@@ -117,9 +117,7 @@ async def create_stats_collector(username: str) -> StatsCollector:
     """
     token = get_github_token()
 
-    env = Environment()
-    env.username = username
-    env.access_token = token
+    env = Environment(username=username, access_token=token)
 
     session = ClientSession()
 

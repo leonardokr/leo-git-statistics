@@ -41,8 +41,11 @@ async def generate_static_api(username: str, output_dir: str = "api-data"):
     """
     logger.info(f"Generating static API for user: {username}")
 
-    env = Environment()
-    env.username = username
+    token = os.getenv("GITHUB_TOKEN") or os.getenv("ACCESS_TOKEN")
+    if not token:
+        raise ValueError("GITHUB_TOKEN or ACCESS_TOKEN environment variable not set")
+
+    env = Environment(username=username, access_token=token)
 
     session = ClientSession()
     collector = StatsCollector(env, session)
