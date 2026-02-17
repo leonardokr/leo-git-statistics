@@ -12,6 +12,7 @@ from typing import Dict, List, Optional, Union
 
 import aiohttp
 import pybreaker
+import structlog
 from json import loads, JSONDecodeError
 from tenacity import (
     before_sleep_log,
@@ -22,6 +23,7 @@ from tenacity import (
 )
 
 logger = logging.getLogger(__name__)
+slog = structlog.get_logger("github.client")
 
 
 class GitHubAPIError(Exception):
@@ -207,10 +209,28 @@ class GitHubClient:
         """
         await rate_limit_state.wait_if_critical()
 
+        start = time.perf_counter()
         async with self.semaphore:
             resp = await self.session.request(method, url, headers=self.headers, **kwargs)
+        duration_ms = round((time.perf_counter() - start) * 1000, 2)
 
         rate_limit_state.update_from_headers(resp.headers)
+
+        slog.info(
+            "github_api_call",
+            method=method,
+            url=url,
+            status=resp.status,
+            duration_ms=duration_ms,
+            rate_limit_remaining=rate_limit_state.remaining,
+        )
+
+        try:
+            from api.middleware.metrics import github_api_calls, github_api_duration
+            github_api_calls.labels(method=method, status=str(resp.status)).inc()
+            github_api_duration.labels(method=method).observe(duration_ms / 1000)
+        except Exception:
+            pass
 
         if resp.status == 403:
             body = await resp.json()

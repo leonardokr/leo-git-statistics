@@ -9,21 +9,41 @@ import logging
 import os
 from contextlib import asynccontextmanager
 
+import structlog
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
+from prometheus_fastapi_instrumentator import Instrumentator
+
 from api.deps.http_session import close_shared_session, create_shared_session
+from api.middleware.logging import RequestLoggingMiddleware, configure_structlog
+from api.middleware.metrics import update_infrastructure_gauges
 from api.middleware.rate_limiter import limiter
 from api.routes import health, users
 
+configure_structlog()
+
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    format="%(message)s",
+    handlers=[
+        logging.StreamHandler(),
+    ],
+    force=True,
 )
-logger = logging.getLogger(__name__)
+
+formatter = structlog.stdlib.ProcessorFormatter(
+    processor=structlog.dev.ConsoleRenderer(),
+)
+
+root_logger = logging.getLogger()
+for handler in root_logger.handlers:
+    handler.setFormatter(formatter)
+
+logger = structlog.get_logger(__name__)
 
 
 @asynccontextmanager
@@ -52,8 +72,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_middleware(RequestLoggingMiddleware)
+
 app.include_router(health.router)
 app.include_router(users.router)
+
+Instrumentator(
+    should_group_status_codes=True,
+    should_ignore_untemplated=True,
+    excluded_handlers=["/metrics", "/health"],
+).instrument(app).expose(app, endpoint="/metrics", include_in_schema=False)
+
+
+
+@app.middleware("http")
+async def refresh_gauges(request: Request, call_next):
+    """Update Prometheus infrastructure gauges after each request."""
+    response = await call_next(request)
+    update_infrastructure_gauges()
+    return response
 
 
 @app.exception_handler(ValueError)
