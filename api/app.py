@@ -6,6 +6,10 @@ Provides REST endpoints to access GitHub repository data with enriched statistic
 The same data used to generate SVG cards is available via JSON endpoints.
 """
 
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import asyncio
 import logging
 import os
