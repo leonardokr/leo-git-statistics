@@ -1,0 +1,4 @@
+-r requirements.txt
+httpx>=0.26.0
+aioresponses>=0.7.6
+locust>=2.20.0
