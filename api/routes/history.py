@@ -13,6 +13,7 @@ from api.models.requests import validated_username
 from api.models.responses import ErrorResponse
 from api.services.stats_service import PartialCollector, create_stats_collector
 from api.services.notification_dispatcher import dispatch_webhooks
+from src.core.stats_assembler import build_snapshot_payload
 from src.db.snapshots import snapshot_store
 
 logger = logging.getLogger(__name__)
@@ -66,28 +67,7 @@ async def create_snapshot(
     )
 
     pc = PartialCollector()
-    total_contributions = await pc.safe(collector.get_total_contributions(), 0, "total contributions")
-    repos = await pc.safe(collector.get_repos(), set(), "repositories")
-    stars = await pc.safe(collector.get_stargazers(), 0, "stargazers")
-    forks = await pc.safe(collector.get_forks(), 0, "forks")
-    pull_requests = await pc.safe(collector.get_pull_requests(), 0, "pull requests")
-    issues = await pc.safe(collector.get_issues(), 0, "issues")
-    lines = await pc.safe(collector.get_lines_changed(), (0, 0), "lines changed")
-    current_streak = await pc.safe(collector.get_current_streak(), 0, "current streak")
-    longest_streak = await pc.safe(collector.get_longest_streak(), 0, "longest streak")
-
-    data = {
-        "total_contributions": total_contributions,
-        "repositories_count": len(repos),
-        "total_stars": stars,
-        "total_forks": forks,
-        "total_pull_requests": pull_requests,
-        "total_issues": issues,
-        "lines_added": lines[0],
-        "lines_deleted": lines[1],
-        "current_streak": current_streak,
-        "longest_streak": longest_streak,
-    }
+    data = await build_snapshot_payload(collector, partial_collector=pc)
 
     await dispatch_webhooks(username, data)
     snapshot_store.save_snapshot(username, data)
