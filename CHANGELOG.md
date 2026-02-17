@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.1.0](https://github.com/leonardokr/leo-git-statistics/compare/v1.0.1...v1.1.0) (2026-02-17)
+
+
+### Features
+
+* add API environment configuration template with PAT generation instructions ([79f56f7](https://github.com/leonardokr/leo-git-statistics/commit/79f56f7361b1003676984f4fe4328ed906ea0b95))
+* add Flask API dependencies ([3f4a117](https://github.com/leonardokr/leo-git-statistics/commit/3f4a117cf620486f663f131d62fafe786b511bd3))
+* add REST API with Swagger documentation and user statistics endpoints ([7f71325](https://github.com/leonardokr/leo-git-statistics/commit/7f7132573ce914b857ea0d6bcc26d9f61c43af71))
+* add static JSON generator for GitHub Pages deployment ([693c997](https://github.com/leonardokr/leo-git-statistics/commit/693c997618921808810e8848625ad561a10de87d))
+
+
+### Bug Fixes
+
+* add parent directory to Python path for module imports ([08f6ea1](https://github.com/leonardokr/leo-git-statistics/commit/08f6ea1205d63288976592ee39681cc56c8ee5c6))
+* pass username and access_token as constructor arguments to Environment ([0d3bd8a](https://github.com/leonardokr/leo-git-statistics/commit/0d3bd8a0d303a76cc73174d4a37f7131d33c850e))
+* remove /api/v1 prefix from route decorators ([0a04dec](https://github.com/leonardokr/leo-git-statistics/commit/0a04dec93b2dc5c7ea2f664a41e3cf6132da61f3))
+
 ## [1.0.1](https://github.com/leonardokr/leo-git-statistics/compare/v1.0.0...v1.0.1) (2026-02-13)
 
 
