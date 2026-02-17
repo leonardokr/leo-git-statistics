@@ -128,6 +128,7 @@ Choose from **25+ built-in themes** or create your own:
 <img src="generated_images/samples/languages_sample_dracula.svg" alt="Dracula Theme" width="49%" />
 <img src="generated_images/samples/languages_puzzle_sample_dracula.svg" alt="Dracula Theme" width="49%" />
 <img src="generated_images/samples/commit_calendar_sample_dracula.svg" alt="Dracula Theme" width="98%" />
+<img src="generated_images/samples/stats_history_sample_dracula.svg" alt="Dracula Theme" width="98%" />
 </div>
 </details>
 
@@ -142,6 +143,7 @@ Choose from **25+ built-in themes** or create your own:
 <img src="generated_images/samples/languages_sample_nord.svg" alt="Nord Theme" width="49%" />
 <img src="generated_images/samples/languages_puzzle_sample_nord.svg" alt="Nord Theme" width="49%" />
 <img src="generated_images/samples/commit_calendar_sample_nord.svg" alt="Nord Theme" width="98%" />
+<img src="generated_images/samples/stats_history_sample_nord.svg" alt="Nord Theme" width="98%" />
 </div>
 </details>
 
@@ -156,6 +158,7 @@ Choose from **25+ built-in themes** or create your own:
 <img src="generated_images/samples/languages_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
 <img src="generated_images/samples/languages_puzzle_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="49%" />
 <img src="generated_images/samples/commit_calendar_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="98%" />
+<img src="generated_images/samples/stats_history_sample_tokyo_night.svg" alt="Tokyo Night Theme" width="98%" />
 </div>
 </details>
 
@@ -170,6 +173,7 @@ Choose from **25+ built-in themes** or create your own:
 <img src="generated_images/samples/languages_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
 <img src="generated_images/samples/languages_puzzle_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="49%" />
 <img src="generated_images/samples/commit_calendar_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="98%" />
+<img src="generated_images/samples/stats_history_sample_catppuccin_mocha.svg" alt="Catppuccin Mocha Theme" width="98%" />
 </div>
 </details>
 
