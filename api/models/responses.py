@@ -130,8 +130,9 @@ class GitHubApiHealth(BaseModel):
 class CacheHealth(BaseModel):
     """Health status of the cache subsystem."""
 
+    backend: str = "memory"
     entries: int = 0
-    maxsize: int = 0
+    maxsize: Optional[int] = None
     hit_ratio: float = 0.0
 
 

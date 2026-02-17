@@ -82,8 +82,9 @@ async def health() -> JSONResponse:
 
     stats = cache_stats()
     cache = CacheHealth(
+        backend=stats.get("backend", "memory"),
         entries=stats["entries"],
-        maxsize=stats["maxsize"],
+        maxsize=stats.get("maxsize"),
         hit_ratio=stats["hit_ratio"],
     )
 
