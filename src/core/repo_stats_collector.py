@@ -25,6 +25,8 @@ class RepoStatsCollector:
         self._name: Optional[str] = None
         self._stargazers: Optional[int] = None
         self._forks: Optional[int] = None
+        self._followers: Optional[int] = None
+        self._following: Optional[int] = None
         self._languages: Optional[Dict[str, Any]] = None
         self._repos: Optional[Set[str]] = None
         self._empty_repos: Optional[Set[str]] = None
@@ -40,6 +42,14 @@ class RepoStatsCollector:
     @property
     def forks(self) -> Optional[int]:
         return self._forks
+
+    @property
+    def followers(self) -> Optional[int]:
+        return self._followers
+
+    @property
+    def following(self) -> Optional[int]:
+        return self._following
 
     @property
     def languages(self) -> Optional[Dict[str, Any]]:
@@ -113,6 +123,8 @@ class RepoStatsCollector:
 
             viewer_data = raw_results.get("data", {}).get("viewer", {})
             self._name = viewer_data.get("name") or viewer_data.get("login", "No Name")
+            self._followers = viewer_data.get("followers", {}).get("totalCount", 0)
+            self._following = viewer_data.get("following", {}).get("totalCount", 0)
 
             contrib_repos = viewer_data.get("repositoriesContributedTo", {})
             owned_repos = viewer_data.get("repositories", {})

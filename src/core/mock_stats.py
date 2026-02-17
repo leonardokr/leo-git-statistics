@@ -1,6 +1,6 @@
 """Mock classes for testing SVG generation without GitHub API."""
 
-from typing import Dict, Any, Set, Tuple
+from typing import Dict, Any, List, Set, Tuple
 
 
 class MockDisplaySettings:
@@ -40,6 +40,8 @@ class MockStatsCollector:
             "name": "User's",
             "stargazers": 567,
             "forks": 89,
+            "followers": 142,
+            "following": 87,
             "total_contributions": 2345,
             "languages": {
                 "Python": {"size": 45000, "prop": 45.0, "color": "#3572A5"},
@@ -102,6 +104,18 @@ class MockStatsCollector:
                     "timestamp": "2026-02-13T21:08:00+00:00",
                 },
             ],
+            "stats_history": [
+                {"date": "2026-02-08", "total_stars": 520, "total_followers": 130, "total_following": 82, "total_contributions": 2100, "total_forks": 72, "total_pull_requests": 35, "total_issues": 18},
+                {"date": "2026-02-09", "total_stars": 525, "total_followers": 131, "total_following": 83, "total_contributions": 2130, "total_forks": 74, "total_pull_requests": 36, "total_issues": 18},
+                {"date": "2026-02-10", "total_stars": 530, "total_followers": 133, "total_following": 83, "total_contributions": 2170, "total_forks": 76, "total_pull_requests": 37, "total_issues": 19},
+                {"date": "2026-02-11", "total_stars": 538, "total_followers": 134, "total_following": 84, "total_contributions": 2200, "total_forks": 78, "total_pull_requests": 38, "total_issues": 19},
+                {"date": "2026-02-12", "total_stars": 542, "total_followers": 136, "total_following": 85, "total_contributions": 2240, "total_forks": 80, "total_pull_requests": 39, "total_issues": 20},
+                {"date": "2026-02-13", "total_stars": 548, "total_followers": 137, "total_following": 85, "total_contributions": 2265, "total_forks": 82, "total_pull_requests": 40, "total_issues": 21},
+                {"date": "2026-02-14", "total_stars": 553, "total_followers": 138, "total_following": 86, "total_contributions": 2290, "total_forks": 84, "total_pull_requests": 41, "total_issues": 21},
+                {"date": "2026-02-15", "total_stars": 558, "total_followers": 139, "total_following": 86, "total_contributions": 2310, "total_forks": 85, "total_pull_requests": 43, "total_issues": 22},
+                {"date": "2026-02-16", "total_stars": 562, "total_followers": 140, "total_following": 87, "total_contributions": 2330, "total_forks": 87, "total_pull_requests": 44, "total_issues": 22},
+                {"date": "2026-02-17", "total_stars": 567, "total_followers": 142, "total_following": 87, "total_contributions": 2345, "total_forks": 89, "total_pull_requests": 45, "total_issues": 23},
+            ],
         }
 
     async def get_name(self) -> str:
@@ -112,6 +126,12 @@ class MockStatsCollector:
 
     async def get_forks(self) -> int:
         return self._data["forks"]
+
+    async def get_followers(self) -> int:
+        return self._data["followers"]
+
+    async def get_following(self) -> int:
+        return self._data["following"]
 
     async def get_total_contributions(self) -> int:
         return self._data["total_contributions"]
@@ -169,3 +189,6 @@ class MockStatsCollector:
 
     async def get_weekly_commit_schedule(self) -> list:
         return self._data["weekly_commit_schedule"]
+
+    async def get_stats_history(self) -> List[Dict[str, Any]]:
+        return self._data["stats_history"]

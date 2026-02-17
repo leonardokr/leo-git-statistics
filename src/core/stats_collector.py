@@ -6,7 +6,7 @@ while maintaining a unified public API for generators.
 """
 
 import logging
-from typing import Dict, Optional, Set, Tuple, Any
+from typing import Any, Dict, List, Optional, Set, Tuple
 from aiohttp import ClientSession
 
 from src.core.environment import Environment
@@ -34,8 +34,10 @@ class StatsCollector:
     """
 
     def __init__(self, environment_vars: Environment, session: ClientSession,
-                 github_client: Optional[GitHubClient] = None):
+                 github_client: Optional[GitHubClient] = None,
+                 snapshot_store=None):
         self.environment_vars: Environment = environment_vars
+        self._snapshot_store = snapshot_store
         self.queries = github_client or GitHubClient(
             username=self.environment_vars.username,
             access_token=self.environment_vars.access_token,
@@ -100,6 +102,22 @@ class StatsCollector:
         """Retrieve the total number of forks across repositories.
 
         :return: Total fork count.
+        """
+        return 0
+
+    @lazy_async_property("_repo_stats.followers", "get_stats")
+    async def get_followers(self) -> int:
+        """Retrieve the total number of followers.
+
+        :return: Total follower count.
+        """
+        return 0
+
+    @lazy_async_property("_repo_stats.following", "get_stats")
+    async def get_following(self) -> int:
+        """Retrieve the total number of users being followed.
+
+        :return: Total following count.
         """
         return 0
 
@@ -278,4 +296,15 @@ class StatsCollector:
             repos=repos,
             username=self.environment_vars.username,
             timezone_name=self.environment_vars.timezone,
+        )
+
+    async def get_stats_history(self) -> List[Dict[str, Any]]:
+        """Retrieve historical statistics snapshots.
+
+        :return: List of snapshot dictionaries ordered by date.
+        """
+        if self._snapshot_store is None:
+            return []
+        return self._snapshot_store.get_snapshots(
+            self.environment_vars.username
         )

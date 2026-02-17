@@ -23,6 +23,8 @@ class GraphQLQueries:
                 viewer {{
                     login,
                     name,
+                    followers {{ totalCount }}
+                    following {{ totalCount }}
                     repositories(
                     first: 100,
                     orderBy: {{
