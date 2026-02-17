@@ -26,8 +26,9 @@
 - **Animated SVGs** - Smooth fade-in and slide animations
 - **Fully Configurable** - Control which stats to show, filter repositories, and more
 - **Reusable GitHub Action** - Run the generator from any repository (great for profile repos)
-- **Accumulated Metrics** - Track views and clones beyond GitHub's 14-day limit
-- **REST API** - Access all statistics data as JSON for portfolios and web applications (requires backend hosting)
+- **Accumulated Metrics** - Track views and clones beyond GitHub's 14-day limit using SQLite with WAL mode
+- **REST API** - FastAPI-based async API with JSON and SVG card endpoints, Swagger docs, caching (Redis or in-memory), rate limiting, API key auth, and Prometheus metrics
+- **Production-Ready** - Docker/docker-compose deployment with gunicorn, Redis cache, structured logging, circuit breaker, and retry with exponential backoff
 
 ## Generated Cards
 
@@ -355,9 +356,9 @@ themes:
 
 ## REST API
 
-This project also provides a **REST API** that exposes all statistics data as JSON. Perfect for portfolios, dashboards, and web applications.
+This project provides a **FastAPI-based async REST API** that exposes statistics as JSON and SVG cards. Built for production with caching, authentication, rate limiting, structured logging, and Prometheus metrics.
 
-> **Note:** The API is a Flask application that requires backend hosting (Render, Railway, PythonAnywhere, etc.). It cannot run on GitHub Pages.
+> **Note:** The API requires backend hosting (Docker, Render, Railway, etc.). It cannot run on GitHub Pages. For static sites, see the static JSON generation option below.
 
 <details>
 <summary><b>Click to view API Documentation</b></summary>
@@ -371,27 +372,80 @@ pip install -r requirements.txt
 # 2. Configure environment (see api/.env.example)
 export GITHUB_TOKEN=your_token_here
 
-# 3. Run the API
-python api/app.py
+# 3. Run the API (development)
+uvicorn api.main:app --reload --port 8000
 
-# 4. Access interactive docs at http://localhost:5000/docs
+# 4. Access interactive docs at http://localhost:8000/docs
 ```
 
-### Key Endpoints
+### Endpoints
 
-| Endpoint                                             | Description                  |
-| ------------------------------------------------------| ------------------------------|
-| `GET /users/{username}/overview`              | Complete overview statistics |
-| `GET /users/{username}/languages`             | Language distribution        |
-| `GET /users/{username}/repositories`          | Repository list (names only) |
-| `GET /users/{username}/repositories/detailed` | Detailed repository info     |
-| `GET /users/{username}/streak`                | Contribution streak data     |
-| `GET /users/{username}/stats/full`            | All data in one request      |
+#### Statistics (JSON)
+
+| Endpoint | Description |
+|---|---|
+| `GET /users/{username}/overview` | Overview statistics (contributions, stars, forks, lines changed) |
+| `GET /users/{username}/languages` | Language distribution |
+| `GET /users/{username}/repositories` | Repository list (names only, paginated) |
+| `GET /users/{username}/repositories/detailed` | Detailed repository info (paginated) |
+| `GET /users/{username}/streak` | Contribution streak data |
+| `GET /users/{username}/weekly-commits` | Weekly commit schedule |
+| `GET /users/{username}/recent-contributions` | Recent contribution activity |
+| `GET /users/{username}/stats/full` | All data in one request |
+
+#### SVG Cards
+
+| Endpoint | Description |
+|---|---|
+| `GET /users/{username}/cards/overview?theme=dracula` | Overview SVG card |
+| `GET /users/{username}/cards/languages?theme=dark` | Language distribution SVG card |
+| `GET /users/{username}/cards/streak?theme=nord` | Contribution streak SVG card |
+| `GET /users/{username}/cards/streak-battery?theme=tokyo_night` | Streak battery SVG card |
+| `GET /users/{username}/cards/languages-puzzle?theme=catppuccin_mocha` | Language puzzle SVG card |
+| `GET /users/{username}/cards/commit-calendar?theme=dracula` | Commit calendar SVG card |
+
+SVG cards can be embedded directly in Markdown:
+```markdown
+![Stats](https://your-api.example.com/users/leonardokr/cards/overview?theme=dracula)
+```
+
+#### Comparison, History & Webhooks
+
+| Endpoint | Description |
+|---|---|
+| `GET /users/{username}/compare/{other}` | Side-by-side user comparison |
+| `GET /users/{username}/history` | Historical stats snapshots |
+| `POST /webhooks` | Register a webhook for stat changes |
+| `GET /webhooks` | List registered webhooks |
+| `DELETE /webhooks/{id}` | Remove a webhook |
+
+#### Infrastructure
+
+| Endpoint | Description |
+|---|---|
+| `GET /health` | Health check (GitHub API connectivity, rate limits, cache, circuit breaker) |
+| `GET /metrics` | Prometheus metrics |
+| `GET /docs` | Interactive Swagger documentation |
+
+### Query Parameters
+
+Endpoints that return repository lists support filtering and pagination:
+
+| Parameter | Default | Description |
+|---|---|---|
+| `page` | `1` | Page number |
+| `per_page` | `30` | Items per page (max 100) |
+| `visibility` | `all` | `public`, `private`, or `all` |
+| `sort` | `stars` | `stars`, `forks`, `updated`, or `name` |
+| `limit` | `100` | Max repositories to return (1-500) |
+| `exclude_forks` | `false` | Exclude forked repositories |
+| `exclude_archived` | `false` | Exclude archived repositories |
+| `no_cache` | `false` | Bypass cache and fetch fresh data |
 
 ### Example Response
 
 ```bash
-curl http://localhost:5000/users/leonardokr/overview
+curl http://localhost:8000/users/leonardokr/overview
 ```
 
 ```json
@@ -408,33 +462,63 @@ curl http://localhost:5000/users/leonardokr/overview
 }
 ```
 
-### Interactive Documentation
+### Security
 
-The API includes **Swagger/OpenAPI** documentation. After running the API, visit:
+- **API Key Authentication** - Protect endpoints with `Authorization: Bearer <key>` header. Enable via `API_AUTH_ENABLED=true` and `API_KEYS` env vars. `/health` and `/docs` remain public.
+- **Private Repo Isolation** - Server token is restricted to public repos by default (`ALLOW_PRIVATE_REPOS=false`). Private repo data is never leaked to unauthenticated callers.
+- **User Token Support** - Callers can pass `X-GitHub-Token` header with their own token to access their private repos. The API validates token ownership.
+- **Rate Limiting** - Per-IP and per-key rate limits via slowapi. Configurable via `RATE_LIMIT_DEFAULT`, `RATE_LIMIT_AUTH`, `RATE_LIMIT_HEAVY` env vars.
+- **Input Validation** - All parameters validated with Pydantic models. Username validated against GitHub's format rules.
 
+### Caching
+
+Responses are cached with configurable TTL (default 5 minutes). Two backends available:
+
+- **In-memory** (`TTLCache`) - Default, no configuration needed. Lost on restart.
+- **Redis** - Set `REDIS_URL=redis://localhost:6379/0`. Shared across workers, survives restarts.
+
+Cache status is returned via `X-Cache: HIT/MISS` response header.
+
+### Resilience
+
+- **Retry with Exponential Backoff** - Automatic retries on GitHub API failures (rate limits, timeouts, 5xx errors) via tenacity.
+- **Circuit Breaker** - Fails fast when GitHub API is down (opens after 5 consecutive failures, resets after 30s) via pybreaker.
+- **GitHub Rate Limit Monitoring** - Tracks `X-RateLimit-Remaining` headers. Logs warnings when low, pauses proactively when critical.
+- **Partial Responses** - If a collector fails, the response includes data from successful collectors with a `_warnings` field listing failures.
+
+### Deployment
+
+#### Docker (Recommended)
+
+```bash
+# 1. Configure environment
+cp api/.env.example api/.env
+# Edit api/.env with your GITHUB_TOKEN
+
+# 2. Run with docker-compose (API + Redis)
+docker-compose up -d
+
+# API available at http://localhost:8000
 ```
-http://localhost:5000/docs
+
+The `docker-compose.yml` includes the API service with gunicorn (4 workers) and a Redis cache.
+
+#### Manual
+
+```bash
+# Production server
+gunicorn api.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 ```
 
-You'll see an interactive interface where you can test all endpoints directly in your browser.
+#### Cloud Platforms
 
-### Deployment Options
+**Render:**
+1. New -> Web Service -> Connect GitHub repo
+2. Build: `pip install -r requirements.txt`
+3. Start: `gunicorn api.main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT`
+4. Environment variable: `GITHUB_TOKEN=your_token`
 
-The API needs a backend platform that supports Python:
-
-#### Recommended: Render (Free)
-1. Create account at [render.com](https://render.com)
-2. New → Web Service → Connect GitHub repo
-3. Configure:
-   - Build: `pip install -r requirements.txt`
-   - Start: `python api/app.py`
-   - Environment variable: `GITHUB_TOKEN=your_token`
-4. Deploy!
-
-**Other Options:**
-- **Railway** - $5 credit/month free tier
-- **PythonAnywhere** - 1 free web app, always running
-- **Fly.io** - 3 free VMs with limits
+**Other options:** Railway, Fly.io, any platform supporting Docker.
 
 #### Using with Static Sites (GitHub Pages)
 
@@ -519,23 +603,20 @@ Then access: `https://username.github.io/repo/api/users/username/overview.json`
 
 **Option 1: Client-side fetch (hosted API)**
 ```javascript
-// In your portfolio site (e.g., leonardokr.github.io)
-fetch('https://your-api.onrender.com/users/leonardokr/repositories/detailed')
+fetch('https://your-api.example.com/users/leonardokr/repositories/detailed')
   .then(res => res.json())
   .then(data => {
-    // Render projects with full details
-    data.repositories.forEach(repo => {
-      renderProject(repo); // repo has name, description, stars, topics, etc.
+    data.data.forEach(repo => {
+      renderProject(repo);
     });
   });
 ```
 
 **Option 2: Build-time generation (GitHub Actions)**
 ```yaml
-# In your portfolio repository workflow
 - name: Fetch latest projects
   run: |
-    curl https://your-api.onrender.com/users/leonardokr/repositories/detailed \
+    curl https://your-api.example.com/users/leonardokr/repositories/detailed \
       -o src/data/projects.json
 
 - name: Build site with fresh data
@@ -547,42 +628,6 @@ fetch('https://your-api.onrender.com/users/leonardokr/repositories/detailed')
 - Deploy to `gh-pages` branch
 - Your portfolio fetches: `https://username.github.io/leo-git-statistics/api/users/username/repositories.json`
 
-### Usage Examples
-
-**JavaScript (Fetch)**
-```javascript
-// Get all stats
-const response = await fetch('https://api.example.com/users/leonardokr/stats/full');
-const stats = await response.json();
-
-// Get only repositories
-const repos = await fetch('https://api.example.com/users/leonardokr/repositories');
-const data = await repos.json();
-console.log(data.repositories); // Array of repo names
-```
-
-**Python**
-```python
-import requests
-
-# Get overview
-stats = requests.get('https://api.example.com/users/leonardokr/overview').json()
-print(f"Total stars: {stats['total_stars']}")
-
-# Get languages
-langs = requests.get('https://api.example.com/users/leonardokr/languages').json()
-print(langs['languages'])
-```
-
-**cURL**
-```bash
-# Get repositories for portfolio
-curl https://api.example.com/users/leonardokr/repositories
-
-# Get full stats
-curl https://api.example.com/users/leonardokr/stats/full
-```
-
 ### Environment Variables
 
 Create `api/.env` file (see `api/.env.example`):
@@ -591,26 +636,38 @@ Create `api/.env` file (see `api/.env.example`):
 # Required
 GITHUB_TOKEN=your_github_personal_access_token
 
-# Optional
-PORT=5000
-FLASK_DEBUG=false
-API_HOST=localhost:5000
+# Server
+PORT=8000
+WORKERS=4
+
+# Security
+ALLOW_PRIVATE_REPOS=false
+API_AUTH_ENABLED=false
+API_KEYS=
+CORS_ORIGINS=*
+
+# Rate limiting
+RATE_LIMIT_DEFAULT=30/minute
+RATE_LIMIT_AUTH=100/minute
+RATE_LIMIT_HEAVY=10/minute
+
+# Cache
+# REDIS_URL=redis://localhost:6379/0
+# CACHE_TTL=300
+
+# Database
+# DATABASE_PATH=src/db/traffic.db
+# SNAPSHOTS_DB_PATH=src/db/snapshots.db
+# WEBHOOKS_DB_PATH=src/db/webhooks.db
 ```
 
 ### CORS
 
-CORS is enabled for all origins by default. To restrict, edit `api/app.py`:
+CORS is enabled for all origins by default. To restrict, set the `CORS_ORIGINS` env var:
 
-```python
-CORS(app, origins=["https://leonardokr.github.io"])
+```bash
+CORS_ORIGINS=https://leonardokr.github.io,https://myportfolio.com
 ```
-
-### Rate Limits
-
-- **Authenticated:** 5000 requests/hour (with `GITHUB_TOKEN`)
-- **Unauthenticated:** 60 requests/hour
-
-Always use a token to avoid limits.
 
 </details>
 
@@ -618,35 +675,61 @@ Always use a token to avoid limits.
 
 ```
 leo-git-statistics/
-├── generate.py                          # Main SVG generation script
-├── requirements.txt                     # Python dependencies
+├── generate.py                          # Main SVG generation script (CLI)
+├── requirements.txt                     # Production dependencies
+├── requirements-dev.txt                 # Development/test dependencies
 ├── config.yml                           # Configuration file
-├── .env.example                         # Environment variables example
-├── api/                                 # REST API
-│   ├── app.py                           # Flask API application
+├── Dockerfile                           # Multi-stage Docker build
+├── docker-compose.yml                   # API + Redis deployment
+├── api/                                 # FastAPI REST API
+│   ├── main.py                          # App entry point, CORS, lifecycle events
 │   ├── generate_static_api.py           # Static JSON generator for GitHub Pages
-│   └── .env.example                     # API environment variables
+│   ├── .env.example                     # API environment variables
+│   ├── routes/                          # API route handlers
+│   │   ├── users.py                     # /users/{username}/* endpoints
+│   │   ├── cards.py                     # SVG card endpoints
+│   │   ├── compare.py                   # User comparison endpoint
+│   │   ├── history.py                   # Historical snapshots endpoint
+│   │   ├── health.py                    # Health check with dependency status
+│   │   └── webhooks.py                  # Webhook registration endpoints
+│   ├── services/                        # Business logic layer
+│   │   ├── stats_service.py             # StatsCollector creation, partial responses
+│   │   ├── card_renderer.py             # SVG card rendering service
+│   │   └── notification_dispatcher.py   # Webhook notification dispatcher
+│   ├── deps/                            # FastAPI dependency injection
+│   │   ├── http_session.py              # Shared aiohttp.ClientSession (connection pool)
+│   │   ├── cache.py                     # Redis cache with in-memory TTLCache fallback
+│   │   ├── auth.py                      # API key authentication
+│   │   ├── github_token.py              # User GitHub token resolution
+│   │   └── token_scope.py               # Private repo access control
+│   ├── middleware/                      # FastAPI middleware
+│   │   ├── logging.py                   # Structured logging (structlog)
+│   │   ├── metrics.py                   # Prometheus metrics instrumentation
+│   │   └── rate_limiter.py              # Rate limiting (slowapi)
+│   └── models/                          # Pydantic models
+│       ├── requests.py                  # Query parameter validation
+│       └── responses.py                 # Response schemas
 ├── src/                                 # Core business logic
 │   ├── core/                            # Domain logic & data collection
+│   │   ├── github_client.py             # GitHub API client (retry, circuit breaker, rate limit tracking)
+│   │   ├── stats_collector.py           # Facade composing all collectors
+│   │   ├── repo_stats_collector.py      # Repos, stars, forks, languages
+│   │   ├── contribution_tracker.py      # Streaks & contribution calendar
+│   │   ├── commit_schedule_collector.py # Weekly commit schedule (async parallel)
+│   │   ├── code_change_analyzer.py      # Lines changed, percentages (async parallel)
+│   │   ├── traffic_collector.py         # Views & clones traffic (async parallel)
+│   │   ├── engagement_collector.py      # Pull requests, issues (async parallel)
+│   │   ├── graphql_queries.py           # GraphQL query builders
 │   │   ├── config.py                    # Theme configuration management
 │   │   ├── credentials.py               # GitHub token/actor resolution
-│   │   ├── environment.py               # Environment variables & injectable dependencies
+│   │   ├── environment.py               # Environment variables & DI
 │   │   ├── display_settings.py          # Statistics visibility toggles
 │   │   ├── repository_filter.py         # Repository inclusion/exclusion rules
 │   │   ├── traffic_stats.py             # Accumulated traffic state
 │   │   ├── protocols.py                 # Segregated Protocol interfaces (ISP)
-│   │   ├── github_client.py             # GitHub API client (GraphQL + REST)
-│   │   ├── graphql_queries.py           # GraphQL query builders
-│   │   ├── stats_collector.py           # Facade composing all collectors
-│   │   ├── repo_stats_collector.py      # Repos, stars, forks, languages
-│   │   ├── contribution_tracker.py      # Streaks & contribution calendar
-│   │   ├── commit_schedule_collector.py # Weekly commit schedule by repository
-│   │   ├── code_change_analyzer.py      # Lines changed, percentages, contributors
-│   │   ├── traffic_collector.py         # Views & clones traffic
-│   │   ├── engagement_collector.py      # Pull requests, issues, collaborators
 │   │   └── mock_stats.py                # Mock data for local testing
-│   ├── db/                              # Data persistence
-│   │   └── db.py                        # JSON database for accumulated metrics
+│   ├── db/                              # Data persistence (SQLite with WAL)
+│   │   └── db.py                        # Traffic stats database
 │   ├── generators/                      # SVG generators (auto-discovered via registry)
 │   │   ├── base.py                      # BaseGenerator ABC + GeneratorRegistry
 │   │   ├── overview.py                  # Overview statistics card
@@ -660,27 +743,13 @@ leo-git-statistics/
 │   │   ├── svg_template.py              # SVG template engine
 │   │   └── visual_algorithms.py         # Treemap & color palette algorithms
 │   ├── templates/                       # SVG templates
-│   │   ├── overview.svg
-│   │   ├── languages.svg
-│   │   ├── languages_puzzle.svg
-│   │   ├── streak.svg
-│   │   ├── streak_battery.svg
-│   │   └── commit_calendar.svg
 │   ├── themes/                          # Theme definitions (YAML)
-│   │   ├── loader.py                    # Theme loading utilities
-│   │   ├── github.yml
-│   │   ├── popular.yml
-│   │   ├── catppuccin.yml
-│   │   ├── material.yml
-│   │   └── creative.yml
-│   ├── utils/                           # Utility functions
-│   │   ├── file_system.py               # File system helpers
-│   │   ├── decorators.py                # Async property decorators
-│   │   └── helpers.py                   # Shared helper functions
-│   └── orchestrator.py                  # Main coordinator
-├── examples/                            # Integration examples
-│   └── portfolio-integration.md         # Complete portfolio integration guide
-└── test/                                # Unit tests
+│   └── utils/                           # Utility functions
+├── test/                                # Test suite
+│   ├── api/                             # API integration tests (httpx)
+│   ├── core/                            # Async collector unit tests (aioresponses)
+│   └── load/                            # Load tests (locust)
+└── examples/                            # Integration examples
 ```
 
 ### Key Design Decisions
@@ -689,27 +758,35 @@ leo-git-statistics/
 - **Facade Pattern** - `StatsCollector` composes 6 specialized collectors (`RepoStatsCollector`, `ContributionTracker`, `CommitScheduleCollector`, `CodeChangeAnalyzer`, `TrafficCollector`, `EngagementCollector`) behind a unified API
 - **Registry Pattern** - Generators self-register via `@register_generator` decorator; the orchestrator discovers them automatically without hardcoded lists
 - **Protocol-based Interfaces** - Each generator depends only on the subset of stats it needs (`StreakProvider`, `LanguageProvider`, `OverviewProvider`, `BatteryProvider`, `CommitCalendarProvider`)
-- **Dependency Injection** - All major classes accept optional dependencies in their constructors for testability
-- **Async/Await** - Concurrent API calls for better performance
+- **Dependency Injection** - All major classes accept optional dependencies in their constructors for testability. FastAPI `Depends()` used for HTTP session, cache, auth, and token resolution
+- **Async/Await with Parallel Execution** - All collectors use `asyncio.gather()` with `asyncio.Semaphore(10)` to fetch repository data concurrently while respecting GitHub rate limits
+- **Resilience Patterns** - Retry with exponential backoff (tenacity) and circuit breaker (pybreaker) in `GitHubClient` for automatic failure recovery
+- **Multi-tier Caching** - Redis cache backend with in-memory `TTLCache` fallback. Cache key is `(username, endpoint)` with configurable TTL
+- **SQLite with WAL** - Traffic stats, snapshots, and webhooks stored in SQLite databases with Write-Ahead Logging for concurrent read/write safety
 - **YAML-based Themes** - Easy to add, remove, or modify themes
 - **Template Engine** - Simple placeholder replacement for maintainability
-- **Persistent Storage** - JSON database for accumulated metrics beyond GitHub's 14-day limit
+- **Structured Observability** - structlog for JSON logging, Prometheus metrics for monitoring, robust health checks for dependency status
 
 ## Development
 
 ### Prerequisites
 - Python 3.10+
 - pip
+- Docker (optional, for containerized deployment)
 
 ### Setup
 
 ```bash
+# Production dependencies
 pip install -r requirements.txt
+
+# Development/test dependencies (includes httpx, aioresponses, locust)
+pip install -r requirements-dev.txt
 ```
 
 ### Running Locally
 
-#### With GitHub API (real data)
+#### SVG Generation with GitHub API
 
 ```bash
 export ACCESS_TOKEN="your_github_token"
@@ -717,24 +794,43 @@ export GITHUB_ACTOR="your_username"
 python generate.py
 ```
 
-#### With Mock Data (no API required)
-
-For testing templates, themes, and visual changes without needing a GitHub token:
+#### SVG Generation with Mock Data (no API required)
 
 ```bash
 python generate_test.py
 ```
 
-This generates all SVG cards using mock data in the `generated_images/` folder. Useful for:
-- Testing theme modifications
-- Developing new SVG templates
-- Previewing visual changes locally
-- CI/CD pipelines without API access
+Generates all SVG cards using mock data in `generated_images/`. Useful for testing themes and templates.
+
+#### API Development Server
+
+```bash
+export GITHUB_TOKEN="your_github_token"
+uvicorn api.main:app --reload --port 8000
+```
+
+#### API with Docker
+
+```bash
+cp api/.env.example api/.env
+# Edit api/.env with your GITHUB_TOKEN
+docker-compose up -d
+```
 
 ### Running Tests
 
 ```bash
+# All tests
 pytest test/
+
+# API integration tests only
+pytest test/api/
+
+# Async collector tests only
+pytest test/core/
+
+# Load tests (requires running API)
+locust -f test/load/locustfile.py --host http://localhost:8000
 ```
 
 ## Contributing
@@ -754,7 +850,7 @@ GPL-3.0 License - see [LICENSE](LICENSE) for details.
 ---
 
 <p align="center">
-  <sub>Built with Python and GitHub Actions</sub>
+  <sub>Built with Python, FastAPI, and GitHub Actions</sub>
 </p>
 
 
