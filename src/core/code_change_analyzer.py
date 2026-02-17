@@ -1,5 +1,6 @@
 """Code change analysis: lines changed, contributors and percentages."""
 
+import asyncio
 import logging
 from typing import Dict, List, Optional, Set, Tuple, Any, Union
 
@@ -59,7 +60,8 @@ class CodeChangeAnalyzer:
         Calculate lines added and deleted by the user across repositories.
 
         Also populates total lines changed, contribution percentages and
-        contributor set as side-effects.
+        contributor set as side-effects. Repositories are fetched in parallel
+        using a semaphore to avoid exceeding GitHub API rate limits.
 
         :param repos: Set of repository names to analyze.
         :param empty_repos: Set of empty repository names to skip.
@@ -68,6 +70,19 @@ class CodeChangeAnalyzer:
         if self._users_lines_changed is not None:
             return self._users_lines_changed
 
+        sem = asyncio.Semaphore(10)
+        active_repos = [r for r in repos if r not in empty_repos]
+
+        async def fetch_one(repo: str) -> List:
+            async with sem:
+                return _ensure_list(
+                    await self._queries.query_rest(f"/repos/{repo}/stats/contributors")
+                )
+
+        results = await asyncio.gather(
+            *[fetch_one(r) for r in active_repos], return_exceptions=True
+        )
+
         contributor_set: Set[str] = set()
         total_additions = 0
         total_deletions = 0
@@ -75,15 +90,15 @@ class CodeChangeAnalyzer:
         deletions = 0
         total_percentage = 0.0
 
-        for repo in repos:
-            if repo in empty_repos:
+        for repo, result in zip(active_repos, results):
+            if isinstance(result, BaseException):
+                logger.warning("Failed to fetch contributors for %s: %s", repo, result)
                 continue
+
             repo_total_changes = 0
             author_total_changes = 0
 
-            r = _ensure_list(await self._queries.query_rest(f"/repos/{repo}/stats/contributors"))
-
-            for author_obj in r:
+            for author_obj in result:
                 if not isinstance(author_obj, dict) or not isinstance(
                     author_obj.get("author", {}), dict
                 ):
@@ -108,7 +123,7 @@ class CodeChangeAnalyzer:
             if author_total_changes > 0:
                 total_percentage += author_total_changes / repo_total_changes
 
-        non_empty_count = len(repos) - len(empty_repos)
+        non_empty_count = len(active_repos)
         if total_percentage > 0 and non_empty_count > 0:
             total_percentage /= non_empty_count
         else:

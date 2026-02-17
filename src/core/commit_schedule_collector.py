@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from datetime import datetime, time, timedelta, timezone
 from typing import Any, Dict, List, Optional, Set, Tuple
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -51,10 +52,28 @@ class CommitScheduleCollector:
         since_utc = week_start_local.astimezone(timezone.utc).isoformat()
         until_utc = week_end_local.astimezone(timezone.utc).isoformat()
 
+        sem = asyncio.Semaphore(10)
+        sorted_repos = sorted(repos)
+
+        async def fetch_one(repo: str) -> Tuple[str, bool, List[Dict[str, Any]]]:
+            async with sem:
+                is_private = await self._is_private_repo(repo)
+                commits = await self._fetch_repo_commits(
+                    repo, username, since_utc, until_utc
+                )
+                return repo, is_private, commits
+
+        results = await asyncio.gather(
+            *[fetch_one(r) for r in sorted_repos], return_exceptions=True
+        )
+
         entries: List[Dict[str, Any]] = []
-        for repo in sorted(repos):
-            is_private = await self._is_private_repo(repo)
-            commits = await self._fetch_repo_commits(repo, username, since_utc, until_utc)
+        for result in results:
+            if isinstance(result, BaseException):
+                logger.warning("Failed to fetch commit schedule: %s", result)
+                continue
+
+            repo, is_private, commits = result
             for commit in commits:
                 timestamp = self._extract_timestamp(commit)
                 if timestamp is None:

@@ -1,7 +1,8 @@
 """Repository traffic collection: views and clones."""
 
+import asyncio
 import logging
-from typing import Optional, Set, Tuple
+from typing import Dict, Optional, Set, Tuple
 from datetime import date, timedelta
 
 from src.core.environment import Environment
@@ -51,6 +52,9 @@ class TrafficCollector:
         """
         Collect traffic entries from all repos for a given metric.
 
+        Repositories are fetched in parallel using a semaphore to avoid
+        exceeding GitHub API rate limits.
+
         :param metric_type: Either "views" or "clones".
         :param last_date: The last recorded date for this metric.
         :param accumulate_fn: Callable to accumulate new counts.
@@ -62,10 +66,27 @@ class TrafficCollector:
         dates = {last_date, yesterday}
         today_count = 0
 
-        for repo in repos:
-            r = await self._queries.query_rest(f"/repos/{repo}/traffic/{metric_type}")
+        sem = asyncio.Semaphore(10)
+        repo_list = list(repos)
 
-            for entry in r.get(metric_type, []):
+        async def fetch_one(repo: str) -> Dict:
+            async with sem:
+                return await self._queries.query_rest(
+                    f"/repos/{repo}/traffic/{metric_type}"
+                )
+
+        results = await asyncio.gather(
+            *[fetch_one(r) for r in repo_list], return_exceptions=True
+        )
+
+        for repo, result in zip(repo_list, results):
+            if isinstance(result, BaseException):
+                logger.warning(
+                    "Failed to fetch %s traffic for %s: %s", metric_type, repo, result
+                )
+                continue
+
+            for entry in result.get(metric_type, []):
                 timestamp = (entry.get("timestamp") or "")[:10]
                 if timestamp == today:
                     today_count += entry.get("count", 0)

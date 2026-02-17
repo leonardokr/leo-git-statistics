@@ -1,5 +1,6 @@
 """Engagement metrics collection: pull requests, issues and collaborators."""
 
+import asyncio
 import logging
 from typing import Dict, List, Optional, Set, Any, Union
 
@@ -49,18 +50,34 @@ class EngagementCollector:
         """
         Retrieve the total number of pull requests across all repositories.
 
+        Repositories are fetched in parallel using a semaphore to avoid
+        exceeding GitHub API rate limits.
+
         :param repos: Set of repository names.
         :return: Total pull request count.
         """
         if self._pull_requests is not None:
             return self._pull_requests
 
+        sem = asyncio.Semaphore(10)
+        repo_list = list(repos)
+
+        async def fetch_one(repo: str) -> List:
+            async with sem:
+                return _ensure_list(
+                    await self._queries.query_rest(f"/repos/{repo}/pulls?state=all")
+                )
+
+        results = await asyncio.gather(
+            *[fetch_one(r) for r in repo_list], return_exceptions=True
+        )
+
         self._pull_requests = 0
-
-        for repo in repos:
-            r = _ensure_list(await self._queries.query_rest(f"/repos/{repo}/pulls?state=all"))
-
-            for obj in r:
+        for repo, result in zip(repo_list, results):
+            if isinstance(result, BaseException):
+                logger.warning("Failed to fetch pull requests for %s: %s", repo, result)
+                continue
+            for obj in result:
                 if isinstance(obj, dict):
                     self._pull_requests += 1
         return self._pull_requests
@@ -69,18 +86,34 @@ class EngagementCollector:
         """
         Retrieve the total number of issues across all repositories.
 
+        Repositories are fetched in parallel using a semaphore to avoid
+        exceeding GitHub API rate limits.
+
         :param repos: Set of repository names.
         :return: Total issue count (excluding pull requests).
         """
         if self._issues is not None:
             return self._issues
 
+        sem = asyncio.Semaphore(10)
+        repo_list = list(repos)
+
+        async def fetch_one(repo: str) -> List:
+            async with sem:
+                return _ensure_list(
+                    await self._queries.query_rest(f"/repos/{repo}/issues?state=all")
+                )
+
+        results = await asyncio.gather(
+            *[fetch_one(r) for r in repo_list], return_exceptions=True
+        )
+
         self._issues = 0
-
-        for repo in repos:
-            r = _ensure_list(await self._queries.query_rest(f"/repos/{repo}/issues?state=all"))
-
-            for obj in r:
+        for repo, result in zip(repo_list, results):
+            if isinstance(result, BaseException):
+                logger.warning("Failed to fetch issues for %s: %s", repo, result)
+                continue
+            for obj in result:
                 if isinstance(obj, dict):
                     try:
                         if obj.get("html_url").split("/")[-2] == "issues":
@@ -95,6 +128,9 @@ class EngagementCollector:
         """
         Retrieve the total number of unique collaborators.
 
+        Repositories are fetched in parallel using a semaphore to avoid
+        exceeding GitHub API rate limits.
+
         :param repos: Set of repository names.
         :param contributors: Set of known contributors for union.
         :return: Total collaborator count.
@@ -102,12 +138,25 @@ class EngagementCollector:
         if self._collaborators is not None:
             return self._collaborators
 
+        sem = asyncio.Semaphore(10)
+        repo_list = list(repos)
+
+        async def fetch_one(repo: str) -> List:
+            async with sem:
+                return _ensure_list(
+                    await self._queries.query_rest(f"/repos/{repo}/collaborators")
+                )
+
+        results = await asyncio.gather(
+            *[fetch_one(r) for r in repo_list], return_exceptions=True
+        )
+
         collaborator_set: Set[str] = set()
-
-        for repo in repos:
-            r = _ensure_list(await self._queries.query_rest(f"/repos/{repo}/collaborators"))
-
-            for obj in r:
+        for repo, result in zip(repo_list, results):
+            if isinstance(result, BaseException):
+                logger.warning("Failed to fetch collaborators for %s: %s", repo, result)
+                continue
+            for obj in result:
                 if isinstance(obj, dict):
                     collaborator_set.add(obj.get("login"))
 
