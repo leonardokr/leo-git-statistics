@@ -146,6 +146,35 @@ class HealthResponse(BaseModel):
     circuit_breaker: str
 
 
+class PaginationMeta(BaseModel):
+    """Pagination metadata included in paginated responses."""
+
+    page: int
+    per_page: int
+    total: int
+    total_pages: int
+    has_next: bool
+    has_prev: bool
+
+
+class PaginatedRepositoriesResponse(BaseModel):
+    """Response model for paginated repository listing."""
+
+    username: str
+    data: List[str]
+    pagination: PaginationMeta
+    warnings: Optional[List[str]] = None
+
+
+class PaginatedDetailedRepositoriesResponse(BaseModel):
+    """Response model for paginated detailed repository listing."""
+
+    username: str
+    data: List[DetailedRepoItem]
+    pagination: PaginationMeta
+    warnings: Optional[List[str]] = None
+
+
 class ErrorResponse(BaseModel):
     """Response model for error responses."""
 

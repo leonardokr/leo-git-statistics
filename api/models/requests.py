@@ -29,6 +29,13 @@ def validated_username(
     return username
 
 
+class PaginationParams(BaseModel):
+    """Query parameters for paginated endpoints."""
+
+    page: int = Field(default=1, ge=1)
+    per_page: int = Field(default=30, ge=1, le=100)
+
+
 class RepoQueryParams(BaseModel):
     """Query parameters for the detailed repositories endpoint."""
 
