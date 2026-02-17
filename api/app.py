@@ -151,7 +151,7 @@ def health():
     return jsonify({"status": "ok", "message": "Leo's Git Statistics API is running"})
 
 
-@app.route("/api/v1/users/<username>/overview", methods=["GET"])
+@app.route("/users/<username>/overview", methods=["GET"])
 @async_route
 async def get_user_overview(username):
     """
@@ -258,7 +258,7 @@ async def get_user_overview(username):
             await session.close()
 
 
-@app.route("/api/v1/users/<username>/languages", methods=["GET"])
+@app.route("/users/<username>/languages", methods=["GET"])
 @async_route
 async def get_user_languages(username):
     """
@@ -317,7 +317,7 @@ async def get_user_languages(username):
             await session.close()
 
 
-@app.route("/api/v1/users/<username>/streak", methods=["GET"])
+@app.route("/users/<username>/streak", methods=["GET"])
 @async_route
 async def get_user_streak(username):
     """
@@ -381,7 +381,7 @@ async def get_user_streak(username):
             await session.close()
 
 
-@app.route("/api/v1/users/<username>/contributions/recent", methods=["GET"])
+@app.route("/users/<username>/contributions/recent", methods=["GET"])
 @async_route
 async def get_recent_contributions(username):
     """
@@ -432,7 +432,7 @@ async def get_recent_contributions(username):
             await session.close()
 
 
-@app.route("/api/v1/users/<username>/commits/weekly", methods=["GET"])
+@app.route("/users/<username>/commits/weekly", methods=["GET"])
 @async_route
 async def get_weekly_commits(username):
     """
@@ -489,7 +489,7 @@ async def get_weekly_commits(username):
             await session.close()
 
 
-@app.route("/api/v1/users/<username>/repositories", methods=["GET"])
+@app.route("/users/<username>/repositories", methods=["GET"])
 @async_route
 async def get_user_repositories(username):
     """
@@ -542,7 +542,7 @@ async def get_user_repositories(username):
             await session.close()
 
 
-@app.route("/api/v1/users/<username>/repositories/detailed", methods=["GET"])
+@app.route("/users/<username>/repositories/detailed", methods=["GET"])
 @async_route
 async def get_user_repositories_detailed(username):
     """
@@ -702,7 +702,7 @@ async def get_user_repositories_detailed(username):
         return jsonify({"error": "Internal server error", "message": str(e)}), 500
 
 
-@app.route("/api/v1/users/<username>/stats/full", methods=["GET"])
+@app.route("/users/<username>/stats/full", methods=["GET"])
 @async_route
 async def get_full_stats(username):
     """
