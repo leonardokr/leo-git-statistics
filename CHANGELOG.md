@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.0](https://github.com/leonardokr/leo-git-statistics/compare/v2.0.4...v2.1.0) (2026-02-18)
+
+
+### Features
+
+* probe GitHub rate limit on startup to seed health endpoint state ([e9f1da7](https://github.com/leonardokr/leo-git-statistics/commit/e9f1da7f6e83872059d898daefee99332bd697b2))
+
+
+### Bug Fixes
+
+* inject tornado.gen into sys.modules for pybreaker compatibility in tests ([3b94a6b](https://github.com/leonardokr/leo-git-statistics/commit/3b94a6b9979743b4ae4882f314f27ce5e1233818))
+
 ## [2.0.4](https://github.com/leonardokr/leo-git-statistics/compare/v2.0.3...v2.0.4) (2026-02-18)
 
 
