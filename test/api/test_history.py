@@ -16,7 +16,7 @@ class TestHistory:
         """GET returns empty list when no snapshots exist."""
         with patch("api.routes.history.snapshot_store") as mock_store:
             mock_store.get_snapshots.return_value = []
-            resp = await client.get("/users/testuser/history")
+            resp = await client.get("/v1/users/testuser/history")
         assert resp.status_code == 200
         body = resp.json()
         assert body["username"] == "testuser"
@@ -30,7 +30,7 @@ class TestHistory:
         ]
         with patch("api.routes.history.snapshot_store") as mock_store:
             mock_store.get_snapshots.return_value = snapshots
-            resp = await client.get("/users/testuser/history")
+            resp = await client.get("/v1/users/testuser/history")
         assert resp.status_code == 200
         assert len(resp.json()["snapshots"]) == 2
 
@@ -39,7 +39,7 @@ class TestHistory:
         with patch("api.routes.history.snapshot_store") as mock_store:
             mock_store.get_snapshots.return_value = []
             resp = await client.get(
-                "/users/testuser/history?from=2026-02-01&to=2026-02-17"
+                "/v1/users/testuser/history?from=2026-02-01&to=2026-02-17"
             )
         assert resp.status_code == 200
         mock_store.get_snapshots.assert_called_once_with(
@@ -53,7 +53,7 @@ class TestHistory:
             patch("api.routes.history.dispatch_webhooks", new_callable=AsyncMock),
             patch("api.routes.history.create_stats_collector", return_value=mock_collector),
         ):
-            resp = await client.post("/users/testuser/history/snapshot")
+            resp = await client.post("/v1/users/testuser/history/snapshot")
         assert resp.status_code == 201
         body = resp.json()
         assert body["username"] == "testuser"

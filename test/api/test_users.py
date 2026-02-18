@@ -16,7 +16,7 @@ class TestOverview:
 
     async def test_returns_overview_data(self, client):
         """Endpoint returns 200 with all overview fields."""
-        resp = await client.get("/users/testuser/overview")
+        resp = await client.get("/v1/users/testuser/overview")
         assert resp.status_code == 200
         body = resp.json()
         assert body["username"] == "testuser"
@@ -33,40 +33,40 @@ class TestOverview:
 
     async def test_cache_miss_header(self, client):
         """First request sets X-Cache: MISS."""
-        resp = await client.get("/users/testuser/overview")
+        resp = await client.get("/v1/users/testuser/overview")
         assert resp.headers.get("x-cache") == "MISS"
 
     async def test_cache_hit_returns_cached(self, client):
         """When cache has data, it is returned directly."""
         cached = {"username": "testuser", "name": "Cached"}
         with patch("api.routes.users.cache_get", return_value=(True, cached)):
-            resp = await client.get("/users/testuser/overview")
+            resp = await client.get("/v1/users/testuser/overview")
         assert resp.status_code == 200
         assert resp.json()["name"] == "Cached"
         assert resp.headers.get("x-cache") == "HIT"
 
     async def test_no_cache_param_bypasses_cache(self, client):
         """no_cache=true should skip cache lookup."""
-        resp = await client.get("/users/testuser/overview?no_cache=true")
+        resp = await client.get("/v1/users/testuser/overview?no_cache=true")
         assert resp.status_code == 200
         assert resp.headers.get("x-cache") == "MISS"
 
     async def test_invalid_username_returns_422(self, client):
         """Invalid GitHub username format returns 422."""
-        resp = await client.get("/users/-invalid/overview")
+        resp = await client.get("/v1/users/-invalid/overview")
         assert resp.status_code == 422
 
     async def test_username_too_long_returns_422(self, client):
         """Username exceeding 39 chars returns 422."""
         long_name = "a" * 40
-        resp = await client.get(f"/users/{long_name}/overview")
+        resp = await client.get(f"/v1/users/{long_name}/overview")
         assert resp.status_code == 422
 
     async def test_partial_failure_includes_warnings(self, client, mock_collector):
         """When a collector call fails, warnings are returned."""
         mock_collector.get_views.side_effect = Exception("permission denied")
         with patch("api.routes.users.create_stats_collector", return_value=mock_collector):
-            resp = await client.get("/users/testuser/overview")
+            resp = await client.get("/v1/users/testuser/overview")
         assert resp.status_code == 200
         body = resp.json()
         assert body["total_views"] is None
@@ -78,7 +78,7 @@ class TestLanguages:
 
     async def test_returns_language_data(self, client):
         """Endpoint returns language distribution."""
-        resp = await client.get("/users/testuser/languages")
+        resp = await client.get("/v1/users/testuser/languages")
         assert resp.status_code == 200
         body = resp.json()
         assert body["username"] == "testuser"
@@ -86,7 +86,7 @@ class TestLanguages:
 
     async def test_proportional_mode(self, client):
         """proportional=true returns percentage values."""
-        resp = await client.get("/users/testuser/languages?proportional=true")
+        resp = await client.get("/v1/users/testuser/languages?proportional=true")
         assert resp.status_code == 200
         body = resp.json()
         assert body["languages"]["Python"] == 80.0
@@ -97,7 +97,7 @@ class TestStreak:
 
     async def test_returns_streak_data(self, client):
         """Endpoint returns streak information."""
-        resp = await client.get("/users/testuser/streak")
+        resp = await client.get("/v1/users/testuser/streak")
         assert resp.status_code == 200
         body = resp.json()
         assert body["current_streak"] == 7
@@ -111,7 +111,7 @@ class TestRecentContributions:
 
     async def test_returns_recent_contributions(self, client):
         """Endpoint returns list of recent contribution counts."""
-        resp = await client.get("/users/testuser/contributions/recent")
+        resp = await client.get("/v1/users/testuser/contributions/recent")
         assert resp.status_code == 200
         body = resp.json()
         assert len(body["recent_contributions"]) == 10
@@ -122,7 +122,7 @@ class TestWeeklyCommits:
 
     async def test_returns_weekly_commits(self, client):
         """Endpoint returns weekly commit schedule."""
-        resp = await client.get("/users/testuser/commits/weekly")
+        resp = await client.get("/v1/users/testuser/commits/weekly")
         assert resp.status_code == 200
         body = resp.json()
         assert len(body["weekly_commits"]) == 1
@@ -134,7 +134,7 @@ class TestRepositories:
 
     async def test_returns_paginated_repos(self, client):
         """Endpoint returns paginated repository list."""
-        resp = await client.get("/users/testuser/repositories")
+        resp = await client.get("/v1/users/testuser/repositories")
         assert resp.status_code == 200
         body = resp.json()
         assert "data" in body
@@ -143,7 +143,7 @@ class TestRepositories:
 
     async def test_pagination_params(self, client):
         """Custom page/per_page are respected."""
-        resp = await client.get("/users/testuser/repositories?page=1&per_page=1")
+        resp = await client.get("/v1/users/testuser/repositories?page=1&per_page=1")
         assert resp.status_code == 200
         body = resp.json()
         assert body["pagination"]["per_page"] == 1
@@ -180,7 +180,7 @@ class TestRepositoriesDetailed:
         mock_client.query_rest.side_effect = [mock_repos, {"Python": 5000}]
 
         with patch("api.routes.users.GitHubClient", return_value=mock_client):
-            resp = await client.get("/users/testuser/repositories/detailed")
+            resp = await client.get("/v1/users/testuser/repositories/detailed")
 
         assert resp.status_code == 200
         body = resp.json()
@@ -193,7 +193,7 @@ class TestFullStats:
 
     async def test_returns_full_stats(self, client):
         """Endpoint returns aggregated statistics."""
-        resp = await client.get("/users/testuser/stats/full")
+        resp = await client.get("/v1/users/testuser/stats/full")
         assert resp.status_code == 200
         body = resp.json()
         assert body["username"] == "testuser"
@@ -221,7 +221,7 @@ class TestAuth:
 
                 transport = ASGITransport(app=app)
                 async with AsyncClient(transport=transport, base_url="http://test") as ac:
-                    resp = await ac.get("/users/testuser/overview")
+                    resp = await ac.get("/v1/users/testuser/overview")
                 assert resp.status_code == 401
         finally:
             auth_mod._cached_keys = old_keys
@@ -250,7 +250,7 @@ class TestAuth:
                     transport = ASGITransport(app=app)
                     async with AsyncClient(transport=transport, base_url="http://test") as ac:
                         resp = await ac.get(
-                            "/users/testuser/overview",
+                            "/v1/users/testuser/overview",
                             headers={"Authorization": "Bearer secret-key"},
                         )
                     assert resp.status_code == 200

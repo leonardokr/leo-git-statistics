@@ -429,46 +429,46 @@ uvicorn api.main:app --reload --port 8000
 
 | Endpoint | Description |
 |---|---|
-| `GET /users/{username}/overview` | Overview statistics (contributions, stars, forks, lines changed) |
-| `GET /users/{username}/languages` | Language distribution |
-| `GET /users/{username}/repositories` | Repository list (names only, paginated) |
-| `GET /users/{username}/repositories/detailed` | Detailed repository info (paginated) |
-| `GET /users/{username}/streak` | Contribution streak data |
-| `GET /users/{username}/weekly-commits` | Weekly commit schedule |
-| `GET /users/{username}/recent-contributions` | Recent contribution activity |
-| `GET /users/{username}/stats/full` | All data in one request |
+| `GET /v1/users/{username}/overview` | Overview statistics (contributions, stars, forks, lines changed) |
+| `GET /v1/users/{username}/languages` | Language distribution |
+| `GET /v1/users/{username}/repositories` | Repository list (names only, paginated) |
+| `GET /v1/users/{username}/repositories/detailed` | Detailed repository info (paginated) |
+| `GET /v1/users/{username}/streak` | Contribution streak data |
+| `GET /v1/users/{username}/commits/weekly` | Weekly commit schedule |
+| `GET /v1/users/{username}/contributions/recent` | Recent contribution activity |
+| `GET /v1/users/{username}/stats/full` | All data in one request |
 
 #### SVG Cards
 
 | Endpoint | Description |
 |---|---|
-| `GET /users/{username}/cards/overview?theme=dracula` | Overview SVG card |
-| `GET /users/{username}/cards/languages?theme=dark` | Language distribution SVG card |
-| `GET /users/{username}/cards/streak?theme=nord` | Contribution streak SVG card |
-| `GET /users/{username}/cards/streak-battery?theme=tokyo_night` | Streak battery SVG card |
-| `GET /users/{username}/cards/languages-puzzle?theme=catppuccin_mocha` | Language puzzle SVG card |
-| `GET /users/{username}/cards/commit-calendar?theme=dracula` | Commit calendar SVG card |
+| `GET /v1/users/{username}/cards/overview?theme=dracula` | Overview SVG card |
+| `GET /v1/users/{username}/cards/languages?theme=dark` | Language distribution SVG card |
+| `GET /v1/users/{username}/cards/streak?theme=nord` | Contribution streak SVG card |
+| `GET /v1/users/{username}/cards/streak-battery?theme=tokyo_night` | Streak battery SVG card |
+| `GET /v1/users/{username}/cards/languages-puzzle?theme=catppuccin_mocha` | Language puzzle SVG card |
+| `GET /v1/users/{username}/cards/commit-calendar?theme=dracula` | Commit calendar SVG card |
 
 SVG cards can be embedded directly in Markdown:
 ```markdown
-![Stats](https://your-api.example.com/users/leonardokr/cards/overview?theme=dracula)
+![Stats](https://your-api.example.com/v1/users/leonardokr/cards/overview?theme=dracula)
 ```
 
 #### Comparison, History & Webhooks
 
 | Endpoint | Description |
 |---|---|
-| `GET /users/{username}/compare/{other}` | Side-by-side user comparison |
-| `GET /users/{username}/history` | Historical stats snapshots |
-| `POST /webhooks` | Register a webhook for stat changes |
-| `GET /webhooks` | List registered webhooks |
-| `DELETE /webhooks/{id}` | Remove a webhook |
+| `GET /v1/users/{username}/compare/{other}` | Side-by-side user comparison |
+| `GET /v1/users/{username}/history` | Historical stats snapshots |
+| `POST /v1/users/{username}/webhooks` | Register a webhook for stat changes |
+| `GET /v1/users/{username}/webhooks` | List registered webhooks |
+| `DELETE /v1/users/{username}/webhooks/{id}` | Remove a webhook |
 
 #### Infrastructure
 
 | Endpoint | Description |
 |---|---|
-| `GET /health` | Health check (GitHub API connectivity, rate limits, cache, circuit breaker) |
+| `GET /health` | Health check |
 | `GET /metrics` | Prometheus metrics |
 | `GET /docs` | Interactive Swagger documentation |
 
@@ -490,7 +490,7 @@ Endpoints that return repository lists support filtering and pagination:
 ### Example Response
 
 ```bash
-curl http://localhost:8000/users/leonardokr/overview
+curl http://localhost:8000/v1/users/leonardokr/overview
 ```
 
 ```json
@@ -648,7 +648,7 @@ Then access: `https://username.github.io/repo/api/users/username/overview.json`
 
 **Option 1: Client-side fetch (hosted API)**
 ```javascript
-fetch('https://your-api.example.com/users/leonardokr/repositories/detailed')
+fetch('https://your-api.example.com/v1/users/leonardokr/repositories/detailed')
   .then(res => res.json())
   .then(data => {
     data.data.forEach(repo => {
@@ -661,7 +661,7 @@ fetch('https://your-api.example.com/users/leonardokr/repositories/detailed')
 ```yaml
 - name: Fetch latest projects
   run: |
-    curl https://your-api.example.com/users/leonardokr/repositories/detailed \
+    curl https://your-api.example.com/v1/users/leonardokr/repositories/detailed \
       -o src/data/projects.json
 
 - name: Build site with fresh data

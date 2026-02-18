@@ -31,7 +31,7 @@ class CacheUser(HttpUser):
     @task
     def get_overview(self):
         """Request the overview endpoint for a fixed user."""
-        self.client.get("/users/testuser/overview")
+        self.client.get("/v1/users/testuser/overview")
 
 
 class MixedUser(HttpUser):
@@ -44,43 +44,43 @@ class MixedUser(HttpUser):
     @task(5)
     def get_overview(self):
         """Most common request: user overview."""
-        self.client.get("/users/testuser/overview")
+        self.client.get("/v1/users/testuser/overview")
 
     @tag("mixed")
     @task(3)
     def get_languages(self):
         """Language distribution endpoint."""
-        self.client.get("/users/testuser/languages")
+        self.client.get("/v1/users/testuser/languages")
 
     @tag("mixed")
     @task(3)
     def get_streak(self):
         """Streak information endpoint."""
-        self.client.get("/users/testuser/streak")
+        self.client.get("/v1/users/testuser/streak")
 
     @tag("mixed")
     @task(2)
     def get_recent_contributions(self):
         """Recent contributions endpoint."""
-        self.client.get("/users/testuser/contributions/recent")
+        self.client.get("/v1/users/testuser/contributions/recent")
 
     @tag("mixed")
     @task(2)
     def get_weekly_commits(self):
         """Weekly commit schedule endpoint."""
-        self.client.get("/users/testuser/commits/weekly")
+        self.client.get("/v1/users/testuser/commits/weekly")
 
     @tag("mixed")
     @task(2)
     def get_repositories(self):
         """Paginated repository listing."""
-        self.client.get("/users/testuser/repositories?page=1&per_page=10")
+        self.client.get("/v1/users/testuser/repositories?page=1&per_page=10")
 
     @tag("mixed")
     @task(1)
     def get_full_stats(self):
         """Heavy full-stats endpoint (less frequent)."""
-        self.client.get("/users/testuser/stats/full")
+        self.client.get("/v1/users/testuser/stats/full")
 
     @tag("mixed")
     @task(1)
@@ -103,7 +103,7 @@ class BurstUser(HttpUser):
     @task(3)
     def burst_overview(self):
         """Rapid overview requests."""
-        with self.client.get("/users/testuser/overview", catch_response=True) as resp:
+        with self.client.get("/v1/users/testuser/overview", catch_response=True) as resp:
             if resp.status_code == 429:
                 resp.success()
 
@@ -111,7 +111,7 @@ class BurstUser(HttpUser):
     @task(2)
     def burst_languages(self):
         """Rapid language requests."""
-        with self.client.get("/users/testuser/languages", catch_response=True) as resp:
+        with self.client.get("/v1/users/testuser/languages", catch_response=True) as resp:
             if resp.status_code == 429:
                 resp.success()
 
@@ -119,6 +119,6 @@ class BurstUser(HttpUser):
     @task(1)
     def burst_full_stats(self):
         """Rapid full-stats requests (most likely to trigger rate limit)."""
-        with self.client.get("/users/testuser/stats/full", catch_response=True) as resp:
+        with self.client.get("/v1/users/testuser/stats/full", catch_response=True) as resp:
             if resp.status_code == 429:
                 resp.success()

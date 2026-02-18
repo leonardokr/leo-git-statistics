@@ -83,11 +83,11 @@ app.add_middleware(
 app.add_middleware(RequestLoggingMiddleware)
 
 app.include_router(health.router)
-app.include_router(users.router)
-app.include_router(cards.router)
-app.include_router(compare.router)
-app.include_router(history.router)
-app.include_router(webhooks.router)
+app.include_router(users.router, prefix="/v1")
+app.include_router(cards.router, prefix="/v1")
+app.include_router(compare.router, prefix="/v1")
+app.include_router(history.router, prefix="/v1")
+app.include_router(webhooks.router, prefix="/v1")
 
 Instrumentator(
     should_group_status_codes=True,
