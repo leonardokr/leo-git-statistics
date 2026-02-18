@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/leonardokr/leo-git-statistics/compare/v2.0.1...v2.0.2) (2026-02-18)
+
+
+### Bug Fixes
+
+* resolve pybreaker NameError for tornado.gen on Python 3.12+ ([753e62b](https://github.com/leonardokr/leo-git-statistics/commit/753e62b8e3b64eef0a8e1f1f1dfbff78fcdbd386))
+
 ## [2.0.1](https://github.com/leonardokr/leo-git-statistics/compare/v2.0.0...v2.0.1) (2026-02-18)
 
 
