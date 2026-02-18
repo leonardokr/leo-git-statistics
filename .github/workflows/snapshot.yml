@@ -28,23 +28,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.repository_owner }}
-        run: python -c "
-          import asyncio, os, sys;
-          sys.path.insert(0, '.');
-          from aiohttp import ClientSession;
-          from src.core.environment import Environment;
-          from src.core.stats_collector import StatsCollector;
-          from src.core.stats_assembler import build_snapshot_payload;
-          from src.db.snapshots import snapshot_store;
+        run: |
+          python -c "
+          import asyncio, os, sys
+          sys.path.insert(0, '.')
+          from aiohttp import ClientSession
+          from src.core.environment import Environment
+          from src.core.stats_collector import StatsCollector
+          from src.core.stats_assembler import build_snapshot_payload
+          from src.db.snapshots import snapshot_store
           async def main():
-              username = os.environ['GITHUB_ACTOR'];
-              token = os.environ['GITHUB_TOKEN'];
-              env = Environment(username=username, access_token=token);
+              username = os.environ['GITHUB_ACTOR']
+              token = os.environ['GITHUB_TOKEN']
+              env = Environment(username=username, access_token=token)
               async with ClientSession() as session:
-                  collector = StatsCollector(env, session);
-                  data = await build_snapshot_payload(collector);
-                  snapshot_store.save_snapshot(username, data);
-                  print(f'Snapshot saved for {username}: {data}');
+                  collector = StatsCollector(env, session)
+                  data = await build_snapshot_payload(collector)
+                  snapshot_store.save_snapshot(username, data)
+                  print(f'Snapshot saved for {username}: {data}')
           asyncio.run(main())
           "
 
