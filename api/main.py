@@ -18,13 +18,14 @@ from slowapi.errors import RateLimitExceeded
 
 from prometheus_fastapi_instrumentator import Instrumentator
 
-from api.deps.http_session import close_shared_session, create_shared_session
+from api.deps.http_session import close_shared_session, create_shared_session, get_shared_session
 from api.middleware.logging import RequestLoggingMiddleware, configure_structlog
 from api.middleware.metrics import update_infrastructure_gauges
 from api.middleware.rate_limiter import limiter
 from api.routes import cards, compare, health, history, users, webhooks
+from src.core.github_client import probe_rate_limit
 
-# Inject tornado.gen into sys.modules to satisfy pybreaker's missing import
+# FIX: Inject tornado.gen into sys.modules to satisfy pybreaker's missing import
 import tornado.gen as gen
 sys.modules['gen'] = gen
 
@@ -54,6 +55,9 @@ logger = structlog.get_logger(__name__)
 async def lifespan(application: FastAPI):
     """Manage startup and shutdown of shared resources."""
     await create_shared_session()
+    token = os.getenv("GITHUB_TOKEN", "")
+    if token:
+        await probe_rate_limit(get_shared_session(), token)
     yield
     await close_shared_session()
 

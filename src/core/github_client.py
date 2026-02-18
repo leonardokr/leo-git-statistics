@@ -104,6 +104,28 @@ class RateLimitState:
 
 rate_limit_state = RateLimitState()
 
+
+async def probe_rate_limit(session: aiohttp.ClientSession, token: str) -> None:
+    """Fetch current GitHub rate limit and seed the global state.
+
+    :param session: An open aiohttp ClientSession.
+    :param token: GitHub personal access token.
+    """
+    try:
+        async with session.get(
+            "https://api.github.com/rate_limit",
+            headers={"Authorization": f"Bearer {token}"},
+        ) as resp:
+            rate_limit_state.update_from_headers(resp.headers)
+            slog.info(
+                "rate_limit_probe",
+                remaining=rate_limit_state.remaining,
+                limit=rate_limit_state.limit,
+            )
+    except Exception as exc:
+        slog.warning("rate_limit_probe_failed", error=str(exc))
+
+
 github_breaker = pybreaker.CircuitBreaker(
     fail_max=5,
     reset_timeout=30,
