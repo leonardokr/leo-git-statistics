@@ -216,7 +216,7 @@ Use this action from your profile repository workflow:
 
 ```yaml
 - name: Generate profile SVG stats
-  uses: leonardokr/leo-git-statistics@v1
+  uses: leonardokr/leo-git-statistics@v2
   with:
     github-token: ${{ secrets.PROFILE_STATS_TOKEN }}
     github-username: leonardokr
@@ -256,7 +256,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Generate SVGs via leo-git-statistics action
-        uses: leonardokr/leo-git-statistics@v1
+        uses: leonardokr/leo-git-statistics@v2
         with:
           github-token: ${{ secrets.PROFILE_STATS_TOKEN }}
           github-username: leonardokr
@@ -364,12 +364,13 @@ This repository uses automated releases with `release-please` on `main`.
 - Create changes in branches and merge with Conventional Commits.
 - `release-please` opens/updates a release PR with changelog entries.
 - When the release PR is merged, it creates a GitHub Release and a semver tag (`v1.2.3`).
-- The workflow also updates the floating major tag (`v1`, `v2`, ...) to the latest patch/minor of that major.
+- The workflow also updates the floating major tag (`v1`, `v2`, ...) and the `latest` tag to the newest release.
 
 For consumers:
 
-- Use `@v1` for stable major updates with automatic minor/patch refreshes.
-- Pin exact versions (`@v1.2.3`) only when strict reproducibility is required.
+- Use `@v2` for stable major updates with automatic minor/patch refreshes.
+- Use `@latest` to always track the newest release regardless of major version (may include breaking changes).
+- Pin exact versions (`@v2.0.3`) only when strict reproducibility is required.
 ## Creating Custom Themes
 
 Add a new `.yml` file in `src/themes/`:

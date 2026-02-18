@@ -53,6 +53,9 @@ jobs:
 
           git fetch --tags origin
           git tag -f "${MAJOR_TAG}" "${TAG_NAME}"
+          git tag -f "latest" "${TAG_NAME}"
           git push origin "refs/tags/${MAJOR_TAG}" --force
+          git push origin "refs/tags/latest" --force
 
           echo "Updated ${MAJOR_TAG} -> ${TAG_NAME}"
+          echo "Updated latest -> ${TAG_NAME}"
