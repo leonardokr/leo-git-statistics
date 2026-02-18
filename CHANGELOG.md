@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.4](https://github.com/leonardokr/leo-git-statistics/compare/v2.0.3...v2.0.4) (2026-02-18)
+
+
+### Bug Fixes
+
+* add tornado dependency and inject module for pybreaker compatibility ([88b5895](https://github.com/leonardokr/leo-git-statistics/commit/88b5895b595d6bdc779311c94a319e1e5097bf63))
+
 ## [2.0.3](https://github.com/leonardokr/leo-git-statistics/compare/v2.0.2...v2.0.3) (2026-02-18)
 
 
