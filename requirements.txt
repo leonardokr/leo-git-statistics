@@ -10,6 +10,7 @@ pydantic>=2.5.0
 slowapi>=0.1.9
 tenacity>=8.2.0
 pybreaker>=1.0.0
+tornado>=6.0.0
 structlog>=24.1.0
 prometheus-fastapi-instrumentator>=6.1.0
 gunicorn>=21.2.0
