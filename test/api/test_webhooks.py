@@ -3,6 +3,11 @@
 import pytest
 from unittest.mock import MagicMock, patch
 
+# FIX: Inject tornado.gen into sys.modules to satisfy pybreaker's missing import
+import sys
+import tornado.gen as gen
+sys.modules['gen'] = gen
+
 
 class TestWebhooks:
     """Tests for webhook CRUD operations."""

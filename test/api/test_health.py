@@ -5,6 +5,11 @@ from unittest.mock import patch
 
 from src.core.github_client import RateLimitState
 
+# FIX: Inject tornado.gen into sys.modules to satisfy pybreaker's missing import
+import sys
+import tornado.gen as gen
+sys.modules['gen'] = gen
+
 
 class TestHealthEndpoint:
     """Tests for GET /health."""
