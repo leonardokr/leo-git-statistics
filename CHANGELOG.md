@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/leonardokr/leo-git-statistics/compare/v2.0.0...v2.0.1) (2026-02-18)
+
+
+### Bug Fixes
+
+* pin Python 3.13.2 for pybreaker compatibility ([442b7aa](https://github.com/leonardokr/leo-git-statistics/commit/442b7aae884ee84b6932da4be0115b0c0d16a840))
+
 ## [2.0.0](https://github.com/leonardokr/leo-git-statistics/compare/v1.1.0...v2.0.0) (2026-02-18)
 
 
