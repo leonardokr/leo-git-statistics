@@ -1,11 +1,9 @@
 """Integration tests for the /health endpoint."""
 
-import pytest
 from unittest.mock import patch
 
 from src.core.github_client import RateLimitState
 
-# FIX: Inject tornado.gen into sys.modules to satisfy pybreaker's missing import
 import sys
 import tornado.gen as gen
 sys.modules['gen'] = gen
@@ -14,8 +12,8 @@ sys.modules['gen'] = gen
 class TestHealthEndpoint:
     """Tests for GET /health."""
 
-    async def test_healthy_status(self, client):
-        """Endpoint returns 200 with healthy status when subsystems are normal."""
+    async def test_ok_status(self, client):
+        """Endpoint returns 200 with ok status when subsystems are normal."""
         state = RateLimitState()
         state.remaining = 4500
         state.limit = 5000
@@ -29,17 +27,10 @@ class TestHealthEndpoint:
             resp = await client.get("/health")
 
         assert resp.status_code == 200
-        body = resp.json()
-        assert body["status"] == "healthy"
-        assert body["version"] == "latest"
-        assert body["circuit_breaker"] == "closed"
-        assert body["github_api"]["status"] == "connected"
-        assert body["github_api"]["rate_limit_remaining"] == 4500
-        assert "uptime_seconds" in body
-        assert "cache" in body
+        assert resp.json() == {"status": "ok"}
 
     async def test_degraded_when_rate_limit_low(self, client):
-        """Endpoint returns 503 when rate limit is degraded."""
+        """Endpoint returns 200 with degraded status when rate limit is low."""
         state = RateLimitState()
         state.remaining = 50
         state.limit = 5000
@@ -52,11 +43,10 @@ class TestHealthEndpoint:
             mock_breaker.current_state = "closed"
             resp = await client.get("/health")
 
-        assert resp.status_code == 503
-        assert resp.json()["status"] == "degraded"
-        assert resp.json()["github_api"]["status"] == "degraded"
+        assert resp.status_code == 200
+        assert resp.json() == {"status": "degraded"}
 
-    async def test_unhealthy_when_circuit_open(self, client):
+    async def test_unavailable_when_circuit_open(self, client):
         """Endpoint returns 503 when circuit breaker is open."""
         state = RateLimitState()
         state.remaining = 4000
@@ -70,10 +60,10 @@ class TestHealthEndpoint:
             resp = await client.get("/health")
 
         assert resp.status_code == 503
-        assert resp.json()["status"] == "unhealthy"
+        assert resp.json() == {"status": "unavailable"}
 
-    async def test_unknown_github_status_when_no_data(self, client):
-        """When rate limit has never been populated, status is unknown/degraded."""
+    async def test_degraded_when_no_rate_limit_data(self, client):
+        """When rate limit has never been populated, status is degraded."""
         state = RateLimitState()
 
         with (
@@ -83,5 +73,37 @@ class TestHealthEndpoint:
             mock_breaker.current_state = "closed"
             resp = await client.get("/health")
 
+        assert resp.status_code == 200
+        assert resp.json() == {"status": "degraded"}
+
+    async def test_unavailable_when_rate_limit_critical(self, client):
+        """Endpoint returns 503 when rate limit is critically low."""
+        state = RateLimitState()
+        state.remaining = 5
+        state.limit = 5000
+
+        with (
+            patch("api.routes.health.rate_limit_state", state),
+            patch("api.routes.health.github_breaker") as mock_breaker,
+        ):
+            mock_breaker.current_state = "closed"
+            resp = await client.get("/health")
+
+        assert resp.status_code == 503
+        assert resp.json() == {"status": "unavailable"}
+
+    async def test_no_internal_details_exposed(self, client):
+        """Response must not contain internal infrastructure details."""
+        state = RateLimitState()
+        state.remaining = 4500
+        state.limit = 5000
+
+        with (
+            patch("api.routes.health.rate_limit_state", state),
+            patch("api.routes.health.github_breaker") as mock_breaker,
+        ):
+            mock_breaker.current_state = "closed"
+            resp = await client.get("/health")
+
         body = resp.json()
-        assert body["github_api"]["status"] == "unknown"
+        assert list(body.keys()) == ["status"]

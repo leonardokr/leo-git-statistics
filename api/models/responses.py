@@ -118,33 +118,10 @@ class FullStatsResponse(BaseModel):
     warnings: Optional[List[str]] = None
 
 
-class GitHubApiHealth(BaseModel):
-    """Health status of the GitHub API connection."""
-
-    status: str
-    rate_limit_remaining: Optional[int] = None
-    rate_limit_limit: Optional[int] = None
-    rate_limit_reset: Optional[str] = None
-
-
-class CacheHealth(BaseModel):
-    """Health status of the cache subsystem."""
-
-    backend: str = "memory"
-    entries: int = 0
-    maxsize: Optional[int] = None
-    hit_ratio: float = 0.0
-
-
 class HealthResponse(BaseModel):
     """Response model for health check."""
 
     status: str
-    version: str
-    uptime_seconds: float
-    github_api: GitHubApiHealth
-    cache: CacheHealth
-    circuit_breaker: str
 
 
 class PaginationMeta(BaseModel):
