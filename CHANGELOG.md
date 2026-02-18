@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/leonardokr/leo-git-statistics/compare/v2.1.0...v2.2.0) (2026-02-18)
+
+
+### Features
+
+* add latest floating tag to release workflow and update README ([7065dd4](https://github.com/leonardokr/leo-git-statistics/commit/7065dd4e7632fe0e160505b7bf80bf39edbbc796))
+
 ## [2.1.0](https://github.com/leonardokr/leo-git-statistics/compare/v2.0.4...v2.1.0) (2026-02-18)
 
 
