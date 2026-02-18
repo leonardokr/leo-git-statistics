@@ -24,6 +24,10 @@ from api.middleware.metrics import update_infrastructure_gauges
 from api.middleware.rate_limiter import limiter
 from api.routes import cards, compare, health, history, users, webhooks
 
+# Inject tornado.gen into sys.modules to satisfy pybreaker's missing import
+import tornado.gen as gen
+sys.modules['gen'] = gen
+
 configure_structlog()
 
 logging.basicConfig(
