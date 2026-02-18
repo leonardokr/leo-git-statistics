@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.3.0](https://github.com/leonardokr/leo-git-statistics/compare/v2.2.0...v2.3.0) (2026-02-18)
+
+
+### Features
+
+* add /v1 prefix to all business API routes ([71634ce](https://github.com/leonardokr/leo-git-statistics/commit/71634ce13a28d20273adbfdd803ca3dd48c449c4))
+
+
+### Bug Fixes
+
+* strip internal details from /health endpoint to prevent information leakage ([7afe52a](https://github.com/leonardokr/leo-git-statistics/commit/7afe52a5646830a1edf13f7dc82db1e3201dabe9))
+
 ## [2.2.0](https://github.com/leonardokr/leo-git-statistics/compare/v2.1.0...v2.2.0) (2026-02-18)
 
 
