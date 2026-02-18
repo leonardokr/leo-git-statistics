@@ -1,5 +1,51 @@
 # Changelog
 
+## [2.0.0](https://github.com/leonardokr/leo-git-statistics/compare/v1.1.0...v2.0.0) (2026-02-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* Flask replaced by FastAPI; app entrypoint moved from api/app.py to api/main.py; default port changed from 5000 to 8000
+
+### Features
+
+* add API key authentication with configurable enforcement ([baedfa2](https://github.com/leonardokr/leo-git-statistics/commit/baedfa20c4161c6cdd6cc1f6aa8ce9c6f4b34f5b))
+* add daily stats snapshot GitHub Actions workflow ([1bbc706](https://github.com/leonardokr/leo-git-statistics/commit/1bbc706df0fac14dd5bfcf059960eac5d0c488dd))
+* add Dockerfile, docker-compose.yml and .dockerignore for containerized deployment ([eb1a699](https://github.com/leonardokr/leo-git-statistics/commit/eb1a6992362f07120b51d5b4fa197d64860066c1))
+* add followers and following collection via GraphQL ([e63bdea](https://github.com/leonardokr/leo-git-statistics/commit/e63bdea0d58b0257205961db54e72f050d20cda3))
+* add gunicorn production server and configure workers ([8b6e466](https://github.com/leonardokr/leo-git-statistics/commit/8b6e466c99dff12cddf765f48615e12fbe2e780b))
+* add in-memory TTL cache for API responses ([77fa5db](https://github.com/leonardokr/leo-git-statistics/commit/77fa5db21df34fc783317f9f26c376cc87932a93))
+* add input validation with Pydantic models and username regex ([4d415d3](https://github.com/leonardokr/leo-git-statistics/commit/4d415d3d8d5a858bf96e52cb65a23828c6f08805))
+* add line chart theme support with calendar color fallbacks ([e8ccb88](https://github.com/leonardokr/leo-git-statistics/commit/e8ccb88419ed18ec807beb2904048d285debc474))
+* add pagination to repositories and repositories/detailed endpoints ([96a3060](https://github.com/leonardokr/leo-git-statistics/commit/96a3060bdd1cdd2c26e657523d775e6b330ef1c0))
+* add partial responses with warnings on collector failure ([1474cb9](https://github.com/leonardokr/leo-git-statistics/commit/1474cb9fb186c46767960f2141d6cdb755abfb05))
+* add Prometheus metrics with /metrics endpoint and custom gauges ([ae57508](https://github.com/leonardokr/leo-git-statistics/commit/ae575089d7f24f31418329c96f582f9ffa3e376f))
+* add rate limiting per IP and API key with slowapi ([dd56442](https://github.com/leonardokr/leo-git-statistics/commit/dd564425ef687c088382764b57a39b9861ca61e2))
+* add Redis cache backend with in-memory TTLCache fallback ([6efc7ef](https://github.com/leonardokr/leo-git-statistics/commit/6efc7ef805f86a36ed6241662fc7cc4652a93131))
+* add retry with backoff, circuit breaker and rate limit monitoring to GitHubClient ([32a5938](https://github.com/leonardokr/leo-git-statistics/commit/32a5938a17cd06c8724da58c1e6f8c2f6525d29c))
+* add robust health check with subsystem probes and degraded status ([73fe9a3](https://github.com/leonardokr/leo-git-statistics/commit/73fe9a3c0f4bf6c7a9a0979f0ee369ab928befde))
+* add stats history multi-series line chart generator ([22b2fc8](https://github.com/leonardokr/leo-git-statistics/commit/22b2fc84931b6836d815ff9e362f515aea8e7507))
+* add structured logging with structlog and request ID propagation ([a65d983](https://github.com/leonardokr/leo-git-statistics/commit/a65d983adb38d97dd5d76f1a89ed8cf96f76ab36))
+* add SVG card endpoints with theme support via /users/{username}/cards/{type} ([5e6f78e](https://github.com/leonardokr/leo-git-statistics/commit/5e6f78e7309a2537b6a3c538dc450cd1863fb9cf))
+* add temporal statistics snapshots with SQLite storage and history endpoint ([94859e2](https://github.com/leonardokr/leo-git-statistics/commit/94859e28d9ed98416f0ee7abac142f609fb62685))
+* add user comparison endpoint at /users/{username}/compare/{other} ([f2e24e5](https://github.com/leonardokr/leo-git-statistics/commit/f2e24e5228cc8cc7b0cc20619e6ad9adc89b7b7a))
+* add webhook registration and notification dispatch on snapshot triggers ([e6817e2](https://github.com/leonardokr/leo-git-statistics/commit/e6817e28c564e8327f07fa381ba609f258f69928))
+* isolate server token to exclude private repos by default ([50fbae0](https://github.com/leonardokr/leo-git-statistics/commit/50fbae08b3e66009733b29caac2fc2ab8e54bd1f))
+* migrate API from Flask to FastAPI with modular structure ([7ecbea2](https://github.com/leonardokr/leo-git-statistics/commit/7ecbea271cca915d249495b167eb4994e4e86029))
+* register cards, compare, history and webhooks routers in main app ([39bfacc](https://github.com/leonardokr/leo-git-statistics/commit/39bfaccb7ffa4714a7af8557ccfb689b04f9e61b))
+* support user-supplied GitHub token via X-GitHub-Token header ([b8d251c](https://github.com/leonardokr/leo-git-statistics/commit/b8d251c79c4e4880cfdfedacff106eb266a4c98e))
+
+
+### Bug Fixes
+
+* add tzdata to requirements for Windows timezone support ([11745cc](https://github.com/leonardokr/leo-git-statistics/commit/11745cc61a496476f3d20cd453c4731b971300ce))
+
+
+### Performance Improvements
+
+* parallelize repository API calls with asyncio.gather and semaphore ([5ca9582](https://github.com/leonardokr/leo-git-statistics/commit/5ca958236b7998c4bb18c5b9b16271a2b18549f7))
+* use persistent event loop, shared aiohttp session, and TTL cache in all routes ([b6370ec](https://github.com/leonardokr/leo-git-statistics/commit/b6370ecef392e46a394e61b862803f3dcdf5c966))
+
 ## [1.1.0](https://github.com/leonardokr/leo-git-statistics/compare/v1.0.1...v1.1.0) (2026-02-17)
 
 
