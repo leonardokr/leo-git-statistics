@@ -19,6 +19,7 @@ import asyncio
 import json
 import logging
 import os
+import yaml
 
 from aiohttp import ClientSession
 
@@ -48,7 +49,24 @@ async def generate_static_api(username: str, output_dir: str = "api-data"):
     if not token:
         raise ValueError("GITHUB_TOKEN or ACCESS_TOKEN environment variable not set")
 
-    env = Environment(username=username, access_token=token)
+    config_path = os.getenv("CONFIG_PATH", "config.yml")
+    config_overrides_raw = os.getenv("CONFIG_OVERRIDES", "").strip()
+    config_overrides = None
+
+    if config_overrides_raw:
+        parsed = yaml.safe_load(config_overrides_raw)
+        if parsed is None:
+            parsed = {}
+        if not isinstance(parsed, dict):
+            raise ValueError("CONFIG_OVERRIDES must be a YAML object")
+        config_overrides = parsed
+
+    env = Environment(
+        username=username,
+        access_token=token,
+        config_path=config_path,
+        config_overrides=config_overrides,
+    )
 
     session = ClientSession()
     collector = StatsCollector(env, session)

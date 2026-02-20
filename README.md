@@ -629,8 +629,16 @@ Use the `api/generate_static_api.py` script to create static JSON files for all 
 ```bash
 export GITHUB_TOKEN=your_token
 export GITHUB_ACTOR=your_username
+export CONFIG_PATH=config.yml
+export CONFIG_OVERRIDES='
+stats_generation:
+  exclude_contrib_repos: "false"
+  mask_private_repos: "true"
+'
 python api/generate_static_api.py
 ```
+
+`CONFIG_OVERRIDES` is a YAML object merged at runtime over `CONFIG_PATH`.
 
 This creates:
 ```
@@ -679,6 +687,10 @@ jobs:
         env:
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.repository_owner }}
+          CONFIG_OVERRIDES: |
+            stats_generation:
+              exclude_contrib_repos: "false"
+              mask_private_repos: "true"
         run: python api/generate_static_api.py
 
       - name: Deploy to GitHub Pages

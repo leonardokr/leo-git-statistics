@@ -10,6 +10,8 @@ Set OUTPUT_SUFFIX to add a suffix to output filenames (e.g., "_sample" for READM
 
 import asyncio
 import logging
+import os
+import yaml
 
 from src.core.config import Config
 from src.core.mock_stats import MockStatsCollector, MockEnvironment
@@ -32,12 +34,40 @@ logger = logging.getLogger(__name__)
 OUTPUT_SUFFIX = ""
 
 
+def _load_runtime_options(config_path: str = "config.yml") -> dict:
+    with open(config_path, "r", encoding="utf-8") as fh:
+        config = yaml.safe_load(fh)
+    if not isinstance(config, dict):
+        raise ValueError("config.yml must contain a YAML object at root")
+
+    stats = config["stats_generation"]
+
+    return {
+        "timezone": config["timezone"],
+        "show_total_contributions": stats["show_total_contributions"],
+        "show_repositories": stats["show_repositories"],
+        "show_lines_changed": stats["show_lines_changed"],
+        "show_avg_percent": stats["show_avg_percent"],
+        "show_collaborators": stats["show_collaborators"],
+        "show_contributors": stats["show_contributors"],
+        "show_views": stats["show_views"],
+        "show_clones": stats["show_clones"],
+        "show_forks": stats["show_forks"],
+        "show_stars": stats["show_stars"],
+        "show_pull_requests": stats["show_pull_requests"],
+        "show_issues": stats["show_issues"],
+        "mask_private_repos": stats["mask_private_repos"],
+    }
+
+
 async def main():
     """Generate test SVG images with mock data."""
     config = Config()
     formatter = StatsFormatter()
     template_engine = SVGTemplate(config.TEMPLATE_PATH, config.OUTPUT_DIR)
-    environment = MockEnvironment()
+    runtime_options = _load_runtime_options()
+    os.environ["MASK_PRIVATE_REPOS"] = str(runtime_options["mask_private_repos"])
+    environment = MockEnvironment(**runtime_options)
     mock_stats = MockStatsCollector()
 
     languages_gen = LanguagesGenerator(config, mock_stats, formatter, template_engine)

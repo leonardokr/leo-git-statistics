@@ -3,30 +3,32 @@
 import os
 from typing import Dict, Any, List, Set, Tuple
 from src.utils.privacy import mask_weekly_commits, should_mask_private
+from src.utils.helpers import to_bool
 
 
 class MockDisplaySettings:
     """Mock display settings for testing."""
 
     def __init__(self, **kwargs):
-        self.show_total_contributions = kwargs.get("show_total_contributions", True)
-        self.show_repositories = kwargs.get("show_repositories", True)
-        self.show_lines_changed = kwargs.get("show_lines_changed", True)
-        self.show_avg_percent = kwargs.get("show_avg_percent", True)
-        self.show_collaborators = kwargs.get("show_collaborators", True)
-        self.show_contributors = kwargs.get("show_contributors", True)
-        self.show_views = kwargs.get("show_views", True)
-        self.show_clones = kwargs.get("show_clones", True)
-        self.show_forks = kwargs.get("show_forks", True)
-        self.show_stars = kwargs.get("show_stars", True)
-        self.show_pull_requests = kwargs.get("show_pull_requests", True)
-        self.show_issues = kwargs.get("show_issues", True)
+        self.show_total_contributions = to_bool(kwargs.get("show_total_contributions"), True)
+        self.show_repositories = to_bool(kwargs.get("show_repositories"), True)
+        self.show_lines_changed = to_bool(kwargs.get("show_lines_changed"), True)
+        self.show_avg_percent = to_bool(kwargs.get("show_avg_percent"), True)
+        self.show_collaborators = to_bool(kwargs.get("show_collaborators"), True)
+        self.show_contributors = to_bool(kwargs.get("show_contributors"), True)
+        self.show_views = to_bool(kwargs.get("show_views"), True)
+        self.show_clones = to_bool(kwargs.get("show_clones"), True)
+        self.show_forks = to_bool(kwargs.get("show_forks"), True)
+        self.show_stars = to_bool(kwargs.get("show_stars"), True)
+        self.show_pull_requests = to_bool(kwargs.get("show_pull_requests"), True)
+        self.show_issues = to_bool(kwargs.get("show_issues"), True)
 
 
 class MockEnvironment:
     """Mock Environment for testing."""
 
     def __init__(self, **kwargs):
+        self.timezone = kwargs.get("timezone", "UTC") or "UTC"
         self.display = MockDisplaySettings(**kwargs)
 
 

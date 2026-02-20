@@ -1,8 +1,7 @@
 #!/usr/bin/python3
 """Environment and configuration management."""
 
-from os import getenv
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import yaml
 
@@ -20,6 +19,8 @@ class Environment:
                  repo_filter: RepositoryFilter = None,
                  traffic: TrafficStats = None,
                  display: DisplaySettings = None,
+                 config_path: str = "config.yml",
+                 config_overrides: Optional[Dict[str, Any]] = None,
                  **kwargs):
         """
         :param username: GitHub username.
@@ -31,7 +32,10 @@ class Environment:
         """
         self.username = username
         self.access_token = access_token
-        config = self._load_config()
+
+        config = self._load_config(config_path)
+        if isinstance(config_overrides, dict) and config_overrides:
+            self._deep_merge(config, config_overrides)
         config_stats = config.get("stats_generation", {}) or {}
         resolved_options = self._resolve_options(config, config_stats, kwargs)
 
@@ -57,6 +61,14 @@ class Environment:
             return {}
 
     @staticmethod
+    def _deep_merge(dst: Dict[str, Any], src: Dict[str, Any]) -> None:
+        for key, value in (src or {}).items():
+            if isinstance(value, dict) and isinstance(dst.get(key), dict):
+                Environment._deep_merge(dst[key], value)
+            else:
+                dst[key] = value
+
+    @staticmethod
     def _resolve_options(
         config: Dict[str, Any],
         stats: Dict[str, Any],
@@ -67,7 +79,7 @@ class Environment:
         Source of truth is ``config.yml``. Explicit kwargs override config values.
         """
         resolved = {
-            "timezone": config.get("timezone", getenv("TIMEZONE")) or "UTC",
+            "timezone": config.get("timezone") or "UTC",
             "exclude_repos": stats.get("excluded_repos", ""),
             "exclude_langs": stats.get("excluded_langs", ""),
             "include_forked_repos": stats.get("include_forked_repos", "false"),
