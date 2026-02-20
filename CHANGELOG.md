@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.2](https://github.com/leonardokr/leo-git-statistics/compare/v2.7.1...v2.7.2) (2026-02-20)
+
+
+### Bug Fixes
+
+* harden environment config parsing for invalid stats_generation types ([665513e](https://github.com/leonardokr/leo-git-statistics/commit/665513e418a02b29dde8b34821e8dd0ffb03e1ec))
+
 ## [2.7.1](https://github.com/leonardokr/leo-git-statistics/compare/v2.7.0...v2.7.1) (2026-02-20)
 
 
