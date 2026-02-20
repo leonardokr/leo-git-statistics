@@ -65,8 +65,7 @@ async def resolve_github_token(
     private repositories are visible.  Otherwise a 403 is returned.
 
     When no user token is provided, the server's ``GITHUB_TOKEN`` is used
-    in restricted mode (private repos excluded unless ``ALLOW_PRIVATE_REPOS``
-    is enabled).
+    in restricted mode (private repositories excluded).
 
     :param request: The incoming request.
     :param username: GitHub username from the URL path.

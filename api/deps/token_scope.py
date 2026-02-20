@@ -1,7 +1,5 @@
 """Token scope resolution for controlling private repository visibility."""
 
-import os
-
 from src.core.repository_filter import RepositoryFilter
 
 
@@ -13,13 +11,15 @@ def resolve_repo_filter(*, user_owns_token: bool) -> RepositoryFilter:
     server token operates in restricted mode and private repos are excluded
     regardless of the ``EXCLUDE_PRIVATE_REPOS`` environment variable.
 
+    Private repositories are allowed only when a caller provides a validated
+    `X-GitHub-Token` that belongs to the requested username. Server token
+    requests are always restricted to public repositories.
+
     :param user_owns_token: True when the request carries a validated user token.
     :returns: A configured RepositoryFilter instance.
     :rtype: RepositoryFilter
     """
-    allow_private = os.getenv("ALLOW_PRIVATE_REPOS", "false").lower() == "true"
-
     if user_owns_token:
         return RepositoryFilter()
 
-    return RepositoryFilter(exclude_private_repos=True if not allow_private else None)
+    return RepositoryFilter(exclude_private_repos=True)
