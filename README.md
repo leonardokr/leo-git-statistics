@@ -223,8 +223,9 @@ Choose from **25+ built-in themes** or create your own:
 ## Quick Start
 
 ### 1. Choose Mode
-- **Action mode (recommended):** use `uses: leonardokr/leo-git-statistics@v2` from your profile repo.
-- **Clone/template mode:** clone this repo when you need to change source code, templates, generators, or API internals.
+Pick the mode that matches your goal in **When to Use Each Mode** above.
+- For profile card generation, use the reusable action (`uses: leonardokr/leo-git-statistics@v2`).
+- For source-level customization, clone/template this repository.
 
 ### 2. Create a Personal Access Token
 1. Go to **Settings** -> **Developer settings** -> **Personal access tokens** -> **Tokens (classic)**
