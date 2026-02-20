@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.7.1](https://github.com/leonardokr/leo-git-statistics/compare/v2.7.0...v2.7.1) (2026-02-20)
+
+
+### Bug Fixes
+
+* **action:** remove heredoc from config override merge step ([f3024cf](https://github.com/leonardokr/leo-git-statistics/commit/f3024cf55dda8f964458302e90dbd5ef8c57d62e))
+* enforce owner-only repos when exclude_contrib_repos is enabled ([aa9575b](https://github.com/leonardokr/leo-git-statistics/commit/aa9575bd4f53926dab600b8b0dd693d5c2149bbf))
+
 ## [2.7.0](https://github.com/leonardokr/leo-git-statistics/compare/v2.6.0...v2.7.0) (2026-02-20)
 
 
