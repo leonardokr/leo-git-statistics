@@ -44,8 +44,8 @@
 
 | Mode | Use when | Data source | Config source |
 |---|---|---|---|
-| `generate.py` | You want SVGs directly from GitHub APIs | Live GitHub API | `config.yml` (or Action `config-overrides`) |
-| `generate.py` + `STATIC_API_DATA_DIR` | You want SVGs from pre-generated JSON (no live API calls during render). Requires a workflow in the consumer repository to generate/update `api-data` first. | `api-data/users/{username}/*.json` | `config.yml` (or Action `config-overrides`) |
+| `generate.py` | You want SVGs directly from GitHub APIs | Live GitHub API | `config.yml` (if you cloned the repo) or Action `config-overrides` (if you use a workflow) |
+| `generate.py` + `STATIC_API_DATA_DIR` | You want SVGs from pre-generated JSON (no live API calls during render). Requires a workflow in the consumer repository to generate/update `api-data` first. | `api-data/users/{username}/*.json` | `config.yml` (if you cloned the repo) or Action `config-overrides` (if you use a workflow) |
 | `generate_test.py` | You want sample/mock SVG output for testing templates/themes | Mock data in code | `config.yml` |
 | `api/` (FastAPI) | You want HTTP endpoints/cards for external consumers | Live GitHub API | Server env + runtime scope rules |
 | `api/generate_static_api.py` | You want to publish static JSON for GitHub Pages/CDN | Live GitHub API at generation time | `config.yml` + optional `CONFIG_OVERRIDES` |
