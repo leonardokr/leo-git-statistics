@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.4](https://github.com/leonardokr/leo-git-statistics/compare/v2.7.3...v2.7.4) (2026-02-20)
+
+
+### Bug Fixes
+
+* **action:** resolve static-api-data-dir relative to workspace ([c86d5f3](https://github.com/leonardokr/leo-git-statistics/commit/c86d5f38864d951e1b3cdfd6715c0ab8c915b581))
+
 ## [2.7.3](https://github.com/leonardokr/leo-git-statistics/compare/v2.7.2...v2.7.3) (2026-02-20)
 
 
