@@ -2,6 +2,9 @@
 """Environment and configuration management."""
 
 from os import getenv
+from typing import Any, Dict
+
+import yaml
 
 from src.db.db import GitRepoStatsDB
 from src.core.repository_filter import RepositoryFilter
@@ -28,15 +31,72 @@ class Environment:
         """
         self.username = username
         self.access_token = access_token
-        self.timezone = kwargs.get("timezone", getenv("TIMEZONE")) or "UTC"
+        config = self._load_config()
+        config_stats = config.get("stats_generation", {}) or {}
+        resolved_options = self._resolve_options(config, config_stats, kwargs)
+
+        self.timezone = resolved_options.get("timezone", "UTC") or "UTC"
 
         self._db = db or GitRepoStatsDB()
-        self.filter = repo_filter or RepositoryFilter(**kwargs)
-        self.traffic = traffic or TrafficStats(self._db, **kwargs)
-        self.display = display or DisplaySettings(**kwargs)
+        self.filter = repo_filter or RepositoryFilter(**resolved_options)
+        self.traffic = traffic or TrafficStats(self._db, **resolved_options)
+        self.display = display or DisplaySettings(**resolved_options)
 
-        more_collabs = kwargs.get("more_collabs", getenv("MORE_COLLABS"))
+        more_collabs = resolved_options.get("more_collabs", 0)
         try:
             self.more_collabs = int(more_collabs) if more_collabs else 0
         except ValueError:
             self.more_collabs = 0
+
+    @staticmethod
+    def _load_config(config_path: str = "config.yml") -> dict:
+        try:
+            with open(config_path, "r", encoding="utf-8") as fh:
+                return yaml.safe_load(fh) or {}
+        except Exception:
+            return {}
+
+    @staticmethod
+    def _resolve_options(
+        config: Dict[str, Any],
+        stats: Dict[str, Any],
+        explicit: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Resolve runtime options from config and explicit overrides.
+
+        Source of truth is ``config.yml``. Explicit kwargs override config values.
+        """
+        resolved = {
+            "timezone": config.get("timezone", getenv("TIMEZONE")) or "UTC",
+            "exclude_repos": stats.get("excluded_repos", ""),
+            "exclude_langs": stats.get("excluded_langs", ""),
+            "include_forked_repos": stats.get("include_forked_repos", "false"),
+            "exclude_contrib_repos": stats.get("exclude_contrib_repos", "false"),
+            "exclude_archive_repos": stats.get("exclude_archive_repos", "true"),
+            "exclude_private_repos": stats.get("exclude_private_repos", "false"),
+            "exclude_public_repos": stats.get("exclude_public_repos", "false"),
+            "mask_private_repos": stats.get("mask_private_repos", "true"),
+            "store_repo_view_count": stats.get("store_repo_views", "true"),
+            "store_repo_clone_count": stats.get("store_repo_clones", "true"),
+            "more_collabs": stats.get("more_collabs", 0),
+            "manually_added_repos": stats.get("manually_added_repos", ""),
+            "only_included_repos": stats.get("only_included_repos", ""),
+            "show_total_contributions": stats.get("show_total_contributions", "true"),
+            "show_repositories": stats.get("show_repositories", "true"),
+            "show_lines_changed": stats.get("show_lines_changed", "true"),
+            "show_avg_percent": stats.get("show_avg_percent", "true"),
+            "show_collaborators": stats.get("show_collaborators", "true"),
+            "show_contributors": stats.get("show_contributors", "true"),
+            "show_views": stats.get("show_views", "true"),
+            "show_clones": stats.get("show_clones", "true"),
+            "show_forks": stats.get("show_forks", "true"),
+            "show_stars": stats.get("show_stars", "true"),
+            "show_pull_requests": stats.get("show_pull_requests", "true"),
+            "show_issues": stats.get("show_issues", "true"),
+        }
+
+        for key, value in explicit.items():
+            if value is not None and value != "":
+                resolved[key] = value
+
+        return resolved

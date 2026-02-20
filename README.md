@@ -261,11 +261,14 @@ jobs:
           github-token: ${{ secrets.PROFILE_STATS_TOKEN }}
           github-username: leonardokr
           output-dir: profile
-          themes: dark,light
-          excluded-repos: owner/repo1,owner/repo2
-          exclude-archive-repos: "true"
-          show-stars: "true"
-          show-issues: "false"
+          config-path: config.yml
+          config-overrides: |
+            timezone: America/Sao_Paulo
+            themes:
+              enabled: [dark, light]
+            stats_generation:
+              exclude_contrib_repos: "true"
+              mask_private_repos: "true"
 
       - name: Keep README-friendly filenames
         run: |
@@ -301,51 +304,72 @@ If you already generated static files with `api/generate_static_api.py`, you can
     github-token: ${{ secrets.PROFILE_STATS_TOKEN }}
     github-username: leonardokr
     output-dir: profile
-    themes: dark,light
+    config-path: config.yml
     static-api-data-dir: api-data
+    config-overrides: |
+      themes:
+        enabled: [dark, light]
 ```
 
 Under the hood, this maps to env `STATIC_API_DATA_DIR` in the action runtime.
 ### Action Inputs (`with:`)
 
-| Input                      | Required | Default                    | Description                                              |
-| ---------------------------| ---------| ---------------------------| ---------------------------------------------------------|
-| `github-token`             | Yes      | -                          | GitHub token consumed as `ACCESS_TOKEN`.                 |
-| `github-username`          | No       | `github.actor`             | GitHub user to collect stats for.                        |
-| `python-version`           | No       | `3.11`                     | Python runtime version.                                  |
-| `output-dir`               | No       | `generated_images`         | Destination folder in caller repository.                 |
-| `themes`                   | No       | from `config.yml`          | Comma-separated themes (example: `dark,light`) or `all`. |
-| `timezone`                 | No       | from `config.yml` or `UTC` | IANA timezone (example: `America/Sao_Paulo`).            |
-| `excluded-repos`           | No       | from `config.yml`          | Comma-separated repos to exclude.                        |
-| `excluded-langs`           | No       | from `config.yml`          | Comma-separated languages to exclude.                    |
-| `include-forked-repos`     | No       | from `config.yml`          | `true` or `false`.                                       |
-| `exclude-contrib-repos`    | No       | from `config.yml`          | `true` or `false`.                                       |
-| `exclude-archive-repos`    | No       | from `config.yml`          | `true` or `false`.                                       |
-| `exclude-private-repos`    | No       | from `config.yml`          | `true` or `false`.                                       |
-| `exclude-public-repos`     | No       | from `config.yml`          | `true` or `false`.                                       |
-| `mask-private-repos`       | No       | from `config.yml`          | `true` or `false`; masks private repo names/details in output payloads/cards. |
-| `store-repo-views`         | No       | from `config.yml`          | `true` or `false`.                                       |
-| `store-repo-clones`        | No       | from `config.yml`          | `true` or `false`.                                       |
-| `more-collabs`             | No       | from `config.yml`          | Integer to manually add collaborator count.              |
-| `manually-added-repos`     | No       | from `config.yml`          | Comma-separated `owner/repo` list to include.            |
-| `only-included-repos`      | No       | from `config.yml`          | If set, only these `owner/repo` entries are used.        |
-| `show-total-contributions` | No       | from `config.yml`          | `true` or `false`.                                       |
-| `show-repositories`        | No       | from `config.yml`          | `true` or `false`.                                       |
-| `show-lines-changed`       | No       | from `config.yml`          | `true` or `false`.                                       |
-| `show-avg-percent`         | No       | from `config.yml`          | `true` or `false`.                                       |
-| `show-collaborators`       | No       | from `config.yml`          | `true` or `false`.                                       |
-| `show-contributors`        | No       | from `config.yml`          | `true` or `false`.                                       |
-| `show-views`               | No       | from `config.yml`          | `true` or `false`.                                       |
-| `show-clones`              | No       | from `config.yml`          | `true` or `false`.                                       |
-| `show-forks`               | No       | from `config.yml`          | `true` or `false`.                                       |
-| `show-stars`               | No       | from `config.yml`          | `true` or `false`.                                       |
-| `show-pull-requests`       | No       | from `config.yml`          | `true` or `false`.                                       |
-| `show-issues`              | No       | from `config.yml`          | `true` or `false`.                                       |
-| `static-api-data-dir`      | No       | -                          | Static JSON root path (example: `api-data`) to enable `STATIC_API_DATA_DIR`. |
+| Input                  | Required | Default            | Description |
+| ---------------------- | -------- | ------------------ | ----------- |
+| `github-token`         | Yes      | -                  | GitHub token consumed as `ACCESS_TOKEN`. |
+| `github-username`      | No       | `github.actor`     | GitHub user to collect stats for. |
+| `python-version`       | No       | `3.11`             | Python runtime version. |
+| `output-dir`           | No       | `generated_images` | Destination folder in caller repository. |
+| `config-path`          | No       | `config.yml`       | Path to the config file in caller repository. |
+| `config-overrides`     | No       | -                  | YAML fragment merged into config at runtime. |
+| `static-api-data-dir`  | No       | -                  | Static JSON root path (example: `api-data`) to enable `STATIC_API_DATA_DIR`. |
+
+## Configuration via Action (No Clone)
+
+If you use only `uses: leonardokr/leo-git-statistics@v2`, you can configure behavior with:
+- `with: config-path` (read a config file from the caller repository, optional)
+- `with: config-overrides` (inline YAML overrides)
+
+If `config-path` does not exist in the caller repository, the action still runs using built-in defaults + any `config-overrides`.
+
+### Supported `config-overrides` Keys
+
+```yaml
+timezone:
+themes:
+  enabled:
+
+stats_generation:
+  excluded_repos:
+  excluded_langs:
+  include_forked_repos:
+  exclude_contrib_repos:
+  exclude_archive_repos:
+  exclude_private_repos:
+  exclude_public_repos:
+  mask_private_repos:
+  store_repo_views:
+  store_repo_clones:
+  more_collabs:
+  manually_added_repos:
+  only_included_repos:
+  show_total_contributions:
+  show_repositories:
+  show_lines_changed:
+  show_avg_percent:
+  show_collaborators:
+  show_contributors:
+  show_views:
+  show_clones:
+  show_forks:
+  show_stars:
+  show_pull_requests:
+  show_issues:
+```
 
 ## Repository Configuration (config.yml)
 
-This section is for repository-level configuration in `config.yml` (mainly for template/advanced customization). For normal usage via Action, prefer workflow `with:` inputs shown below.
+This section is for users who cloned the repository (or use it as template) and want to edit `config.yml` directly.
 
 ### Theme Selection
 

@@ -12,32 +12,52 @@ from src.utils.helpers import to_bool
 class TrafficStats:
     """Manages repository traffic statistics (views and clones)."""
 
-    __DATE_FORMAT = '%Y-%m-%d'
+    __DATE_FORMAT = "%Y-%m-%d"
 
     def __init__(self, db: GitRepoStatsDB, **kwargs):
         self._db = db
 
-        (self.store_repo_view_count, self.repo_views,
-         self.repo_last_viewed, self.repo_first_viewed) = self._init_metric(
+        (
+            self.store_repo_view_count,
+            self.repo_views,
+            self.repo_last_viewed,
+            self.repo_first_viewed,
+        ) = self._init_metric(
             kwargs,
-            store_kwarg="store_repo_view_count", store_env="STORE_REPO_VIEWS",
-            count_kwarg="repo_views", count_env="REPO_VIEWS",
-            last_kwarg="repo_last_viewed", last_env="LAST_VIEWED",
-            first_kwarg="repo_first_viewed", first_env="FIRST_VIEWED",
-            db_count=self._db.views, db_to=self._db.views_to_date, db_from=self._db.views_from_date,
+            store_kwarg="store_repo_view_count",
+            store_env="STORE_REPO_VIEWS",
+            count_kwarg="repo_views",
+            count_env="REPO_VIEWS",
+            last_kwarg="repo_last_viewed",
+            last_env="LAST_VIEWED",
+            first_kwarg="repo_first_viewed",
+            first_env="FIRST_VIEWED",
+            db_count=self._db.views,
+            db_to=self._db.views_to_date,
+            db_from=self._db.views_from_date,
             set_count=self._db.set_views_count,
             set_from=self._db.set_views_from_date,
             set_to=self._db.set_views_to_date,
         )
 
-        (self.store_repo_clone_count, self.repo_clones,
-         self.repo_last_cloned, self.repo_first_cloned) = self._init_metric(
+        (
+            self.store_repo_clone_count,
+            self.repo_clones,
+            self.repo_last_cloned,
+            self.repo_first_cloned,
+        ) = self._init_metric(
             kwargs,
-            store_kwarg="store_repo_clone_count", store_env="STORE_REPO_CLONES",
-            count_kwarg="repo_clones", count_env="REPO_CLONES",
-            last_kwarg="repo_last_cloned", last_env="LAST_CLONED",
-            first_kwarg="repo_first_cloned", first_env="FIRST_CLONED",
-            db_count=self._db.clones, db_to=self._db.clones_to_date, db_from=self._db.clones_from_date,
+            store_kwarg="store_repo_clone_count",
+            store_env="STORE_REPO_CLONES",
+            count_kwarg="repo_clones",
+            count_env="REPO_CLONES",
+            last_kwarg="repo_last_cloned",
+            last_env="LAST_CLONED",
+            first_kwarg="repo_first_cloned",
+            first_env="FIRST_CLONED",
+            db_count=self._db.clones,
+            db_to=self._db.clones_to_date,
+            db_from=self._db.clones_from_date,
             set_count=self._db.set_clones_count,
             set_from=self._db.set_clones_from_date,
             set_to=self._db.set_clones_to_date,
@@ -46,16 +66,36 @@ class TrafficStats:
     def _validate_date(self, date_str: str) -> str:
         """Validates date string format."""
         try:
-            if date_str == datetime.strptime(date_str, self.__DATE_FORMAT).strftime(self.__DATE_FORMAT):
+            if (
+                date_str
+                == datetime.strptime(date_str, self.__DATE_FORMAT).strftime(
+                    self.__DATE_FORMAT
+                )
+            ):
                 return date_str
         except (ValueError, TypeError):
             pass
         return ""
 
-    def _init_metric(self, kwargs, *, store_kwarg, store_env,
-                     count_kwarg, count_env, last_kwarg, last_env,
-                     first_kwarg, first_env, db_count, db_to, db_from,
-                     set_count, set_from, set_to) -> Tuple[bool, int, str, str]:
+    def _init_metric(
+        self,
+        kwargs,
+        *,
+        store_kwarg,
+        store_env,
+        count_kwarg,
+        count_env,
+        last_kwarg,
+        last_env,
+        first_kwarg,
+        first_env,
+        db_count,
+        db_to,
+        db_from,
+        set_count,
+        set_from,
+        set_to,
+    ) -> Tuple[bool, int, str, str]:
         """Initializes a single traffic metric (views or clones)."""
         store = to_bool(kwargs.get(store_kwarg, getenv(store_env)), default=True)
 
