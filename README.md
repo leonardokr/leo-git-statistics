@@ -256,6 +256,7 @@ Use the override channel that matches your chosen flow:
 - Reusable action step: `config-path` and/or `with: config-overrides`.
 - Static API script step (`api/generate_static_api.py`): `CONFIG_PATH` and/or `CONFIG_OVERRIDES`.
 
+
 ## Consumer Workflow Examples (Reusable Action)
 <details>
 <summary><b>Expand Action Workflows (Live API and Static JSON Render)</b></summary>
@@ -487,53 +488,11 @@ stats_generation:
 
 </details>
 
-## Versioning and Releases
-
-This repository uses automated releases with `release-please` on `main`.
-
-- Create changes in branches and merge with Conventional Commits.
-- `release-please` opens/updates a release PR with changelog entries.
-- When the release PR is merged, it creates a GitHub Release and a semver tag (`v1.2.3`).
-- The workflow also updates the floating major tag (`v1`, `v2`, ...) and the `latest` tag to the newest release.
-
-For consumers:
-
-- Use `@v2` for stable major updates with automatic minor/patch refreshes.
-- Use `@latest` to always track the newest release regardless of major version (may include breaking changes).
-- Pin exact versions (`@v2.0.3`) only when strict reproducibility is required.
-## Creating Custom Themes
-
-Add a new `.yml` file in `src/themes/`:
-
-```yaml
-# src/themes/my_theme.yml
-my_awesome_theme:
-  suffix: "MyAwesome"
-  colors:
-    bg_color: "#1a1b26"
-    title_color: "#7aa2f7"
-    text_color: "#a9b1d6"
-    icon_color: "#bb9af7"
-    percent_color: "#565f89"
-    border_color: "#292e42"
-    accent_color: "#9ece6a"
-    gradient_start: "#7aa2f7"
-    gradient_end: "#bb9af7"
-```
-
-Then enable it in `config.yml`:
-
-```yaml
-themes:
-  enabled:
-    - my_awesome_theme
-```
-
-## REST API
+## REST API (Hosted Service Mode)
 
 This project provides a **FastAPI-based async REST API** that exposes statistics as JSON and SVG cards. Built for production with caching, authentication, rate limiting, structured logging, and Prometheus metrics.
 
-> **Note:** The API requires backend hosting (Docker, Render, Railway, etc.). It cannot run on GitHub Pages. For static sites, see the static JSON generation option below.
+> **Note:** The API requires backend hosting (Docker, Render, Railway, etc.) and cannot run on GitHub Pages. For static sites, use the workflow mode in [Consumer Workflow Examples (Reusable Action)](#consumer-workflow-examples-reusable-action), especially [Generate SVGs from Static JSON (offline render mode)](#generate-svgs-from-static-json-offline-render-mode).
 
 <details>
 <summary><b>Click to view API Documentation</b></summary>
@@ -843,7 +802,7 @@ fetch('https://your-api.example.com/v1/users/leonardokr/repositories/detailed')
 ```
 
 **Option 3: Static JSON files (no backend needed)**
-- Generate JSON files via GitHub Actions in this repo
+- Generate JSON files via GitHub Actions in a consumer repository
 - Deploy to `gh-pages` branch
 - Your portfolio fetches: `https://username.github.io/leo-git-statistics/api/users/username/repositories.json`
 
@@ -889,6 +848,50 @@ CORS_ORIGINS=https://leonardokr.github.io,https://myportfolio.com
 ```
 
 </details>
+
+
+
+## Versioning and Releases
+
+This repository uses automated releases with `release-please` on `main`.
+
+- Create changes in branches and merge with Conventional Commits.
+- `release-please` opens/updates a release PR with changelog entries.
+- When the release PR is merged, it creates a GitHub Release and a semver tag (`v1.2.3`).
+- The workflow also updates the floating major tag (`v1`, `v2`, ...) and the `latest` tag to the newest release.
+
+For consumers:
+
+- Use `@v2` for stable major updates with automatic minor/patch refreshes.
+- Use `@latest` to always track the newest release regardless of major version (may include breaking changes).
+- Pin exact versions (`@v2.0.3`) only when strict reproducibility is required.
+## Creating Custom Themes
+
+Add a new `.yml` file in `src/themes/`:
+
+```yaml
+# src/themes/my_theme.yml
+my_awesome_theme:
+  suffix: "MyAwesome"
+  colors:
+    bg_color: "#1a1b26"
+    title_color: "#7aa2f7"
+    text_color: "#a9b1d6"
+    icon_color: "#bb9af7"
+    percent_color: "#565f89"
+    border_color: "#292e42"
+    accent_color: "#9ece6a"
+    gradient_start: "#7aa2f7"
+    gradient_end: "#bb9af7"
+```
+
+Then enable it in `config.yml`:
+
+```yaml
+themes:
+  enabled:
+    - my_awesome_theme
+```
 
 ## Architecture
 
