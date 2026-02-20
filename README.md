@@ -55,6 +55,11 @@ Overrides are explicit:
 - Action: `with: config-overrides`
 - Static API script: `CONFIG_OVERRIDES`
 
+These are two override channels for two different entry points:
+- `with: config-overrides` is consumed by the reusable GitHub Action (`uses: leonardokr/leo-git-statistics@v2`).
+- `CONFIG_OVERRIDES` is consumed by the static JSON generator script (`api/generate_static_api.py`).
+- In both cases, `config.yml` remains the base configuration and overrides are merged at runtime.
+
 Workflow example for this mode: [Generate SVGs from Static JSON (offline render mode)](#generate-svgs-from-static-json-offline-render-mode)
 
 ### Snapshot Data Flow
