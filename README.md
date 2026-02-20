@@ -213,21 +213,20 @@ Choose from **25+ built-in themes** or create your own:
 
 ## Quick Start
 
-### 1. Choose How You Want to Use It
-- Recommended: call this repository as a reusable GitHub Action from your profile repository.
-- Use **Use this template** only when you need advanced customization not exposed by action inputs (for example: editing generators, templates, themes source files, architecture, or custom business rules).
+### 1. Choose Mode
+- **Action mode (recommended):** use `uses: leonardokr/leo-git-statistics@v2` from your profile repo.
+- **Clone/template mode:** clone this repo when you need to change source code, templates, generators, or API internals.
 
 ### 2. Create a Personal Access Token
 1. Go to **Settings** -> **Developer settings** -> **Personal access tokens** -> **Tokens (classic)**
 2. Generate a new token with scopes: `repo`, `read:user`, `read:org`
 3. Copy the token
 
-### 3. Add Repository Secret
+### 3. Add Secret in Profile Repository
 1. In your profile repository (`<username>/<username>`): **Settings** -> **Secrets and variables** -> **Actions**
 2. Create secret named `PROFILE_STATS_TOKEN` with your token
 
-### 4. Add a Workflow in Your Profile Repository
-Use this action from your profile repository workflow:
+### 4. Add Workflow (Action Mode)
 
 ```yaml
 - name: Generate profile SVG stats
@@ -239,7 +238,7 @@ Use this action from your profile repository workflow:
 ```
 
 ### 5. Configure (Optional)
-Pass optional `with:` inputs in your profile workflow (see full list below in **Workflow Configuration (Profile Repository)**).
+Use `config-path` and/or `config-overrides` in the workflow.
 
 ## Workflow Configuration (Profile Repository)
 
@@ -285,11 +284,6 @@ jobs:
               exclude_contrib_repos: "true"
               mask_private_repos: "true"
 
-      - name: Keep README-friendly filenames
-        run: |
-          cp profile/overviewdark.svg profile/stats.svg
-          cp profile/languagesdark.svg profile/top-langs.svg
-
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
@@ -311,6 +305,11 @@ If you already generated static files with `api/generate_static_api.py`, you can
     GITHUB_TOKEN: ${{ secrets.PROFILE_STATS_TOKEN }}
     GITHUB_ACTOR: ${{ github.repository_owner }}
     SNAPSHOTS_DB_PATH: ${{ github.workspace }}/api-data/snapshots.db
+    CONFIG_OVERRIDES: |
+      timezone: America/Sao_Paulo
+      stats_generation:
+        exclude_contrib_repos: "true"
+        mask_private_repos: "true"
   run: python api/generate_static_api.py
 
 - name: Generate SVGs from static JSON
@@ -322,22 +321,26 @@ If you already generated static files with `api/generate_static_api.py`, you can
     config-path: config.yml
     static-api-data-dir: api-data
     config-overrides: |
+      timezone: America/Sao_Paulo
       themes:
         enabled: [dark, light]
+      stats_generation:
+        mask_private_repos: "true"
 ```
 
 Under the hood, this maps to env `STATIC_API_DATA_DIR` in the action runtime.
+Keep static-generation and render overrides aligned to avoid mismatched behavior.
 ### Action Inputs (`with:`)
 
-| Input                  | Required | Default            | Description |
-| ---------------------- | -------- | ------------------ | ----------- |
-| `github-token`         | Yes      | -                  | GitHub token consumed as `ACCESS_TOKEN`. |
-| `github-username`      | No       | `github.actor`     | GitHub user to collect stats for. |
-| `python-version`       | No       | `3.11`             | Python runtime version. |
-| `output-dir`           | No       | `generated_images` | Destination folder in caller repository. |
-| `config-path`          | No       | `config.yml`       | Path to the config file in caller repository. |
-| `config-overrides`     | No       | -                  | YAML fragment merged into config at runtime. |
-| `static-api-data-dir`  | No       | -                  | Static JSON root path (example: `api-data`) to enable `STATIC_API_DATA_DIR`. |
+| Input                 | Required | Default            | Description                                                                  |
+| -----------------------| ----------| --------------------| ------------------------------------------------------------------------------|
+| `github-token`        | Yes      | -                  | GitHub token consumed as `ACCESS_TOKEN`.                                     |
+| `github-username`     | No       | `github.actor`     | GitHub user to collect stats for.                                            |
+| `python-version`      | No       | `3.11`             | Python runtime version.                                                      |
+| `output-dir`          | No       | `generated_images` | Destination folder in caller repository.                                     |
+| `config-path`         | No       | `config.yml`       | Path to the config file in caller repository.                                |
+| `config-overrides`    | No       | -                  | YAML fragment merged into config at runtime.                                 |
+| `static-api-data-dir` | No       | -                  | Static JSON root path (example: `api-data`) to enable `STATIC_API_DATA_DIR`. |
 
 ## Configuration via Action (No Clone)
 
@@ -345,7 +348,7 @@ If you use only `uses: leonardokr/leo-git-statistics@v2`, you can configure beha
 - `with: config-path` (read a config file from the caller repository, optional)
 - `with: config-overrides` (inline YAML overrides)
 
-If `config-path` does not exist in the caller repository, the action still runs using built-in defaults + any `config-overrides`.
+If `config-path` does not exist in the caller repository, the action uses its bundled `config.yml` as base and then applies `config-overrides`.
 
 ### Supported `config-overrides` Keys
 
@@ -385,6 +388,40 @@ stats_generation:
 ## Repository Configuration (config.yml)
 
 This section is for users who cloned the repository (or use it as template) and want to edit `config.yml` directly.
+
+### Clone/Template Example Workflow
+
+```yaml
+name: Generate cards from cloned repo
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - env:
+          ACCESS_TOKEN: ${{ secrets.PROFILE_STATS_TOKEN }}
+          GITHUB_ACTOR: ${{ github.repository_owner }}
+        run: python generate.py
+      - run: |
+          git add generated_images/*.svg
+          git commit -m "Update cards" || exit 0
+          git push
+```
 
 ### Theme Selection
 
@@ -507,12 +544,14 @@ uvicorn api.main:app --reload --port 8000
 
 | Endpoint | Description |
 |---|---|
+| `GET /v1/users/{username}/cards/themes` | List available card themes |
 | `GET /v1/users/{username}/cards/overview?theme=dracula` | Overview SVG card |
 | `GET /v1/users/{username}/cards/languages?theme=dark` | Language distribution SVG card |
 | `GET /v1/users/{username}/cards/streak?theme=nord` | Contribution streak SVG card |
 | `GET /v1/users/{username}/cards/streak-battery?theme=tokyo_night` | Streak battery SVG card |
 | `GET /v1/users/{username}/cards/languages-puzzle?theme=catppuccin_mocha` | Language puzzle SVG card |
 | `GET /v1/users/{username}/cards/commit-calendar?theme=dracula` | Commit calendar SVG card |
+| `GET /v1/users/{username}/cards/stats-history?theme=dracula` | Historical stats SVG card |
 
 SVG cards can be embedded directly in Markdown:
 ```markdown
@@ -668,11 +707,13 @@ Use the `api/generate_static_api.py` script to create static JSON files for all 
 export GITHUB_TOKEN=your_token
 export GITHUB_ACTOR=your_username
 export CONFIG_PATH=config.yml
-export CONFIG_OVERRIDES='
+export CONFIG_OVERRIDES="$(cat <<'YAML'
+timezone: America/Sao_Paulo
 stats_generation:
-  exclude_contrib_repos: "false"
+  exclude_contrib_repos: "true"
   mask_private_repos: "true"
-'
+YAML
+)"
 python api/generate_static_api.py
 ```
 
@@ -681,13 +722,17 @@ python api/generate_static_api.py
 This creates:
 ```
 api-data/
-└── users/
-    └── {username}/
-        ├── overview.json
-        ├── languages.json
-        ├── streak.json
-        ├── repositories.json
-        └── stats-full.json
+- users/
+  - {username}/
+    - overview.json
+    - languages.json
+    - languages-proportional.json
+    - streak.json
+    - contributions-recent.json
+    - commits-weekly.json
+    - repositories.json
+    - stats-full.json
+    - history.json
 ```
 
 **Deploy with GitHub Actions**
@@ -726,8 +771,9 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_ACTOR: ${{ github.repository_owner }}
           CONFIG_OVERRIDES: |
+            timezone: America/Sao_Paulo
             stats_generation:
-              exclude_contrib_repos: "false"
+              exclude_contrib_repos: "true"
               mask_private_repos: "true"
         run: python api/generate_static_api.py
 
@@ -787,7 +833,6 @@ WORKERS=4
 
 # Security
 ALLOW_PRIVATE_REPOS=false
-MASK_PRIVATE_REPOS=true
 API_AUTH_ENABLED=false
 API_KEYS=
 CORS_ORIGINS=*
