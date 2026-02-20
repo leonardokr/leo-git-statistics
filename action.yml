@@ -87,7 +87,14 @@ runs:
         export GITHUB_ACTOR="${ACTOR}"
 
         if [ -n "${INPUT_STATIC_API_DATA_DIR}" ]; then
-          export STATIC_API_DATA_DIR="${INPUT_STATIC_API_DATA_DIR}"
+          case "${INPUT_STATIC_API_DATA_DIR}" in
+            /*)
+              export STATIC_API_DATA_DIR="${INPUT_STATIC_API_DATA_DIR}"
+              ;;
+            *)
+              export STATIC_API_DATA_DIR="${{ github.workspace }}/${INPUT_STATIC_API_DATA_DIR}"
+              ;;
+          esac
         fi
 
         cd "${{ github.action_path }}"
