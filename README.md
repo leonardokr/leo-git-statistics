@@ -237,7 +237,10 @@ Pick the mode that matches your goal in **When to Use Each Mode** above.
 1. In your profile repository (`<username>/<username>`): **Settings** -> **Secrets and variables** -> **Actions**
 2. Create secret named `PROFILE_STATS_TOKEN` with your token
 
-### 4. Add Workflow (Action Mode)
+### 4. Add Workflow (Action + Live API)
+
+Use this example only if you chose the "reusable action with live GitHub API" mode.
+If you chose another mode, use the matching workflow example in the sections below.
 
 ```yaml
 - name: Generate profile SVG stats
