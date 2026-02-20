@@ -71,6 +71,7 @@ class ImageOrchestrator:
             self._stats = StaticStatsCollector(
                 username=self.environment.username,
                 data_root=static_data_dir,
+                mask_private_repos=self.environment.filter.mask_private_repos,
             )
 
             repos = await self._stats.get_repos()

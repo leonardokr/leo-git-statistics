@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 from src.utils.privacy import (
@@ -16,13 +15,14 @@ from src.utils.privacy import (
 class StaticStatsCollector:
     """Load statistics from generated static JSON files."""
 
-    def __init__(self, username: str, data_root: str):
+    def __init__(self, username: str, data_root: str, *, mask_private_repos: Any = False):
         if not username or not username.strip():
             raise ValueError("GitHub username must not be empty")
         if not data_root or not str(data_root).strip():
             raise ValueError("STATIC_API_DATA_DIR must not be empty")
 
         self.username = username
+        self._mask_private_repos = should_mask_private(mask_private_repos)
         self._base = Path(data_root) / "users" / username
         self._overview = self._load_json("overview.json")
         self._languages = self._load_json("languages.json")
@@ -95,7 +95,7 @@ class StaticStatsCollector:
             repos,
             visibility,
             self.username,
-            mask_enabled=should_mask_private(os.getenv("MASK_PRIVATE_REPOS")),
+            mask_enabled=self._mask_private_repos,
         )
         return set(masked)
 
@@ -154,7 +154,7 @@ class StaticStatsCollector:
         return mask_weekly_commits(
             self._weekly.get("weekly_commits", []),
             self.username,
-            mask_enabled=should_mask_private(os.getenv("MASK_PRIVATE_REPOS")),
+            mask_enabled=self._mask_private_repos,
         )
 
     async def get_stats_history(self) -> List[Dict[str, Any]]:
