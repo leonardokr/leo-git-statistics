@@ -40,6 +40,21 @@
 |----------------------------------|-------------------------------------|
 | `.github/workflows/snapshot.yml` | Daily cron job that saves a snapshot |
 
+### When to Use Each Mode
+
+| Mode | Use when | Data source | Config source |
+|---|---|---|---|
+| `generate.py` | You want SVGs directly from GitHub APIs | Live GitHub API | `config.yml` (or Action `config-overrides`) |
+| `generate.py` + `STATIC_API_DATA_DIR` | You want SVGs from pre-generated JSON (no live API calls during render) | `api-data/users/{username}/*.json` | `config.yml` (or Action `config-overrides`) |
+| `generate_test.py` | You want sample/mock SVG output for testing templates/themes | Mock data in code | `config.yml` |
+| `api/` (FastAPI) | You want HTTP endpoints/cards for external consumers | Live GitHub API | Server env + runtime scope rules |
+| `api/generate_static_api.py` | You want to publish static JSON for GitHub Pages/CDN | Live GitHub API at generation time | `config.yml` + optional `CONFIG_OVERRIDES` |
+
+For card/stat generation settings, `config.yml` is the single base source.  
+Overrides are explicit:
+- Action: `with: config-overrides`
+- Static API script: `CONFIG_OVERRIDES`
+
 ### Snapshot Data Flow
 
 A snapshot is a timestamped record of a user's GitHub statistics (stars, forks, followers, contributions, PRs, issues) saved to a SQLite database. Because GitHub does not provide historical data for most of these metrics, snapshots are the only way to track how they change over time. The stats history line chart is built entirely from these accumulated snapshots.
@@ -513,6 +528,29 @@ SVG cards can be embedded directly in Markdown:
 | `POST /v1/users/{username}/webhooks` | Register a webhook for stat changes |
 | `GET /v1/users/{username}/webhooks` | List registered webhooks |
 | `DELETE /v1/users/{username}/webhooks/{id}` | Remove a webhook |
+
+#### Webhook Conditions
+
+`POST /v1/users/{username}/webhooks` supports these condition keys:
+
+| Key | Type | Trigger |
+|---|---|---|
+| `stars_threshold` | `int` | Fires when `total_stars` crosses the threshold upward |
+| `streak_broken` | `bool` | Fires when `current_streak` drops from `> 0` to `0` |
+| `contributions_record` | `bool` | Fires when `total_contributions` becomes greater than previous snapshot |
+
+Example:
+
+```json
+{
+  "url": "https://example.com/hooks/stats",
+  "conditions": {
+    "stars_threshold": 500,
+    "streak_broken": true,
+    "contributions_record": true
+  }
+}
+```
 
 #### Infrastructure
 

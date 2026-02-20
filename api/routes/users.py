@@ -1,7 +1,6 @@
 """User statistics endpoints."""
 
 import logging
-import os
 
 from aiohttp import ClientSession
 from fastapi import APIRouter, Depends, Query, Request, Response
@@ -288,7 +287,7 @@ async def get_weekly_commits(
     resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get weekly commit schedule for a GitHub user."""
-    mask_enabled = should_mask_private(os.getenv("MASK_PRIVATE_REPOS"))
+    mask_enabled = should_mask_private(resolved.repo_filter.mask_private_repos)
     endpoint = f"commits_weekly:mask:{str(mask_enabled).lower()}"
     if not no_cache:
         hit, cached = cache_get(username, endpoint)
@@ -331,7 +330,7 @@ async def get_user_repositories(
     resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get paginated list of repositories for a GitHub user."""
-    mask_enabled_env = should_mask_private(os.getenv("MASK_PRIVATE_REPOS"))
+    mask_enabled_env = should_mask_private(resolved.repo_filter.mask_private_repos)
     endpoint = (
         f"repositories:p{pagination.page}:{pagination.per_page}"
         f":mask:{str(mask_enabled_env).lower()}"
@@ -395,7 +394,7 @@ async def get_user_repositories_detailed(
     resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get paginated detailed repository information for a GitHub user."""
-    mask_enabled = should_mask_private(os.getenv("MASK_PRIVATE_REPOS"))
+    mask_enabled = should_mask_private(resolved.repo_filter.mask_private_repos)
     visibility = params.visibility
     if not resolved.user_owns_token and visibility in ("private", "all"):
         visibility = "public"
@@ -499,7 +498,7 @@ async def get_full_stats(
     resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get all statistics for a GitHub user in a single request."""
-    mask_enabled = should_mask_private(os.getenv("MASK_PRIVATE_REPOS"))
+    mask_enabled = should_mask_private(resolved.repo_filter.mask_private_repos)
     endpoint = f"stats_full:mask:{str(mask_enabled).lower()}"
     if not no_cache:
         hit, cached = cache_get(username, endpoint)

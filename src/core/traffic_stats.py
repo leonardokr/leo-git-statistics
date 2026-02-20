@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """Traffic statistics management for views and clones."""
 
-from os import getenv
 from typing import Any, Tuple
 from datetime import datetime
 
@@ -25,13 +24,9 @@ class TrafficStats:
         ) = self._init_metric(
             kwargs,
             store_kwarg="store_repo_view_count",
-            store_env="STORE_REPO_VIEWS",
             count_kwarg="repo_views",
-            count_env="REPO_VIEWS",
             last_kwarg="repo_last_viewed",
-            last_env="LAST_VIEWED",
             first_kwarg="repo_first_viewed",
-            first_env="FIRST_VIEWED",
             db_count=self._db.views,
             db_to=self._db.views_to_date,
             db_from=self._db.views_from_date,
@@ -48,13 +43,9 @@ class TrafficStats:
         ) = self._init_metric(
             kwargs,
             store_kwarg="store_repo_clone_count",
-            store_env="STORE_REPO_CLONES",
             count_kwarg="repo_clones",
-            count_env="REPO_CLONES",
             last_kwarg="repo_last_cloned",
-            last_env="LAST_CLONED",
             first_kwarg="repo_first_cloned",
-            first_env="FIRST_CLONED",
             db_count=self._db.clones,
             db_to=self._db.clones_to_date,
             db_from=self._db.clones_from_date,
@@ -82,13 +73,9 @@ class TrafficStats:
         kwargs,
         *,
         store_kwarg,
-        store_env,
         count_kwarg,
-        count_env,
         last_kwarg,
-        last_env,
         first_kwarg,
-        first_env,
         db_count,
         db_to,
         db_from,
@@ -97,7 +84,7 @@ class TrafficStats:
         set_to,
     ) -> Tuple[bool, int, str, str]:
         """Initializes a single traffic metric (views or clones)."""
-        store = to_bool(kwargs.get(store_kwarg, getenv(store_env)), default=True)
+        store = to_bool(kwargs.get(store_kwarg), default=True)
 
         if not store:
             set_count(0)
@@ -105,7 +92,7 @@ class TrafficStats:
             set_to("0000-00-00")
             return store, 0, "0000-00-00", "0000-00-00"
 
-        count_val = kwargs.get(count_kwarg, getenv(count_env))
+        count_val = kwargs.get(count_kwarg)
         try:
             count = int(count_val) if count_val else db_count
             if count_val:
@@ -113,10 +100,10 @@ class TrafficStats:
         except ValueError:
             count = db_count
 
-        last_val = kwargs.get(last_kwarg, getenv(last_env))
+        last_val = kwargs.get(last_kwarg)
         last_date = self._validate_date(last_val) if last_val else db_to
 
-        first_val = kwargs.get(first_kwarg, getenv(first_env))
+        first_val = kwargs.get(first_kwarg)
         first_date = self._validate_date(first_val) if first_val else db_from
 
         return store, count, last_date, first_date
