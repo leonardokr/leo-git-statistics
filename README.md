@@ -256,7 +256,7 @@ Use the override channel that matches your chosen flow:
 - Reusable action step: `config-path` and/or `with: config-overrides`.
 - Static API script step (`api/generate_static_api.py`): `CONFIG_PATH` and/or `CONFIG_OVERRIDES`.
 
-## Workflow Configuration (Consumer Profile Repository)
+## Consumer Workflow Examples (Reusable Action)
 <details>
 <summary><b>Expand Action Workflows (Live API and Static JSON Render)</b></summary>
 
@@ -362,7 +362,7 @@ Keep static-generation and render overrides aligned to avoid mismatched behavior
 
 </details>
 
-## Action Configuration (No Clone Required)
+## Action Override Reference (Reusable Action)
 <details>
 <summary><b>Expand Action Override Rules and Supported Keys</b></summary>
 
@@ -409,9 +409,11 @@ stats_generation:
 
 </details>
 
-## Repository Configuration (config.yml)
+## Repository Configuration (Clone/Template Mode)
+<details>
+<summary><b>Expand config.yml Setup for Cloned/Template Repositories</b></summary>
 
-This section is for users who cloned the repository (or use it as template) and want to edit `config.yml` directly.
+Use this section only if you cloned this repository (or used it as a template) and will run scripts from this codebase directly.
 
 ### Clone/Template Example Workflow
 
@@ -482,6 +484,8 @@ stats_generation:
   show_pull_requests: "true"
   # ... more options
 ```
+
+</details>
 
 ## Versioning and Releases
 
