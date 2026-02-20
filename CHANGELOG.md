@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.0](https://github.com/leonardokr/leo-git-statistics/compare/v2.5.0...v2.6.0) (2026-02-20)
+
+
+### Features
+
+* support config-path and config-overrides in action ([cd21071](https://github.com/leonardokr/leo-git-statistics/commit/cd210713bd38f42981c1214d5cd2e7eac551107e))
+
 ## [2.5.0](https://github.com/leonardokr/leo-git-statistics/compare/v2.4.1...v2.5.0) (2026-02-20)
 
 
