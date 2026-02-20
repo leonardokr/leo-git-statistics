@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.0](https://github.com/leonardokr/leo-git-statistics/compare/v2.6.0...v2.7.0) (2026-02-20)
+
+
+### Features
+
+* enforce config-driven behavior across all entrypoints ([084b46a](https://github.com/leonardokr/leo-git-statistics/commit/084b46a08544a74b9860fb14733ecbb1adbc68d0))
+
 ## [2.6.0](https://github.com/leonardokr/leo-git-statistics/compare/v2.5.0...v2.6.0) (2026-02-20)
 
 
