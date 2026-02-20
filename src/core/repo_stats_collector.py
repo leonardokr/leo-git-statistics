@@ -84,6 +84,14 @@ class RepoStatsCollector:
             or repo_name in self._env.filter.exclude_repos
         )
 
+    def is_non_owned_repo_excluded(self, repo_name: Optional[str]) -> bool:
+        """Exclude non-owned repositories when contrib repos are disabled."""
+        if not self._env.filter.exclude_contrib_repos or not repo_name:
+            return False
+
+        owner = repo_name.split("/", 1)[0].lower()
+        return owner != str(self._env.username).lower()
+
     def is_repo_type_excluded(self, repo_data: Dict[str, Any]) -> bool:
         """
         Check if a repository should be excluded based on its type.
@@ -145,6 +153,8 @@ class RepoStatsCollector:
 
                 full_name = repo.get("nameWithOwner")
                 if self.is_repo_name_invalid(full_name):
+                    continue
+                if self.is_non_owned_repo_excluded(full_name):
                     continue
 
                 self._repos.add(full_name)

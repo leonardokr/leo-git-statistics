@@ -113,3 +113,19 @@ class TestRepoStatsCollector:
 
         assert collector.repos == set()
         assert collector.stargazers == 0
+
+    async def test_exclude_contrib_repos_skips_non_owned_from_repositories(
+        self, mock_environment, mock_github_client
+    ):
+        """When exclude_contrib_repos is true, keep only owner repos."""
+        mock_environment.username = "leonardokr"
+        mock_environment.filter.exclude_contrib_repos = True
+        mock_github_client.query.return_value = self._graphql_response([
+            ("leonardokr/owned-repo", 10, 1, 1000),
+            ("tiga-alves/contrib-repo", 5, 1, 1000),
+        ])
+
+        collector = RepoStatsCollector(mock_environment, mock_github_client)
+        await collector.collect()
+
+        assert collector.repos == {"leonardokr/owned-repo"}
