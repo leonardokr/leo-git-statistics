@@ -67,29 +67,7 @@ runs:
         if [ -n "${INPUT_CONFIG_OVERRIDES}" ]; then
           export INPUT_CONFIG_OVERRIDES
           export DST_CONFIG
-          python - <<'PY'
-          import os
-          import yaml
-
-          config_path = os.environ["DST_CONFIG"]
-          overrides_raw = os.environ["INPUT_CONFIG_OVERRIDES"]
-          overrides = yaml.safe_load(overrides_raw) or {}
-
-          with open(config_path, "r", encoding="utf-8") as fh:
-              base = yaml.safe_load(fh) or {}
-
-          def deep_merge(dst, src):
-              for key, value in (src or {}).items():
-                  if isinstance(value, dict) and isinstance(dst.get(key), dict):
-                      deep_merge(dst[key], value)
-                  else:
-                      dst[key] = value
-
-          deep_merge(base, overrides)
-
-          with open(config_path, "w", encoding="utf-8") as fh:
-              yaml.safe_dump(base, fh, sort_keys=False)
-          PY
+          python -c "import os,yaml; p=os.environ['DST_CONFIG']; o=yaml.safe_load(os.environ['INPUT_CONFIG_OVERRIDES']) or {}; b=yaml.safe_load(open(p, encoding='utf-8')) or {}; m=lambda d,s:[d.__setitem__(k,(m(d[k],v) or d[k]) if isinstance(v,dict) and isinstance(d.get(k),dict) else v) for k,v in (s or {}).items()]; m(b,o); open(p,'w',encoding='utf-8').write(yaml.safe_dump(b, sort_keys=False))"
         fi
 
     - name: Generate SVGs
