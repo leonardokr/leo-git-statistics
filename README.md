@@ -225,7 +225,7 @@ Choose from **25+ built-in themes** or create your own:
 ### 1. Choose Mode
 Pick the mode that matches your goal in **When to Use Each Mode** above.
 - For profile card generation, use the reusable action (`uses: leonardokr/leo-git-statistics@v2`).
-- For static JSON + SVG render (no live API calls during render), use a consumer workflow with two steps: `api/generate_static_api.py` then the reusable action with `static-api-data-dir`.
+- For static JSON + SVG render (no live API calls during render), use a consumer workflow with two steps: `api/generate_static_api.py` then the reusable action with [`static-api-data-dir`](#generate-svgs-from-static-json-offline-render-mode).
 - For source-level customization, clone/template this repository.
 
 ### 2. Create a Personal Access Token
