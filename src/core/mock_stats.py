@@ -1,6 +1,8 @@
 """Mock classes for testing SVG generation without GitHub API."""
 
+import os
 from typing import Dict, Any, List, Set, Tuple
+from src.utils.privacy import mask_weekly_commits, should_mask_private
 
 
 class MockDisplaySettings:
@@ -188,7 +190,11 @@ class MockStatsCollector:
         return self._data["recent_contributions"]
 
     async def get_weekly_commit_schedule(self) -> list:
-        return self._data["weekly_commit_schedule"]
+        return mask_weekly_commits(
+            self._data["weekly_commit_schedule"],
+            "mock-user",
+            mask_enabled=should_mask_private(os.getenv("MASK_PRIVATE_REPOS")),
+        )
 
     async def get_stats_history(self) -> List[Dict[str, Any]]:
         return self._data["stats_history"]

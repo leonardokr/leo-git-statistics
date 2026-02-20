@@ -57,6 +57,10 @@ inputs:
     description: "Exclude public repositories (true/false)"
     required: false
     default: ""
+  mask-private-repos:
+    description: "Mask private repository names/details in outputs (true/false)"
+    required: false
+    default: ""
   store-repo-views:
     description: "Persist repository views over time (true/false)"
     required: false
@@ -160,6 +164,7 @@ runs:
         INPUT_EXCLUDE_ARCHIVE_REPOS: ${{ inputs.exclude-archive-repos }}
         INPUT_EXCLUDE_PRIVATE_REPOS: ${{ inputs.exclude-private-repos }}
         INPUT_EXCLUDE_PUBLIC_REPOS: ${{ inputs.exclude-public-repos }}
+        INPUT_MASK_PRIVATE_REPOS: ${{ inputs.mask-private-repos }}
         INPUT_STORE_REPO_VIEWS: ${{ inputs.store-repo-views }}
         INPUT_STORE_REPO_CLONES: ${{ inputs.store-repo-clones }}
         INPUT_MORE_COLLABS: ${{ inputs.more-collabs }}
@@ -204,6 +209,7 @@ runs:
         export_if_set "EXCLUDE_ARCHIVE_REPOS" "${INPUT_EXCLUDE_ARCHIVE_REPOS}"
         export_if_set "EXCLUDE_PRIVATE_REPOS" "${INPUT_EXCLUDE_PRIVATE_REPOS}"
         export_if_set "EXCLUDE_PUBLIC_REPOS" "${INPUT_EXCLUDE_PUBLIC_REPOS}"
+        export_if_set "MASK_PRIVATE_REPOS" "${INPUT_MASK_PRIVATE_REPOS}"
         export_if_set "STORE_REPO_VIEWS" "${INPUT_STORE_REPO_VIEWS}"
         export_if_set "STORE_REPO_CLONES" "${INPUT_STORE_REPO_CLONES}"
         export_if_set "MORE_COLLABS" "${INPUT_MORE_COLLABS}"

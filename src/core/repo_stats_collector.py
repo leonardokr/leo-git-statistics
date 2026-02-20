@@ -30,6 +30,7 @@ class RepoStatsCollector:
         self._languages: Optional[Dict[str, Any]] = None
         self._repos: Optional[Set[str]] = None
         self._empty_repos: Optional[Set[str]] = None
+        self._repo_visibility: Optional[Dict[str, bool]] = None
 
     @property
     def name(self) -> Optional[str]:
@@ -62,6 +63,10 @@ class RepoStatsCollector:
     @property
     def empty_repos(self) -> Optional[Set[str]]:
         return self._empty_repos
+
+    @property
+    def repo_visibility(self) -> Optional[Dict[str, bool]]:
+        return self._repo_visibility
 
     def is_repo_name_invalid(self, repo_name: Optional[str]) -> bool:
         """
@@ -109,6 +114,7 @@ class RepoStatsCollector:
         self._languages = dict()
         self._repos = set()
         self._empty_repos = set()
+        self._repo_visibility = dict()
 
         next_owned = None
         next_contrib = None
@@ -142,6 +148,9 @@ class RepoStatsCollector:
                     continue
 
                 self._repos.add(full_name)
+                self._repo_visibility[full_name] = bool(
+                    repo.get("isPrivate") or repo.get("private")
+                )
                 self._stargazers += repo.get("stargazers", {}).get("totalCount", 0)
                 self._forks += repo.get("forkCount", 0)
 
@@ -207,6 +216,7 @@ class RepoStatsCollector:
                 continue
 
             self._repos.add(repo)
+            self._repo_visibility[repo] = bool(repo_stats.get("private"))
             self._stargazers += repo_stats.get("stargazers_count", 0)
             self._forks += repo_stats.get("forks_count", 0)
 

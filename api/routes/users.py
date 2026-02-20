@@ -1,6 +1,7 @@
 """User statistics endpoints."""
 
 import logging
+import os
 
 from aiohttp import ClientSession
 from fastapi import APIRouter, Depends, Query, Request, Response
@@ -31,6 +32,7 @@ from api.models.responses import (
 from api.services.stats_service import PartialCollector, create_stats_collector
 from src.core.github_client import GitHubClient, rate_limit_state
 from src.core.stats_assembler import build_full_payload
+from src.utils.privacy import mask_detailed_repo, mask_repo_names, should_mask_private
 
 logger = logging.getLogger(__name__)
 
@@ -286,7 +288,8 @@ async def get_weekly_commits(
     resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get weekly commit schedule for a GitHub user."""
-    endpoint = "commits_weekly"
+    mask_enabled = should_mask_private(os.getenv("MASK_PRIVATE_REPOS"))
+    endpoint = f"commits_weekly:mask:{str(mask_enabled).lower()}"
     if not no_cache:
         hit, cached = cache_get(username, endpoint)
         if hit:
@@ -328,7 +331,11 @@ async def get_user_repositories(
     resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get paginated list of repositories for a GitHub user."""
-    endpoint = f"repositories:p{pagination.page}:{pagination.per_page}"
+    mask_enabled_env = should_mask_private(os.getenv("MASK_PRIVATE_REPOS"))
+    endpoint = (
+        f"repositories:p{pagination.page}:{pagination.per_page}"
+        f":mask:{str(mask_enabled_env).lower()}"
+    )
     if not no_cache:
         hit, cached = cache_get(username, endpoint)
         if hit:
@@ -341,8 +348,21 @@ async def get_user_repositories(
 
     pc = PartialCollector()
     repos = await pc.safe(collector.get_repos(), None, "repositories")
+    visibility = await pc.safe(collector.get_repo_visibility(), {}, "repo visibility")
+    mask_enabled = should_mask_private(collector.environment_vars.filter.mask_private_repos)
 
-    all_repos = sorted(list(repos)) if repos is not None else []
+    all_repos = (
+        sorted(
+            mask_repo_names(
+                repos,
+                visibility,
+                username,
+                mask_enabled=mask_enabled,
+            )
+        )
+        if repos is not None
+        else []
+    )
     page_items, meta = _paginate(all_repos, pagination.page, pagination.per_page)
 
     data = {
@@ -375,6 +395,7 @@ async def get_user_repositories_detailed(
     resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get paginated detailed repository information for a GitHub user."""
+    mask_enabled = should_mask_private(os.getenv("MASK_PRIVATE_REPOS"))
     visibility = params.visibility
     if not resolved.user_owns_token and visibility in ("private", "all"):
         visibility = "public"
@@ -383,6 +404,7 @@ async def get_user_repositories_detailed(
         f"repositories_detailed:{visibility}:{params.sort}:{params.limit}"
         f":{params.exclude_forks}:{params.exclude_archived}"
         f":p{pagination.page}:{pagination.per_page}"
+        f":mask:{str(mask_enabled).lower()}"
     )
     if not no_cache:
         hit, cached = cache_get(username, endpoint)
@@ -446,7 +468,7 @@ async def get_user_repositories_detailed(
             logger.warning("Failed to fetch languages for %s: %s", repo.get("name"), exc)
             repo_data["languages"] = {}
 
-        repositories.append(repo_data)
+        repositories.append(mask_detailed_repo(repo_data, username, mask_enabled=mask_enabled))
 
     page_items, meta = _paginate(repositories, pagination.page, pagination.per_page)
 
@@ -477,7 +499,8 @@ async def get_full_stats(
     resolved: ResolvedToken = Depends(resolve_github_token),
 ) -> dict:
     """Get all statistics for a GitHub user in a single request."""
-    endpoint = "stats_full"
+    mask_enabled = should_mask_private(os.getenv("MASK_PRIVATE_REPOS"))
+    endpoint = f"stats_full:mask:{str(mask_enabled).lower()}"
     if not no_cache:
         hit, cached = cache_get(username, endpoint)
         if hit:

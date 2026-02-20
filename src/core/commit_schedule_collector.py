@@ -10,6 +10,7 @@ import logging
 
 from src.core.environment import Environment
 from src.core.github_client import GitHubClient
+from src.utils.privacy import should_mask_private, masked_repo_name
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +69,8 @@ class CommitScheduleCollector:
         )
 
         entries: List[Dict[str, Any]] = []
+        mask_private = should_mask_private(self._env.filter.mask_private_repos)
+        masked_repo = masked_repo_name(username)
         for result in results:
             if isinstance(result, BaseException):
                 logger.warning("Failed to fetch commit schedule: %s", result)
@@ -86,10 +89,16 @@ class CommitScheduleCollector:
                 sha = (commit.get("sha") or "")[:40]
                 message = self._extract_message(commit)
                 description = sha[:7] if is_private else message
+                repo_name = repo
+
+                if mask_private and is_private:
+                    repo_name = masked_repo
+                    sha = "private"
+                    description = "Private commit"
 
                 entries.append(
                     {
-                        "repo": repo,
+                        "repo": repo_name,
                         "sha": sha,
                         "description": description,
                         "is_private": is_private,

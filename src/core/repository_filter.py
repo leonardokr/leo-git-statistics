@@ -30,6 +30,7 @@ class RepositoryFilter:
         self.exclude_archive_repos = to_bool(kwargs.get("exclude_archive_repos", getenv("EXCLUDE_ARCHIVE_REPOS")))
         self.exclude_private_repos = to_bool(kwargs.get("exclude_private_repos", getenv("EXCLUDE_PRIVATE_REPOS")))
         self.exclude_public_repos = to_bool(kwargs.get("exclude_public_repos", getenv("EXCLUDE_PUBLIC_REPOS")))
+        self.mask_private_repos = to_bool(kwargs.get("mask_private_repos", getenv("MASK_PRIVATE_REPOS")))
 
     def _init_repo_lists(self, kwargs) -> None:
         """Initializes manually added and only-included repo lists."""

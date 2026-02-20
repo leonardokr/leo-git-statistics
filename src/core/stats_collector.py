@@ -145,6 +145,11 @@ class StatsCollector:
         """
         return set()
 
+    async def get_repo_visibility(self) -> Dict[str, bool]:
+        """Retrieve repository visibility map keyed by ``owner/repo``."""
+        await self.get_stats()
+        return dict(self._repo_stats.repo_visibility or {})
+
     async def get_total_contributions(self) -> int:
         """Retrieve the total number of contributions as defined by GitHub.
 

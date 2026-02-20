@@ -6,6 +6,7 @@ data-assembly duplication across entry points.
 """
 
 from typing import Any, Dict, Optional, Set, Tuple
+from src.utils.privacy import mask_repo_names, mask_weekly_commits, should_mask_private
 
 
 async def build_overview_payload(
@@ -179,6 +180,28 @@ async def build_full_payload(
         weekly = await collector.get_weekly_commit_schedule()
 
     repos_count = overview["repositories_count"]
+    raw_repos = sorted(list(await collector.get_repos())) if repos_count else None
+
+    repo_visibility = {}
+    if hasattr(collector, "get_repo_visibility"):
+        repo_visibility = await collector.get_repo_visibility()
+
+    mask_enabled = False
+    if hasattr(collector, "environment_vars"):
+        env_filter = getattr(getattr(collector, "environment_vars", None), "filter", None)
+        if env_filter is not None:
+            mask_enabled = should_mask_private(getattr(env_filter, "mask_private_repos", False))
+
+    if mask_enabled and raw_repos is not None:
+        raw_repos = sorted(
+            mask_repo_names(
+                raw_repos,
+                repo_visibility,
+                username,
+                mask_enabled=True,
+            )
+        )
+        weekly = mask_weekly_commits(weekly or [], username, mask_enabled=True)
 
     return {
         "username": username,
@@ -196,7 +219,7 @@ async def build_full_payload(
         },
         "repositories": {
             "count": repos_count,
-            "list": sorted(list(await collector.get_repos())) if repos_count else None,
+            "list": raw_repos,
         },
         "weekly_commits": weekly,
     }

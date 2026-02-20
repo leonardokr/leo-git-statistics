@@ -26,6 +26,7 @@ from src.core.environment import Environment
 from src.core.stats_collector import StatsCollector
 from src.core.stats_assembler import build_overview_payload, build_full_payload, build_snapshot_payload
 from src.db.snapshots import snapshot_store
+from src.utils.privacy import mask_repo_names, should_mask_private
 
 logging.basicConfig(
     level=logging.INFO,
@@ -128,11 +129,21 @@ async def generate_static_api(username: str, output_dir: str = "api-data"):
         logger.info("Generated commits-weekly.json")
 
         repos = await collector.get_repos()
+        visibility = await collector.get_repo_visibility()
+        mask_enabled = should_mask_private(env.filter.mask_private_repos)
+        repo_names = sorted(
+            mask_repo_names(
+                repos,
+                visibility,
+                username,
+                mask_enabled=mask_enabled,
+            )
+        )
 
         repos_data = {
             "username": username,
             "repositories_count": len(repos),
-            "repositories": sorted(list(repos)),
+            "repositories": repo_names,
         }
 
         with open(api_dir / "repositories.json", "w", encoding="utf-8") as f:

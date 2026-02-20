@@ -3,8 +3,14 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
+from src.utils.privacy import (
+    mask_repo_names,
+    mask_weekly_commits,
+    should_mask_private,
+)
 
 
 class StaticStatsCollector:
@@ -80,7 +86,18 @@ class StaticStatsCollector:
             repos = self._full.get("repositories", {}).get("list")
         if repos is None:
             return set()
-        return set(repos)
+        visibility = {}
+        for commit in self._weekly.get("weekly_commits", []):
+            repo = commit.get("repo")
+            if repo:
+                visibility[repo] = bool(commit.get("is_private"))
+        masked = mask_repo_names(
+            repos,
+            visibility,
+            self.username,
+            mask_enabled=should_mask_private(os.getenv("MASK_PRIVATE_REPOS")),
+        )
+        return set(masked)
 
     async def get_lines_changed(self) -> Tuple[int, int]:
         return (
@@ -134,7 +151,11 @@ class StaticStatsCollector:
         return list(self._recent.get("recent_contributions", []))
 
     async def get_weekly_commit_schedule(self) -> list:
-        return list(self._weekly.get("weekly_commits", []))
+        return mask_weekly_commits(
+            self._weekly.get("weekly_commits", []),
+            self.username,
+            mask_enabled=should_mask_private(os.getenv("MASK_PRIVATE_REPOS")),
+        )
 
     async def get_stats_history(self) -> List[Dict[str, Any]]:
         return list(self._history.get("snapshots", []))
