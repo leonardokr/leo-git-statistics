@@ -34,11 +34,11 @@
 | `api/`                       | Serves live stats + SVG cards via HTTP |
 | `api/generate_static_api.py` | Generates JSON files + saves snapshot  |
 
-### CI
+### CI (Consumer Repository)
 
-| Entry point                      | Description                         |
-|----------------------------------|-------------------------------------|
-| `.github/workflows/snapshot.yml` | Daily cron job that saves a snapshot |
+| Entry point | Description |
+|---|---|
+| Consumer workflow (for example: `.github/workflows/update-static-api-data.yml`) | Scheduled job in the consuming repository that generates/saves snapshots |
 
 ### When to Use Each Mode
 
@@ -59,7 +59,7 @@ Overrides are explicit:
 
 A snapshot is a timestamped record of a user's GitHub statistics (stars, forks, followers, contributions, PRs, issues) saved to a SQLite database. Because GitHub does not provide historical data for most of these metrics, snapshots are the only way to track how they change over time. The stats history line chart is built entirely from these accumulated snapshots.
 
-- **Writers:** `api/` (POST /history/snapshot), `api/generate_static_api.py`, `.github/workflows/snapshot.yml`
+- **Writers:** `api/` (POST /history/snapshot), `api/generate_static_api.py`, consumer repository workflow (cron)
 - **Readers:** `generate.py` (stats_history chart), `api/` (history endpoint + stats-history card)
 
 ## Features
