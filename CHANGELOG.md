@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.5.0](https://github.com/leonardokr/leo-git-statistics/compare/v2.4.1...v2.5.0) (2026-02-20)
+
+
+### Features
+
+* mask private repository data across outputs ([4f4057d](https://github.com/leonardokr/leo-git-statistics/commit/4f4057d1be922d0010886c733dfd5d02acee4989))
+
+
+### Bug Fixes
+
+* correct current streak calculation with future calendar days ([ff063f8](https://github.com/leonardokr/leo-git-statistics/commit/ff063f8afc53d2ec7dec1957b7679fc4590333e6))
+
 ## [2.4.1](https://github.com/leonardokr/leo-git-statistics/compare/v2.4.0...v2.4.1) (2026-02-20)
 
 
