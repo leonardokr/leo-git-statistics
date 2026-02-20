@@ -252,7 +252,9 @@ If you chose another mode, use the matching workflow example in the sections bel
 ```
 
 ### 5. Configure (Optional)
-Use `config-path` and/or `config-overrides` in the workflow.
+Use the override channel that matches your chosen flow:
+- Reusable action step: `config-path` and/or `with: config-overrides`.
+- Static API script step (`api/generate_static_api.py`): `CONFIG_PATH` and/or `CONFIG_OVERRIDES`.
 
 ## Workflow Configuration (Profile Repository)
 
