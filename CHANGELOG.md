@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.7.3](https://github.com/leonardokr/leo-git-statistics/compare/v2.7.2...v2.7.3) (2026-02-20)
+
+
+### Bug Fixes
+
+* **action:** correct config-overrides deep-merge to preserve dict types ([6015152](https://github.com/leonardokr/leo-git-statistics/commit/601515201bdc5a11b0865614abe3993f74241ded))
+* **api:** always exclude private repos for server-token requests ([fd6c8cf](https://github.com/leonardokr/leo-git-statistics/commit/fd6c8cfd466a91631b4038cc7a17aa1bdc4501e9))
+* apply config private masking when rendering from static api data ([862b06d](https://github.com/leonardokr/leo-git-statistics/commit/862b06d61f46fd886c61cfb972997962e7e537de))
+
 ## [2.7.2](https://github.com/leonardokr/leo-git-statistics/compare/v2.7.1...v2.7.2) (2026-02-20)
 
 
