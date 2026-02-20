@@ -256,15 +256,16 @@ Use the override channel that matches your chosen flow:
 - Reusable action step: `config-path` and/or `with: config-overrides`.
 - Static API script step (`api/generate_static_api.py`): `CONFIG_PATH` and/or `CONFIG_OVERRIDES`.
 
-## Workflow Configuration (Profile Repository)
+## Workflow Configuration (Consumer Profile Repository)
+<details>
+<summary><b>Expand Action Workflows (Live API and Static JSON Render)</b></summary>
 
-Use this repository as an Action in your profile repository. This is the recommended path for most users.
+Use this repository as an Action in your profile repository.
 
-Required secret in your profile repository:
-
+Required secret:
 - `PROFILE_STATS_TOKEN`: token used by `generate.py` to query GitHub APIs.
 
-### Example Workflow (profile repository)
+### Example Workflow (Action + Live API)
 
 ```yaml
 name: Update Profile SVG Stats
@@ -346,6 +347,7 @@ If you already generated static files with `api/generate_static_api.py`, you can
 
 Under the hood, this maps to env `STATIC_API_DATA_DIR` in the action runtime.
 Keep static-generation and render overrides aligned to avoid mismatched behavior.
+
 ### Action Inputs (`with:`)
 
 | Input                 | Required | Default            | Description                                                                  |
@@ -358,7 +360,11 @@ Keep static-generation and render overrides aligned to avoid mismatched behavior
 | `config-overrides`    | No       | -                  | YAML fragment merged into config at runtime.                                 |
 | `static-api-data-dir` | No       | -                  | Static JSON root path (example: `api-data`) to enable `STATIC_API_DATA_DIR`. |
 
-## Configuration via Action (No Clone)
+</details>
+
+## Action Configuration (No Clone Required)
+<details>
+<summary><b>Expand Action Override Rules and Supported Keys</b></summary>
 
 If you use only `uses: leonardokr/leo-git-statistics@v2`, you can configure behavior with:
 - `with: config-path` (read a config file from the caller repository, optional)
@@ -400,6 +406,8 @@ stats_generation:
   show_pull_requests:
   show_issues:
 ```
+
+</details>
 
 ## Repository Configuration (config.yml)
 
