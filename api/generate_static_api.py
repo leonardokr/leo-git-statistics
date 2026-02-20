@@ -61,7 +61,7 @@ async def generate_static_api(username: str, output_dir: str = "api-data"):
 
         overview_data = await build_overview_payload(collector, username)
 
-        with open(api_dir / "overview.json", "w") as f:
+        with open(api_dir / "overview.json", "w", encoding="utf-8") as f:
             json.dump(overview_data, f, indent=2)
         logger.info("Generated overview.json")
 
@@ -73,7 +73,7 @@ async def generate_static_api(username: str, output_dir: str = "api-data"):
             "languages": languages,
         }
 
-        with open(api_dir / "languages.json", "w") as f:
+        with open(api_dir / "languages.json", "w", encoding="utf-8") as f:
             json.dump(languages_data, f, indent=2)
         logger.info("Generated languages.json")
 
@@ -82,7 +82,7 @@ async def generate_static_api(username: str, output_dir: str = "api-data"):
             "languages": languages_prop,
         }
 
-        with open(api_dir / "languages-proportional.json", "w") as f:
+        with open(api_dir / "languages-proportional.json", "w", encoding="utf-8") as f:
             json.dump(languages_prop_data, f, indent=2)
         logger.info("Generated languages-proportional.json")
 
@@ -101,7 +101,7 @@ async def generate_static_api(username: str, output_dir: str = "api-data"):
             "total_contributions": total_contributions,
         }
 
-        with open(api_dir / "streak.json", "w") as f:
+        with open(api_dir / "streak.json", "w", encoding="utf-8") as f:
             json.dump(streak_data, f, indent=2)
         logger.info("Generated streak.json")
 
@@ -112,7 +112,7 @@ async def generate_static_api(username: str, output_dir: str = "api-data"):
             "recent_contributions": recent,
         }
 
-        with open(api_dir / "contributions-recent.json", "w") as f:
+        with open(api_dir / "contributions-recent.json", "w", encoding="utf-8") as f:
             json.dump(recent_data, f, indent=2)
         logger.info("Generated contributions-recent.json")
 
@@ -123,7 +123,7 @@ async def generate_static_api(username: str, output_dir: str = "api-data"):
             "weekly_commits": weekly,
         }
 
-        with open(api_dir / "commits-weekly.json", "w") as f:
+        with open(api_dir / "commits-weekly.json", "w", encoding="utf-8") as f:
             json.dump(weekly_data, f, indent=2)
         logger.info("Generated commits-weekly.json")
 
@@ -135,19 +135,27 @@ async def generate_static_api(username: str, output_dir: str = "api-data"):
             "repositories": sorted(list(repos)),
         }
 
-        with open(api_dir / "repositories.json", "w") as f:
+        with open(api_dir / "repositories.json", "w", encoding="utf-8") as f:
             json.dump(repos_data, f, indent=2)
         logger.info("Generated repositories.json")
 
         full_data = await build_full_payload(collector, username)
 
-        with open(api_dir / "stats-full.json", "w") as f:
+        with open(api_dir / "stats-full.json", "w", encoding="utf-8") as f:
             json.dump(full_data, f, indent=2)
         logger.info("Generated stats-full.json")
 
         snapshot_data = await build_snapshot_payload(collector)
         snapshot_store.save_snapshot(username, snapshot_data)
         logger.info("Saved statistics snapshot")
+
+        history_data = {
+            "username": username,
+            "snapshots": snapshot_store.get_snapshots(username, limit=1000),
+        }
+        with open(api_dir / "history.json", "w", encoding="utf-8") as f:
+            json.dump(history_data, f, indent=2)
+        logger.info("Generated history.json")
 
         logger.info(f"All static API files generated in: {api_dir}")
         logger.info(f"You can now deploy the '{output_dir}' directory to GitHub Pages")

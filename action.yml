@@ -125,6 +125,10 @@ inputs:
     description: "Show issues metric (true/false)"
     required: false
     default: ""
+  static-api-data-dir:
+    description: "Path to pre-generated static API JSON root (for example: api-data)"
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -173,6 +177,7 @@ runs:
         INPUT_SHOW_STARS: ${{ inputs.show-stars }}
         INPUT_SHOW_PULL_REQUESTS: ${{ inputs.show-pull-requests }}
         INPUT_SHOW_ISSUES: ${{ inputs.show-issues }}
+        INPUT_STATIC_API_DATA_DIR: ${{ inputs.static-api-data-dir }}
       run: |
         set -euo pipefail
 
@@ -216,6 +221,7 @@ runs:
         export_if_set "SHOW_STARS" "${INPUT_SHOW_STARS}"
         export_if_set "SHOW_PULL_REQUESTS" "${INPUT_SHOW_PULL_REQUESTS}"
         export_if_set "SHOW_ISSUES" "${INPUT_SHOW_ISSUES}"
+        export_if_set "STATIC_API_DATA_DIR" "${INPUT_STATIC_API_DATA_DIR}"
 
         cd "${{ github.action_path }}"
         python generate.py
@@ -226,5 +232,3 @@ runs:
         set -euo pipefail
         mkdir -p "${{ github.workspace }}/${{ inputs.output-dir }}"
         cp -f "${{ github.action_path }}/generated_images/"*.svg "${{ github.workspace }}/${{ inputs.output-dir }}/"
-
-

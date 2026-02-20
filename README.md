@@ -283,6 +283,29 @@ jobs:
           fi
 ```
 
+### Generate SVGs from Static JSON (offline render mode)
+
+If you already generated static files with `api/generate_static_api.py`, you can render cards without calling GitHub APIs during `generate.py` by passing `static-api-data-dir`.
+
+```yaml
+- name: Generate static API JSON files
+  env:
+    GITHUB_TOKEN: ${{ secrets.PROFILE_STATS_TOKEN }}
+    GITHUB_ACTOR: ${{ github.repository_owner }}
+    SNAPSHOTS_DB_PATH: ${{ github.workspace }}/api-data/snapshots.db
+  run: python api/generate_static_api.py
+
+- name: Generate SVGs from static JSON
+  uses: leonardokr/leo-git-statistics@v2
+  with:
+    github-token: ${{ secrets.PROFILE_STATS_TOKEN }}
+    github-username: leonardokr
+    output-dir: profile
+    themes: dark,light
+    static-api-data-dir: api-data
+```
+
+Under the hood, this maps to env `STATIC_API_DATA_DIR` in the action runtime.
 ### Action Inputs (`with:`)
 
 | Input                      | Required | Default                    | Description                                              |
@@ -317,6 +340,7 @@ jobs:
 | `show-stars`               | No       | from `config.yml`          | `true` or `false`.                                       |
 | `show-pull-requests`       | No       | from `config.yml`          | `true` or `false`.                                       |
 | `show-issues`              | No       | from `config.yml`          | `true` or `false`.                                       |
+| `static-api-data-dir`      | No       | -                          | Static JSON root path (example: `api-data`) to enable `STATIC_API_DATA_DIR`. |
 
 ## Repository Configuration (config.yml)
 

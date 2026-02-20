@@ -6,17 +6,19 @@ managing the flow between data collection, formatting, and SVG rendering.
 """
 
 import logging
+import os
 from asyncio import gather
 from aiohttp import ClientSession
 
 from src.core.environment import Environment
+from src.core.static_stats_collector import StaticStatsCollector
 from src.core.stats_collector import StatsCollector
 from src.db.snapshots import SnapshotStore
 from src.core.config import Config
 from src.core.credentials import GitHubCredentials
 from src.presentation.stats_formatter import StatsFormatter
 from src.presentation.svg_template import SVGTemplate
-import src.generators  # noqa: F401 – triggers @register_generator decorators
+import src.generators  # noqa: F401 - triggers @register_generator decorators
 from src.generators import BaseGenerator, GeneratorRegistry
 
 logger = logging.getLogger(__name__)
@@ -61,8 +63,29 @@ class ImageOrchestrator:
         """
         Execute the full image generation pipeline.
 
-        Fetches statistics from GitHub and generates all configured SVG images.
+        Fetches statistics from GitHub or static JSON data and generates all configured SVG images.
         """
+        static_data_dir = os.getenv("STATIC_API_DATA_DIR")
+        if static_data_dir:
+            logger.info("Using static API JSON from: %s", static_data_dir)
+            self._stats = StaticStatsCollector(
+                username=self.environment.username,
+                data_root=static_data_dir,
+            )
+
+            repos = await self._stats.get_repos()
+            languages = await self._stats.get_languages()
+            recent = await self._stats.get_recent_contributions()
+
+            logger.info(
+                "Static stats loaded: %d repos, %d languages", len(repos), len(languages)
+            )
+            logger.info("Recent contributions: %s", recent)
+
+            generators = self._create_generators()
+            await gather(*[g.generate() for g in generators])
+            return
+
         async with ClientSession() as session:
             snapshot_store = SnapshotStore()
             self._stats = StatsCollector(
