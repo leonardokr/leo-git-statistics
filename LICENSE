@@ -1,40 +1,74 @@
+ZionDev Non-Commercial License v1.0
+
 Copyright (c) 2025 ZionDev
 
-Permission is hereby granted to any person obtaining a copy of this software and
-associated documentation files (the "Software") to use, copy, modify, and
-distribute the Software for personal, educational, and non-commercial purposes
-only, subject to the following conditions:
+1. Definitions
 
-1. Attribution
-   Any redistribution or derivative work must include proper attribution to the
-   original author(s), including copyright notice and a reference to the original
-   repository or source.
+"Software" means this repository, including source code, assets, documentation,
+and any associated files.
 
-2. Non-Commercial Use
-   The Software may not be used, in whole or in part, for commercial purposes.
-   This includes, but is not limited to:
-   - Selling the Software or derivative works
-   - Including the Software in paid products or services
-   - Offering the Software as part of a commercial SaaS, hosting, or subscription
-     service
-   - Using the Software to generate revenue directly or indirectly
+"Commercial Use" means any use intended for commercial advantage or monetary
+compensation, direct or indirect, including but not limited to:
+- selling the Software or derivative works;
+- bundling the Software in paid products or services;
+- offering the Software as part of paid hosting, SaaS, or subscriptions;
+- using the Software in activities that generate business revenue.
 
-3. Derivative Works
-   Modifications and derivative works are permitted only under this same license.
-   Any derivative work must remain non-commercial and must not impose additional
-   restrictions beyond those stated here.
+2. License Grant (Non-Commercial Only)
 
-4. No Sublicensing
-   The Software may not be sublicensed under different terms without explicit
-   written permission from the copyright holder.
+Permission is granted to use, copy, modify, and redistribute the Software for
+personal, educational, research, and other non-commercial purposes only, subject
+to all terms in this license.
 
-5. Disclaimer of Warranty
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-   SOFTWARE.
+3. Attribution (Required)
 
-For commercial licensing inquiries, please contact the author.
+Any redistribution, public use, or derivative work must include:
+- this copyright notice;
+- the full text of this license; and
+- clear credit to ZionDev with a reference to the original repository/source.
+
+4. Portfolio Use (Restricted)
+
+Portfolio showcasing is permitted only if ALL conditions below are met:
+- you have contributed to the original project; and
+- you showcase only the specific portions you personally authored.
+
+You may not present the full project, or portions authored by others, as your
+own work.
+
+5. Non-Commercial Restriction
+
+Commercial Use is strictly prohibited without prior written permission from the
+copyright holder.
+
+6. Derivative Works
+
+Derivative works are allowed only under this same license and only for
+non-commercial purposes. You may not impose additional restrictions beyond this
+license.
+
+7. No Sublicensing
+
+You may not sublicense the Software under different terms without explicit prior
+written permission from the copyright holder.
+
+8. Termination
+
+Any violation of this license automatically terminates your rights under it.
+Rights may be reinstated only by explicit written permission from the copyright
+holder.
+
+9. Disclaimer of Warranty and Limitation of Liability
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR
+A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR
+OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+OR OTHER DEALINGS IN THE SOFTWARE.
+
+10. Commercial Licensing
+
+For commercial licensing inquiries, contact the copyright holder.
