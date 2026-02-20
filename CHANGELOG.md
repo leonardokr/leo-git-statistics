@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.1](https://github.com/leonardokr/leo-git-statistics/compare/v2.4.0...v2.4.1) (2026-02-20)
+
+
+### Bug Fixes
+
+* create snapshots db directory before sqlite connect ([3583041](https://github.com/leonardokr/leo-git-statistics/commit/358304199f89ecbe316695263927fcf1a13c6b57))
+
 ## [2.4.0](https://github.com/leonardokr/leo-git-statistics/compare/v2.3.0...v2.4.0) (2026-02-20)
 
 
