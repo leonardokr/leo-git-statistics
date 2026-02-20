@@ -37,10 +37,11 @@ class TestCommitScheduleCollector:
         assert len(result) >= 0
 
     async def test_private_repo_hides_message(self, mock_environment, mock_github_client):
-        """Private repo commits use sha prefix as description."""
+        """Private repo commits are masked when private masking is enabled."""
         now = datetime.now(timezone.utc)
         ts = now.isoformat()
         sha = "a" * 40
+        mock_environment.filter.mask_private_repos = True
         mock_github_client.query_rest.side_effect = [
             {"private": True},
             [self._commit_payload(sha, "secret work", ts)],
@@ -52,7 +53,7 @@ class TestCommitScheduleCollector:
 
         for entry in result:
             if entry["is_private"]:
-                assert entry["description"] == sha[:7]
+                assert entry["description"] == "Private commit"
 
     async def test_cached_schedule(self, mock_environment, mock_github_client):
         """Second call with same params returns cached result."""
