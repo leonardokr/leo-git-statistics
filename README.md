@@ -239,12 +239,13 @@ Pick the mode that matches your goal in **When to Use Each Mode** above.
 
 Then continue with the mode-specific sections below:
 - **Consumer Workflow Examples (Reusable Action)**
-- **Action Override Reference (Reusable Action)**
 - **Repository Configuration (Clone/Template Mode)**
 - **REST API (Hosted Service Mode)**
 
 
 ## Consumer Workflow Examples (Reusable Action)
+
+Use this mode when you do not want to maintain this codebase and only need workflows in your profile/consumer repository to generate cards.
 <details>
 <summary><b>Expand Action Workflows (Live API and Static JSON Render)</b></summary>
 
@@ -348,11 +349,7 @@ Keep static-generation and render overrides aligned to avoid mismatched behavior
 | `config-overrides`    | No       | -                  | YAML fragment merged into config at runtime.                                 |
 | `static-api-data-dir` | No       | -                  | Static JSON root path (example: `api-data`) to enable `STATIC_API_DATA_DIR`. |
 
-</details>
-
-## Action Override Reference (Reusable Action)
-<details>
-<summary><b>Expand Action Override Rules and Supported Keys</b></summary>
+### Action Override Reference (`config-overrides`)
 
 If you use only `uses: leonardokr/leo-git-statistics@v2`, you can configure behavior with:
 - `with: config-path` (read a config file from the caller repository, optional)
@@ -398,6 +395,8 @@ stats_generation:
 </details>
 
 ## Repository Configuration (Clone/Template Mode)
+
+Use this mode when you cloned/template this repository and want to run/modify generation locally in this codebase (including templates and source code).
 <details>
 <summary><b>Expand config.yml Setup for Cloned/Template Repositories</b></summary>
 
