@@ -19,6 +19,10 @@ def _make_mock_collector():
     collector.get_name.return_value = "Test User"
     collector.get_total_contributions.return_value = 1200
     collector.get_repos.return_value = {"user/repo-a", "user/repo-b"}
+    collector.get_repo_visibility.return_value = {
+        "user/repo-a": False,
+        "user/repo-b": False,
+    }
     collector.get_stargazers.return_value = 42
     collector.get_forks.return_value = 10
     collector.get_views.return_value = 500

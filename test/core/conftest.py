@@ -15,6 +15,7 @@ def mock_github_client():
     client = AsyncMock()
     client.username = "testuser"
     client.access_token = "test-token"
+    client.get_language_colors = MagicMock(return_value={})
     return client
 
 
