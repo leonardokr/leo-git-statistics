@@ -67,7 +67,7 @@ runs:
         if [ -n "${INPUT_CONFIG_OVERRIDES}" ]; then
           export INPUT_CONFIG_OVERRIDES
           export DST_CONFIG
-          python -c "import os,yaml; p=os.environ['DST_CONFIG']; o=yaml.safe_load(os.environ['INPUT_CONFIG_OVERRIDES']) or {}; b=yaml.safe_load(open(p, encoding='utf-8')) or {}; m=lambda d,s:[d.__setitem__(k,(m(d[k],v) or d[k]) if isinstance(v,dict) and isinstance(d.get(k),dict) else v) for k,v in (s or {}).items()]; m(b,o); open(p,'w',encoding='utf-8').write(yaml.safe_dump(b, sort_keys=False))"
+          python -c "import os,yaml; p=os.environ['DST_CONFIG']; o=yaml.safe_load(os.environ['INPUT_CONFIG_OVERRIDES']) or {}; b=yaml.safe_load(open(p, encoding='utf-8')) or {}; m=lambda d,s:[m(d[k],v) if isinstance(v,dict) and isinstance(d.get(k),dict) else d.__setitem__(k,v) for k,v in (s or {}).items()]; m(b,o); open(p,'w',encoding='utf-8').write(yaml.safe_dump(b, sort_keys=False))"
         fi
 
     - name: Generate SVGs
