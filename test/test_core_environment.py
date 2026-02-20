@@ -74,3 +74,25 @@ class TestEnvironment:
         assert env.traffic._validate_date("2023-01-01") == "2023-01-01"
         assert env.traffic._validate_date("invalid-date") == ""
         assert env.traffic._validate_date("01-01-2023") == ""
+
+    def test_environment_handles_invalid_stats_generation_type(self, tmp_path):
+        """Invalid stats_generation type must not crash environment loading."""
+        config_path = tmp_path / "config.yml"
+        config_path.write_text(
+            yaml.safe_dump(
+                {
+                    "timezone": "UTC",
+                    "stats_generation": ["invalid"],
+                },
+                sort_keys=False,
+            ),
+            encoding="utf-8",
+        )
+
+        env = Environment(
+            username="testuser",
+            access_token="testtoken",
+            config_path=str(config_path),
+        )
+
+        assert env.timezone == "UTC"

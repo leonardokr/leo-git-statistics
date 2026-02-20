@@ -56,7 +56,8 @@ class Environment:
     def _load_config(config_path: str = "config.yml") -> dict:
         try:
             with open(config_path, "r", encoding="utf-8") as fh:
-                return yaml.safe_load(fh) or {}
+                loaded = yaml.safe_load(fh) or {}
+                return loaded if isinstance(loaded, dict) else {}
         except Exception:
             return {}
 
@@ -78,6 +79,9 @@ class Environment:
 
         Source of truth is ``config.yml``. Explicit kwargs override config values.
         """
+        if not isinstance(stats, dict):
+            stats = {}
+
         resolved = {
             "timezone": config.get("timezone") or "UTC",
             "exclude_repos": stats.get("excluded_repos", ""),
