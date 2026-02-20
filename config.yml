@@ -20,18 +20,19 @@ commit_user_name: GitHub Action
 commit_user_email: action@github.com
 
 stats_generation:
-  excluded_repos: "tiga-alves/IAP086---AI-Applied-to-Map-Development-Process"
+  excluded_repos: ""
   excluded_langs: ""
   include_forked_repos: "false"
   exclude_contrib_repos: "false"  # Exclude repos where you are only a contributor
   exclude_archive_repos: "true"
   exclude_private_repos: "false"
   exclude_public_repos: "false"
-  store_repo_views: "true"   # Accumulate views count over time
-  store_repo_clones: "true"  # Accumulate clones count over time
-  more_collabs: 0            # Manually add extra collaborators count
-  manually_added_repos: ""   # Format: owner/repo,owner/repo
-  only_included_repos: ""    # If set, only these repos are included
+  mask_private_repos: "true"      # Mask private repo names/details in outputs
+  store_repo_views: "true"        # Accumulate views count over time
+  store_repo_clones: "true"       # Accumulate clones count over time
+  more_collabs: 0                 # Manually add extra collaborators count
+  manually_added_repos: ""        # Format: owner/repo,owner/repo
+  only_included_repos: ""         # If set, only these repos are included
 
   # Set to "false" to hide specific stats
   show_total_contributions: "true"

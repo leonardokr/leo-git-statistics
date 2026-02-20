@@ -309,7 +309,7 @@ Under the hood, this maps to env `STATIC_API_DATA_DIR` in the action runtime.
 ### Action Inputs (`with:`)
 
 | Input                      | Required | Default                    | Description                                              |
-| ----------------------------| ----------| ----------------------------| ----------------------------------------------------------|
+| ---------------------------| ---------| ---------------------------| ---------------------------------------------------------|
 | `github-token`             | Yes      | -                          | GitHub token consumed as `ACCESS_TOKEN`.                 |
 | `github-username`          | No       | `github.actor`             | GitHub user to collect stats for.                        |
 | `python-version`           | No       | `3.11`                     | Python runtime version.                                  |
@@ -323,6 +323,7 @@ Under the hood, this maps to env `STATIC_API_DATA_DIR` in the action runtime.
 | `exclude-archive-repos`    | No       | from `config.yml`          | `true` or `false`.                                       |
 | `exclude-private-repos`    | No       | from `config.yml`          | `true` or `false`.                                       |
 | `exclude-public-repos`     | No       | from `config.yml`          | `true` or `false`.                                       |
+| `mask-private-repos`       | No       | from `config.yml`          | `true` or `false`; masks private repo names/details in output payloads/cards. |
 | `store-repo-views`         | No       | from `config.yml`          | `true` or `false`.                                       |
 | `store-repo-clones`        | No       | from `config.yml`          | `true` or `false`.                                       |
 | `more-collabs`             | No       | from `config.yml`          | Integer to manually add collaborator count.              |
@@ -365,6 +366,7 @@ stats_generation:
   excluded_repos: "repo1,repo2"
   excluded_langs: "HTML,CSS"
   include_forked_repos: "false"
+  mask_private_repos: "true"
   exclude_private_repos: "false"
   exclude_archive_repos: "true"
 ```
@@ -711,6 +713,7 @@ WORKERS=4
 
 # Security
 ALLOW_PRIVATE_REPOS=false
+MASK_PRIVATE_REPOS=true
 API_AUTH_ENABLED=false
 API_KEYS=
 CORS_ORIGINS=*
