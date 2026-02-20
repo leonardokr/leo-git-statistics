@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/leonardokr/leo-git-statistics/compare/v2.3.0...v2.4.0) (2026-02-20)
+
+
+### Features
+
+* support static api data dir for svg generation ([5420218](https://github.com/leonardokr/leo-git-statistics/commit/542021815212141bc1de87aa0f63dfaee19637c1))
+
 ## [2.3.0](https://github.com/leonardokr/leo-git-statistics/compare/v2.2.0...v2.3.0) (2026-02-18)
 
 
