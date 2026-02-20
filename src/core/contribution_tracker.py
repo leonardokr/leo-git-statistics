@@ -154,6 +154,7 @@ class ContributionTracker:
         temp_streak_start = None
 
         today = date.today().strftime(self.__DATE_FORMAT)
+        yesterday = (date.today() - timedelta(1)).strftime(self.__DATE_FORMAT)
 
         for i, day in enumerate(all_days):
             if day["count"] > 0:
@@ -166,20 +167,34 @@ class ContributionTracker:
                     longest_streak_start = temp_streak_start
                     longest_streak_end = day["date"]
 
-                if day["date"] == today or (i == len(all_days) - 1):
-                    current_streak = temp_streak
-                    current_streak_start = temp_streak_start
-                    current_streak_end = day["date"]
             else:
                 if i < len(all_days) - 1 or day["date"] == today:
                     temp_streak = 0
                     temp_streak_start = None
 
-        yesterday = (date.today() - timedelta(1)).strftime(self.__DATE_FORMAT)
-        if all_days and all_days[-1]["date"] < yesterday:
-            current_streak = 0
-            current_streak_start = None
-            current_streak_end = None
+        # Current streak should be computed only with days up to today.
+        # Calendar payloads may include future days with zero contributions.
+        past_days = [d for d in all_days if d["date"] <= today]
+        if past_days:
+            anchor = len(past_days) - 1
+
+            # If today has no contributions yet, evaluate the streak ending yesterday.
+            if past_days[anchor]["count"] == 0:
+                anchor -= 1
+
+            if anchor >= 0 and past_days[anchor]["count"] > 0:
+                # If last contribution is older than yesterday, streak is broken.
+                if past_days[anchor]["date"] < yesterday:
+                    current_streak = 0
+                    current_streak_start = None
+                    current_streak_end = None
+                else:
+                    start = anchor
+                    while start >= 0 and past_days[start]["count"] > 0:
+                        start -= 1
+                    current_streak = anchor - start
+                    current_streak_start = past_days[start + 1]["date"]
+                    current_streak_end = past_days[anchor]["date"]
 
         self._current_streak = current_streak
         self._longest_streak = longest_streak
