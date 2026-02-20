@@ -237,24 +237,11 @@ Pick the mode that matches your goal in **When to Use Each Mode** above.
 1. In your profile repository (`<username>/<username>`): **Settings** -> **Secrets and variables** -> **Actions**
 2. Create secret named `PROFILE_STATS_TOKEN` with your token
 
-### 4. Add Workflow (Action + Live API)
-
-Use this example only if you chose the "reusable action with live GitHub API" mode.
-If you chose another mode, use the matching workflow example in the sections below.
-
-```yaml
-- name: Generate profile SVG stats
-  uses: leonardokr/leo-git-statistics@v2
-  with:
-    github-token: ${{ secrets.PROFILE_STATS_TOKEN }}
-    github-username: leonardokr
-    output-dir: profile
-```
-
-### 5. Configure (Optional)
-Use the override channel that matches your chosen flow:
-- Reusable action step: `config-path` and/or `with: config-overrides`.
-- Static API script step (`api/generate_static_api.py`): `CONFIG_PATH` and/or `CONFIG_OVERRIDES`.
+Then continue with the mode-specific sections below:
+- **Consumer Workflow Examples (Reusable Action)**
+- **Action Override Reference (Reusable Action)**
+- **Repository Configuration (Clone/Template Mode)**
+- **REST API (Hosted Service Mode)**
 
 
 ## Consumer Workflow Examples (Reusable Action)
